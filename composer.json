@@ -1,0 +1,28 @@
+{
+	"name": "wpsyntex/the-events-calendar-stubs",
+	"description": "The Events Calendar function and class declaration stubs for static analysis.",
+	"license": "GPL-3.0-or-later",
+	"homepage": "https://github.com/polylang/the-events-calendar-stubs",
+	"version": "5.6.0",
+	"type": "library",
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://wpackagist.org",
+			"only": [
+				"wpackagist-plugin/*"
+			]
+		}
+	],
+	"require-dev": {
+		"php": "~7.1",
+		"wpackagist-plugin/the-events-calendar": "5.6.0",
+		"giacocorsiglia/stubs-generator": "^0.5.0",
+		"composer/installers": "^1.11"
+	},
+	"extra": {
+		"installer-paths": {
+			"vendor/{$name}/{$name}/": [ "type:wordpress-plugin" ]
+		}
+	}
+}
