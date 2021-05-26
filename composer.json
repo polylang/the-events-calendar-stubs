@@ -24,5 +24,8 @@
 		"installer-paths": {
 			"vendor/{$name}/{$name}/": [ "type:wordpress-plugin" ]
 		}
+	},
+	"suggest": {
+		"wpsyntex/polylang-phpstan": "Polylang extension for PHPStan"
 	}
 }
