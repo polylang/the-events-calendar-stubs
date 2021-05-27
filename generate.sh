@@ -2,8 +2,11 @@
 
 vendor/bin/generate-stubs \
     --force \
+    --finder=finder.php \
     --functions \
     --interfaces \
+    --traits \
     --classes \
-    --out=the-events-calendar-stubs.php \
-    "vendor/the-events-calendar/the-events-calendar/vendor" "vendor/the-events-calendar/the-events-calendar/src"
+    --out=the-events-calendar-stubs.php
+
+php remove-duplicates.php
