@@ -1,15 +1,24 @@
 <?php
 namespace Polylang\The_Events_Calendar_Stubs;
 
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Style\SymfonyStyle;
+
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require __DIR__ . '/vendor/autoload.php';
+}
+
 function remove_duplicates_and_fix() {
 	$rel_path = 'the-events-calendar-stubs.php';
+	$io       = new SymfonyStyle( new ArgvInput(), new ConsoleOutput() );
 
-	echo "Starting replacements in file $rel_path.\n";
+	$io->title( 'Replacements in stubs' );
 
 	$full_path = __DIR__ . '/' . $rel_path;
 
 	if ( ! file_exists( $full_path ) ) {
-		echo "Failed to locate file $rel_path.\n";
+		$io->error( "Failed to locate file $rel_path." );
 		return;
 	}
 
@@ -23,11 +32,11 @@ function remove_duplicates_and_fix() {
 		$contents = file_get_contents( $full_path );
 
 		if ( ! is_string( $contents ) ) {
-			echo "Failed to open file $rel_path.\n";
+			$io->error( "Failed to open file $rel_path." );
 			return;
 		}
 	} catch( Exception $e ) {
-		echo "Failed to open file $rel_path.\n";
+		$io->error( "Failed to open file $rel_path." );
 	}
 
 	foreach ( $to_remove as $pattern => $replacement ) {
@@ -40,16 +49,16 @@ function remove_duplicates_and_fix() {
 	}
 
 	if ( ! $replaced ) {
-		echo "No replacements done in file $rel_path.\n";
+		$io->error( "No replacements done in file $rel_path." );
 		return;
 	}
 
 	$result = file_put_contents( $full_path, $contents );
 
 	if ( false === $result ) {
-		echo "Failed do replacements in file $rel_path.\n";
+		$io->error( "Failed to perform replacements in file $rel_path." );
 	} else {
-		echo "Replacements successfully done in file $rel_path.\n";
+		$io->success( "Replacements done in file $rel_path." );
 	}
 }
 
