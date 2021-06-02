@@ -1932,7 +1932,7 @@ namespace {
         /**
          * After select2 is loaded to the FE we add one scripts after to prevent select2 from breaking.
          *
-         * @since TBD
+         * @since 4.13.2
          *
          * @param string $tag    The <script> tag for the enqueued script.
          * @param string $handle The script's registered handle.
@@ -2382,6 +2382,39 @@ namespace {
         public function data_size_over_packet_size($value)
         {
         }
+        /**
+         * Returns a transient that might have been stored, due ot its size, in chunks.
+         *
+         * @since 4.13.3
+         *
+         * @param string               $id                 The name of the transients to return.
+         * @param string|array<string> $expiration_trigger The transient expiration trigger(s).
+         *
+         * @return false|mixed Either the transient value, joined back into one, or `false` to indicate
+         *                     the transient was not found or was malformed.
+         */
+        public function get_chunkable_transient($id, $expiration_trigger = '')
+        {
+        }
+        /**
+         * Sets a transient in the database with the knowledge that, if too large to be stored in one
+         * DB row, it will be chunked.
+         *
+         * The method will redirect to the `set_transient` function if the site is using object caching.
+         *
+         *
+         * @since 4.13.3
+         *
+         * @param string               $id                 The transient ID.
+         * @param mixed                $value              The value to store, that could be chunked.
+         * @param int                  $expiration         The transient expiration, in seconds.
+         * @param string|array<string> $expiration_trigger The transient expiration trigger(s).
+         *
+         * @return bool Whether the transient, or the transient chunks, have been stored correctly or not.
+         */
+        public function set_chunkable_transient($id, $value, $expiration = 0, $expiration_trigger = '')
+        {
+        }
     }
     /**
      * Listen for events and update their timestamps
@@ -2474,7 +2507,7 @@ namespace {
         /**
          * Filtering for last occurrence triggers.
          *
-         * @since TBD
+         * @since 4.13.2
          *
          * @param array<string,bool> $triggers Which options will trigger this given action last occurrence.
          * @param string             $action   Which action this trigger will set.
@@ -4387,6 +4420,18 @@ namespace {
         {
         }
         /**
+         * Returns the section requested by ID.
+         *
+         * @since 4.13.3
+         *
+         * @param string $id The ID of the desired section.
+         *
+         * @return boolean|Tribe__Customizer__Section The requested section or boolean false if not found.
+         */
+        public function get_section($id)
+        {
+        }
+        /**
          * A easy way to check if customize is active
          *
          * @since  4.2.2
@@ -4411,11 +4456,14 @@ namespace {
         {
         }
         /**
-         * Get an option from the database, using index search you can retrieve the full panel, a section or even a setting
+         * Get an option from the database, using index search you can retrieve the full panel, a section or even a setting.
          *
-         * @param  array $search   Index search, array( 'section_name', 'setting_name' )
-         * @param  mixed $default  The default, if the requested variable doesn't exits
-         * @return mixed           The requested option or the default
+         * @since 4.4
+         *
+         * @param  array $search   Index search, array( 'section_name', 'setting_name' ).
+         * @param  mixed $default  The default, if the requested variable doesn't exits.
+         *
+         * @return mixed           The requested option or the default.
          */
         public function get_option($search = \null, $default = \null)
         {
@@ -4519,7 +4567,7 @@ namespace {
          * @param  string $slug    The actual Setting name
          * @param  string|WP_Customize_Section $section [description]
          *
-         * @return string          HTML name Attribute name o the setting
+         * @return string          HTML name Attribute name of the setting.
          */
         public function get_setting_name($slug, $section = \null)
         {
@@ -4584,6 +4632,14 @@ namespace Tribe\Customizer\Controls {
     class Heading extends \Tribe\Customizer\Control
     {
         /**
+         * Control's Type.
+         *
+         * @since 4.13.3
+         *
+         * @var string
+         */
+        public $type = 'heading';
+        /**
          * Anyone able to set theme options will be able to see the header.
          *
          * @since 4.12.14
@@ -4608,12 +4664,73 @@ namespace Tribe\Customizer\Controls {
         {
         }
     }
+    /**
+     * Class Heading
+     *
+     * @since   4.13.3
+     *
+     * @package Tribe\Customizer\Controls
+     */
+    class Radio extends \Tribe\Customizer\Control
+    {
+        /**
+         * Anyone able to set theme options will be able to see the header.
+         *
+         * @since 4.13.3
+         *
+         * @var string
+         */
+        public $capability = 'edit_theme_options';
+        /**
+         * Render the control's content
+         *
+         * @since 4.13.3
+         */
+        public function render_content()
+        {
+        }
+    }
+    class Separator extends \Tribe\Customizer\Control
+    {
+        /**
+         * Control's Type.
+         *
+         * @since 4.13.3
+         *
+         * @var string
+         */
+        public $type = 'separator';
+        /**
+         * Anyone able to set theme options will be able to see the header.
+         *
+         * @since 4.13.3
+         *
+         * @var string
+         */
+        public $capability = 'edit_theme_options';
+        /**
+         * The heading does not control any setting.
+         *
+         * @since 4.13.3
+         *
+         * @var array<string,mixed>
+         */
+        public $settings = [];
+        /**
+         * Render the control's content
+         *
+         * @since 4.13.3
+         */
+        public function render_content()
+        {
+        }
+    }
 }
 namespace {
     /**
-     * The Events Calendar Customizer Section Abstract
+     * The Events Calendar Customizer Section Abstract.
      * Extend this when you are trying to create a new The Events Calendar Section
-     * on the Customize from WordPress
+     * on the Customize from WordPress.
      *
      * @package Common
      * @subpackage Customizer
@@ -4622,7 +4739,7 @@ namespace {
     abstract class Tribe__Customizer__Section
     {
         /**
-         * ID of the section
+         * ID of the section.
          *
          * @since 4.0
          *
@@ -4631,7 +4748,7 @@ namespace {
          */
         public $ID;
         /**
-         * Load this section by default
+         * Load this section by default.
          *
          * @since 4.4
          *
@@ -4640,7 +4757,7 @@ namespace {
          */
         public $load = \true;
         /**
-         * Default values for the settings on this class
+         * Default values for the settings on this class.
          *
          * @since 4.0
          *
@@ -4649,7 +4766,7 @@ namespace {
          */
         public $defaults = [];
         /**
-         * Information to setup the Section
+         * Information to setup the Section.
          *
          * @since 4.0
          *
@@ -4658,42 +4775,13 @@ namespace {
          */
         public $arguments = ['priority' => 10, 'capability' => 'edit_theme_options', 'title' => \null, 'description' => \null];
         /**
-         * Overwrite this method to create the Fields/Settings for this section
+         * Allows sections to be loaded in order for overrides.
          *
-         * @param  WP_Customize_Section $section The WordPress section instance
-         * @param  WP_Customize_Manager $manager The WordPress Customizer Manager
-         *
-         * @return void
+         * @var integer
          */
-        public function register_settings(\WP_Customize_Section $section, \WP_Customize_Manager $manager)
-        {
-        }
+        public $queue_priority = 15;
         /**
-         * Overwrite this method to be able to implement the CSS template related to this section
-         *
-         * @return string
-         */
-        public function get_css_template($template)
-        {
-        }
-        /**
-         * Overwrite this method to be able to creaty dynamic settings
-         *
-         * @param  array  $settings The actual options on the database
-         * @return array
-         */
-        public function create_ghost_settings($settings = [])
-        {
-        }
-        /**
-         * This method will be executed when the Class in Initialized
-         * Overwrite this method to be able to setup the arguments of your section
-         *
-         * @return void
-         */
-        public abstract function setup();
-        /**
-         * Private variable holding the class Instance
+         * Private variable holding the class Instance.
          *
          * @since 4.0
          *
@@ -4701,17 +4789,11 @@ namespace {
          * @var Tribe__Events__Pro__Customizer__Section
          */
         private static $instances;
+        protected $content_headings = [];
+        protected $content_settings = [];
+        protected $content_controls = [];
         /**
-         * Get the section slug based on the Class name
-         *
-         * @param  string $class_name The name of this Class
-         * @return the slug for this class
-         */
-        public static final function get_section_slug($class_name)
-        {
-        }
-        /**
-         * Setup and Load hooks for this Section
+         * Setup and Load hooks for this Section.
          *
          * @since  4.0
          *
@@ -4721,25 +4803,125 @@ namespace {
         {
         }
         /**
-         * A way to apply filters when getting the Customizer options
-         * @return array
+         * This method will be executed when the Class is Initialized.
+         * Overwrite this method to be able to setup the arguments of your section.
+         *
+         * @return void
+         */
+        public function setup()
+        {
+        }
+        /**
+         * Register this Section.
+         *
+         * @param  array  $sections   Array of Sections.
+         * @param  Tribe__Customizer $customizer Our internal Cutomizer Class Instance.
+         *
+         * @return array  Return the modified version of the Section array.
+         */
+        public function register($sections, \Tribe__Customizer $customizer)
+        {
+        }
+        /**
+         * Overwrite this method to create the Fields/Settings for this section.
+         *
+         * @param  WP_Customize_Section $section The WordPress section instance.
+         * @param  WP_Customize_Manager $manager The WordPress Customizer Manager.
+         *
+         * @return void
+         */
+        public function register_settings(\WP_Customize_Section $section, \WP_Customize_Manager $manager)
+        {
+        }
+        /**
+         * Function that encapsulates the logic for if a setting should be added to the Customizer style template.
+         * Note: this depends on a default value being set -
+         *       if the setting value is empty OR the default value it's not displayed.
+         *
+         * @since 4.13.3
+         *
+         * @param string $setting The setting slug, like 'grid_lines_color'.
+         * @param int $section_id The ID for the section - defaults to the current one if not set.
+         *
+         * @return boolean If the setting should be added to the style template.
+         */
+        public function should_include_setting_css($setting, $section_id = \null)
+        {
+        }
+        /**
+         * Function to simplify getting an option value.
+         *
+         * @since 4.13.3
+         *
+         * @param string $setting The setting slug, like 'grid_lines_color'.
+         *
+         * @return string The setting value;
+         */
+        public function get_option($setting)
+        {
+        }
+        public function to_rgb($color)
+        {
+        }
+        /**
+         * Overwrite this method to be able to implement the CSS template related to this section.
+         *
+         * @return string The CSS template.
+         */
+        public function get_css_template($template)
+        {
+        }
+        /**
+         * Overwrite this method to be able to create dynamic settings.
+         *
+         * @param  array  $settings The actual options on the database.
+         *
+         * @return array $settings The modified settings.
+         */
+        public function create_ghost_settings($settings = [])
+        {
+        }
+        /**
+         * Get the section slug based on the Class name.
+         *
+         * @param  string $class_name The name of this Class.
+         * @return string $slug The slug for this Class.
+         */
+        public static final function get_section_slug($class_name)
+        {
+        }
+        /**
+         * Set up default values.
+         *
+         * @since 4.13.3
+         */
+        public function setup_defaults()
+        {
+        }
+        /**
+         * Get the (filtered) default settings.
+         *
+         * @return array The filtered defaults.
          */
         public function get_defaults($settings = [])
         {
         }
         /**
-         * Get the Default Value requested
-         * @return mixed
+         * Get a single Default Value by key.
+         *
+         * @param string $key The key for the requested value.
+         *
+         * @return mixed The requested value.
          */
         public function get_default($key)
         {
         }
         /**
-         * Hooks to the `tribe_customizer_pre_get_option`, this applies
-         * the `$this->create_ghost_settings()` method to the settings on the correct section
+         * Hooks to the `tribe_customizer_pre_get_option`. This applies the `$this->create_ghost_settings()` method
+         * to the settings on the correct section.
          *
-         * @param  array $settings  Values from the Database from Customizer actions
-         * @param  array $search    Indexed search @see Tribe__Customizer::search_var()
+         * @param  array $settings  Values from the Database from Customizer actions.
+         * @param  array $search	Indexed search @see Tribe__Customizer::search_var().
          *
          * @return array
          */
@@ -4747,14 +4929,191 @@ namespace {
         {
         }
         /**
-         * Register this Section
+         * Set up section arguments.
          *
-         * @param  array  $sections   Array of Sections
-         * @param  Tribe__Customizer $customizer Our internal Cutomizer Class Instance
+         * @since 4.13.3
          *
-         * @return array  Return the modified version of the Section array
+         * @return void
          */
-        public function register($sections, \Tribe__Customizer $customizer)
+        public function setup_arguments()
+        {
+        }
+        /**
+         * Sets up the Customizer section content.
+         *
+         * @since 4.13.3
+         */
+        public function setup_content_arguments()
+        {
+        }
+        /* Headings */
+        /**
+         * Sets up the Customizer section Header and Separator arguments.
+         *
+         * @since 4.13.3
+         */
+        public function setup_content_headings()
+        {
+        }
+        /**
+         * Get the (filtered) content headings and separator arguments.
+         * @see filter_content_headings()
+         *
+         * @since 4.13.3
+         *
+         * @return array<string,mixed> The filtered arguments.
+         */
+        public function get_content_headings()
+        {
+        }
+        /**
+         * Filter the content headings arguments
+         *
+         * @since 4.13.3
+         *
+         * @param array<string,mixed> $arguments The list of arguments for headings and separators.
+         *
+         * @return array<string,mixed> $arguments The filtered array of arguments.
+         */
+        public function filter_content_headings($arguments)
+        {
+        }
+        /**
+         * Sugar syntax to add heading and separator sections to the customizer content.
+         * These are controls only in name: they do not actually control or save any setting.
+         *
+         * @since 4.13.3
+         *
+         * @param WP_Customize_Manager $manager   The instance of the Customizer Manager.
+         * @param string			   $name	  HTML name Attribute name of the setting.
+         * @param array<string,mixed>  $arguments The control arguments.
+         *
+         */
+        protected function add_heading($section, $manager, $name, $args)
+        {
+        }
+        /* Settings */
+        /**
+         * Sets up the Customizer settings arguments.
+         *
+         * @since 4.13.3
+         */
+        public function setup_content_settings()
+        {
+        }
+        /**
+         * Get the (filtered) content setting arguments.
+         * @see filter_content_settings()
+         *
+         * @since 4.13.3
+         *
+         * @return array<string,mixed> The filtered arguments.
+         */
+        public function get_content_settings()
+        {
+        }
+        /**
+         * Filter the content settings arguments
+         *
+         * @since 4.13.3
+         *
+         * @param array<string,mixed> $arguments The list of arguments for settings.
+         *
+         * @return array<string,mixed> $arguments The filtered array of arguments.
+         */
+        public function filter_content_settings($arguments)
+        {
+        }
+        /**
+         * Sugar syntax to add a setting to the customizer content.
+         *
+         * @since 4.13.3
+         *
+         * @param WP_Customize_Manager $manager	  The instance of the Customizer Manager.
+         * @param string			   $setting_name HTML name Attribute name of the setting.
+         * @param string			   $key		  The key for the default value.
+         * @param array<string,mixed>  $arguments	The control arguments.
+         */
+        protected function add_setting($manager, $setting_name, $key, $args)
+        {
+        }
+        /* Controls */
+        /**
+         * Sets up the Customizer controls arguments.
+         *
+         * @since 4.13.3
+         */
+        public function setup_content_controls()
+        {
+        }
+        /**
+         * Get a list (array) of accepted control types.
+         * In the format slug => control class name.
+         *
+         * @since 4.13.3
+         *
+         * @return array<string,string> The array of control types and their associated classes.
+         */
+        public function get_accepted_control_types()
+        {
+        }
+        /**
+         * Determine if a control type is in our list of accepted ones.
+         *
+         * @since 4.13.3
+         *
+         * @param string $type The "slug" of the control type.
+         *
+         * @return boolean If a control type is in our list of accepted ones.
+         */
+        public function is_control_type_accepted($type)
+        {
+        }
+        /**
+         * Gets the class object associated with a control type.
+         *
+         * @since 4.13.3
+         *
+         * @param string $type The "slug" of the control type.
+         *
+         * @return object|false The control type class or false if type not found.
+         */
+        public function get_control_type($type)
+        {
+        }
+        /**
+         * Get the (filtered) content control arguments.
+         * @see filter_content_controls()
+         *
+         * @since 4.13.3
+         *
+         * @return array<string,mixed> The filtered arguments.
+         */
+        public function get_content_controls()
+        {
+        }
+        /**
+         * Filter the content control arguments
+         *
+         * @since 4.13.3
+         *
+         * @param array<string,mixed> $arguments The list of arguments for controls.
+         *
+         * @return array<string,mixed> $arguments The filtered array of arguments.
+         */
+        public function filter_content_controls($arguments)
+        {
+        }
+        /**
+         * Sugar syntax to add a control to the customizer content.
+         *
+         * @since 4.13.3
+         *
+         * @param WP_Customize_Manager $manager	  The instance of the Customizer Manager.
+         * @param string			   $setting_name HTML name Attribute name of the setting.
+         * @param array<string,mixed>  $arguments	The control arguments.
+         */
+        protected function add_control($section, $manager, $setting_name, $args)
         {
         }
     }
@@ -11697,7 +12056,7 @@ namespace {
         const EVENTSERROROPT = '_tribe_events_errors';
         const OPTIONNAME = 'tribe_events_calendar_options';
         const OPTIONNAMENETWORK = 'tribe_events_calendar_network_options';
-        const VERSION = '4.13.2';
+        const VERSION = '4.13.3';
         const FEED_URL = 'https://theeventscalendar.com/feed/';
         protected $plugin_context;
         protected $plugin_context_class;
@@ -27639,7 +27998,7 @@ namespace {
         }
     }
     // autoload_real.php @generated by Composer
-    class ComposerAutoloaderInit5a1cee1db2c0468d4f0f7a5677d5d16b
+    class ComposerAutoloaderInit95e3628647a1c0870309ea7d314528de
     {
         private static $loader;
         public static function loadClassLoader($class)
@@ -27650,7 +28009,7 @@ namespace {
         }
     }
     // autoload_real_52.php generated by xrstf/composer-php52
-    class ComposerAutoloaderInitf10d845069b9b44a7d2efec010e0a5f5
+    class ComposerAutoloaderInita26fd14a1dc11f69ce0dab8d1944fb69
     {
         private static $loader;
         public static function loadClassLoader($class)
@@ -27665,12 +28024,12 @@ namespace {
     }
 }
 namespace Composer\Autoload {
-    class ComposerStaticInit5a1cee1db2c0468d4f0f7a5677d5d16b
+    class ComposerStaticInit95e3628647a1c0870309ea7d314528de
     {
         public static $prefixLengthsPsr4 = array('T' => array('Tribe\\' => 6), 'P' => array('Psr\\Log\\' => 8), 'M' => array('Monolog\\' => 8), 'F' => array('Firebase\\JWT\\' => 13));
         public static $prefixDirsPsr4 = array('Tribe\\' => array(0 => __DIR__ . '/../..' . '/src/Tribe'), 'Psr\\Log\\' => array(0 => __DIR__ . '/..' . '/psr/log/Psr/Log'), 'Monolog\\' => array(0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog'), 'Firebase\\JWT\\' => array(0 => __DIR__ . '/..' . '/firebase/php-jwt/src'));
         public static $prefixesPsr0 = array('x' => array('xrstf\\Composer52' => array(0 => __DIR__ . '/..' . '/xrstf/composer-php52/lib')), 't' => array('tad_DI52_' => array(0 => __DIR__ . '/..' . '/lucatume/di52/src')));
-        public static $classMap = array('Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php', 'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php', 'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php', 'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php', 'Monolog\\ErrorHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/ErrorHandler.php', 'Monolog\\Formatter\\ChromePHPFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ChromePHPFormatter.php', 'Monolog\\Formatter\\ElasticaFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ElasticaFormatter.php', 'Monolog\\Formatter\\FlowdockFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/FlowdockFormatter.php', 'Monolog\\Formatter\\FluentdFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/FluentdFormatter.php', 'Monolog\\Formatter\\FormatterInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/FormatterInterface.php', 'Monolog\\Formatter\\GelfMessageFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/GelfMessageFormatter.php', 'Monolog\\Formatter\\HtmlFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/HtmlFormatter.php', 'Monolog\\Formatter\\JsonFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/JsonFormatter.php', 'Monolog\\Formatter\\LineFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/LineFormatter.php', 'Monolog\\Formatter\\LogglyFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/LogglyFormatter.php', 'Monolog\\Formatter\\LogstashFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/LogstashFormatter.php', 'Monolog\\Formatter\\MongoDBFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/MongoDBFormatter.php', 'Monolog\\Formatter\\NormalizerFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/NormalizerFormatter.php', 'Monolog\\Formatter\\ScalarFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ScalarFormatter.php', 'Monolog\\Formatter\\WildfireFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/WildfireFormatter.php', 'Monolog\\Handler\\AbstractHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AbstractHandler.php', 'Monolog\\Handler\\AbstractProcessingHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php', 'Monolog\\Handler\\AbstractSyslogHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AbstractSyslogHandler.php', 'Monolog\\Handler\\AmqpHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AmqpHandler.php', 'Monolog\\Handler\\BrowserConsoleHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/BrowserConsoleHandler.php', 'Monolog\\Handler\\BufferHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/BufferHandler.php', 'Monolog\\Handler\\ChromePHPHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ChromePHPHandler.php', 'Monolog\\Handler\\CouchDBHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/CouchDBHandler.php', 'Monolog\\Handler\\CubeHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/CubeHandler.php', 'Monolog\\Handler\\Curl\\Util' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/Curl/Util.php', 'Monolog\\Handler\\DeduplicationHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/DeduplicationHandler.php', 'Monolog\\Handler\\DoctrineCouchDBHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/DoctrineCouchDBHandler.php', 'Monolog\\Handler\\DynamoDbHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/DynamoDbHandler.php', 'Monolog\\Handler\\ElasticSearchHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ElasticSearchHandler.php', 'Monolog\\Handler\\ErrorLogHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ErrorLogHandler.php', 'Monolog\\Handler\\FilterHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FilterHandler.php', 'Monolog\\Handler\\FingersCrossedHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossedHandler.php', 'Monolog\\Handler\\FingersCrossed\\ActivationStrategyInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossed/ActivationStrategyInterface.php', 'Monolog\\Handler\\FingersCrossed\\ChannelLevelActivationStrategy' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossed/ChannelLevelActivationStrategy.php', 'Monolog\\Handler\\FingersCrossed\\ErrorLevelActivationStrategy' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossed/ErrorLevelActivationStrategy.php', 'Monolog\\Handler\\FirePHPHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FirePHPHandler.php', 'Monolog\\Handler\\FleepHookHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FleepHookHandler.php', 'Monolog\\Handler\\FlowdockHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FlowdockHandler.php', 'Monolog\\Handler\\GelfHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/GelfHandler.php', 'Monolog\\Handler\\GroupHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/GroupHandler.php', 'Monolog\\Handler\\HandlerInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/HandlerInterface.php', 'Monolog\\Handler\\HandlerWrapper' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/HandlerWrapper.php', 'Monolog\\Handler\\HipChatHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/HipChatHandler.php', 'Monolog\\Handler\\IFTTTHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/IFTTTHandler.php', 'Monolog\\Handler\\InsightOpsHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/InsightOpsHandler.php', 'Monolog\\Handler\\LogEntriesHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/LogEntriesHandler.php', 'Monolog\\Handler\\LogglyHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/LogglyHandler.php', 'Monolog\\Handler\\MailHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MailHandler.php', 'Monolog\\Handler\\MandrillHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MandrillHandler.php', 'Monolog\\Handler\\MissingExtensionException' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MissingExtensionException.php', 'Monolog\\Handler\\MongoDBHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MongoDBHandler.php', 'Monolog\\Handler\\NativeMailerHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/NativeMailerHandler.php', 'Monolog\\Handler\\NewRelicHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/NewRelicHandler.php', 'Monolog\\Handler\\NullHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/NullHandler.php', 'Monolog\\Handler\\PHPConsoleHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/PHPConsoleHandler.php', 'Monolog\\Handler\\PsrHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/PsrHandler.php', 'Monolog\\Handler\\PushoverHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/PushoverHandler.php', 'Monolog\\Handler\\RavenHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RavenHandler.php', 'Monolog\\Handler\\RedisHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RedisHandler.php', 'Monolog\\Handler\\RollbarHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RollbarHandler.php', 'Monolog\\Handler\\RotatingFileHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RotatingFileHandler.php', 'Monolog\\Handler\\SamplingHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SamplingHandler.php', 'Monolog\\Handler\\SlackHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SlackHandler.php', 'Monolog\\Handler\\SlackWebhookHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SlackWebhookHandler.php', 'Monolog\\Handler\\Slack\\SlackRecord' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/Slack/SlackRecord.php', 'Monolog\\Handler\\SlackbotHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SlackbotHandler.php', 'Monolog\\Handler\\SocketHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SocketHandler.php', 'Monolog\\Handler\\StreamHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/StreamHandler.php', 'Monolog\\Handler\\SwiftMailerHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SwiftMailerHandler.php', 'Monolog\\Handler\\SyslogHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SyslogHandler.php', 'Monolog\\Handler\\SyslogUdpHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SyslogUdpHandler.php', 'Monolog\\Handler\\SyslogUdp\\UdpSocket' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SyslogUdp/UdpSocket.php', 'Monolog\\Handler\\TestHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/TestHandler.php', 'Monolog\\Handler\\WhatFailureGroupHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/WhatFailureGroupHandler.php', 'Monolog\\Handler\\ZendMonitorHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ZendMonitorHandler.php', 'Monolog\\Logger' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Logger.php', 'Monolog\\Processor\\GitProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/GitProcessor.php', 'Monolog\\Processor\\IntrospectionProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/IntrospectionProcessor.php', 'Monolog\\Processor\\MemoryPeakUsageProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MemoryPeakUsageProcessor.php', 'Monolog\\Processor\\MemoryProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MemoryProcessor.php', 'Monolog\\Processor\\MemoryUsageProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MemoryUsageProcessor.php', 'Monolog\\Processor\\MercurialProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MercurialProcessor.php', 'Monolog\\Processor\\ProcessIdProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/ProcessIdProcessor.php', 'Monolog\\Processor\\ProcessorInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/ProcessorInterface.php', 'Monolog\\Processor\\PsrLogMessageProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/PsrLogMessageProcessor.php', 'Monolog\\Processor\\TagProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/TagProcessor.php', 'Monolog\\Processor\\UidProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/UidProcessor.php', 'Monolog\\Processor\\WebProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/WebProcessor.php', 'Monolog\\Registry' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Registry.php', 'Monolog\\ResettableInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/ResettableInterface.php', 'Monolog\\SignalHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/SignalHandler.php', 'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php', 'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/AbstractLogger.php', 'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/Psr/Log/InvalidArgumentException.php', 'Psr\\Log\\LogLevel' => __DIR__ . '/..' . '/psr/log/Psr/Log/LogLevel.php', 'Psr\\Log\\LoggerAwareInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerAwareInterface.php', 'Psr\\Log\\LoggerAwareTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerAwareTrait.php', 'Psr\\Log\\LoggerInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerInterface.php', 'Psr\\Log\\LoggerTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerTrait.php', 'Psr\\Log\\NullLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/NullLogger.php', 'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/DummyTest.php', 'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php', 'Psr\\Log\\Test\\TestLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/TestLogger.php', 'Tribe\\Admin\\Notice\\WP_Version' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/WP_Version.php', 'Tribe\\Customizer\\Control' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Control.php', 'Tribe\\Customizer\\Controls\\Heading' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Heading.php', 'Tribe\\DB_Lock' => __DIR__ . '/../..' . '/src/Tribe/DB_Lock.php', 'Tribe\\Dialog\\View' => __DIR__ . '/../..' . '/src/Tribe/Dialog/View.php', 'Tribe\\Log\\Action_Logger' => __DIR__ . '/../..' . '/src/Tribe/Log/Action_Logger.php', 'Tribe\\Log\\Canonical_Formatter' => __DIR__ . '/../..' . '/src/Tribe/Log/Canonical_Formatter.php', 'Tribe\\Log\\Monolog_Logger' => __DIR__ . '/../..' . '/src/Tribe/Log/Monolog_Logger.php', 'Tribe\\Log\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Log/Service_Provider.php', 'Tribe\\Models\\Post_Types\\Base' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Base.php', 'Tribe\\Models\\Post_Types\\Nothing' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Nothing.php', 'Tribe\\PUE\\Update_Prevention' => __DIR__ . '/../..' . '/src/Tribe/PUE/Update_Prevention.php', 'Tribe\\Repository\\Core_Read_Interface' => __DIR__ . '/../..' . '/src/Tribe/Repository/Core_Read_Interface.php', 'Tribe\\Repository\\Filter_Validation' => __DIR__ . '/../..' . '/src/Tribe/Repository/Filter_Validation.php', 'Tribe\\Service_Providers\\Body_Classes' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Body_Classes.php', 'Tribe\\Service_Providers\\Crons' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Crons.php', 'Tribe\\Service_Providers\\Dialog' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Dialog.php', 'Tribe\\Service_Providers\\PUE' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/PUE.php', 'Tribe\\Service_Providers\\Shortcodes' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Shortcodes.php', 'Tribe\\Service_Providers\\Tooltip' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Tooltip.php', 'Tribe\\Service_Providers\\Widgets' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Widgets.php', 'Tribe\\Shortcode\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Manager.php', 'Tribe\\Shortcode\\Shortcode_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Shortcode_Abstract.php', 'Tribe\\Shortcode\\Shortcode_Interface' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Shortcode_Interface.php', 'Tribe\\Shortcode\\Utils' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Utils.php', 'Tribe\\Tooltip\\View' => __DIR__ . '/../..' . '/src/Tribe/Tooltip/View.php', 'Tribe\\Traits\\Cache_User' => __DIR__ . '/../..' . '/src/Tribe/Traits/Cache_User.php', 'Tribe\\Traits\\With_DB_Lock' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_DB_Lock.php', 'Tribe\\Traits\\With_Meta_Updates_Handling' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_Meta_Updates_Handling.php', 'Tribe\\Traits\\With_Post_Attribute_Detection' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_Post_Attribute_Detection.php', 'Tribe\\Utils\\Body_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Body_Classes.php', 'Tribe\\Utils\\Collection_Interface' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Interface.php', 'Tribe\\Utils\\Collection_Trait' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Trait.php', 'Tribe\\Utils\\Date_I18n' => __DIR__ . '/../..' . '/src/Tribe/Utils/Date_I18n.php', 'Tribe\\Utils\\Date_I18n_Immutable' => __DIR__ . '/../..' . '/src/Tribe/Utils/Date_I18n_Immutable.php', 'Tribe\\Utils\\Element_Attributes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Attributes.php', 'Tribe\\Utils\\Element_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Classes.php', 'Tribe\\Utils\\Lazy_Collection' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Collection.php', 'Tribe\\Utils\\Lazy_Events' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Events.php', 'Tribe\\Utils\\Lazy_String' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_String.php', 'Tribe\\Utils\\Paths' => __DIR__ . '/../..' . '/src/Tribe/Utils/Paths.php', 'Tribe\\Utils\\Post_Thumbnail' => __DIR__ . '/../..' . '/src/Tribe/Utils/Post_Thumbnail.php', 'Tribe\\Utils\\Query' => __DIR__ . '/../..' . '/src/Tribe/Utils/Query.php', 'Tribe\\Utils\\Strings' => __DIR__ . '/../..' . '/src/Tribe/Utils/Strings.php', 'Tribe\\Utils\\Taxonomy' => __DIR__ . '/../..' . '/src/Tribe/Utils/Taxonomy.php', 'Tribe\\Widget\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Widget/Manager.php', 'Tribe\\Widget\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Widget/Widget_Abstract.php', 'Tribe\\Widget\\Widget_Interface' => __DIR__ . '/../..' . '/src/Tribe/Widget/Widget_Interface.php', 'tad_DI52_Container' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/Container.php', 'tad_DI52_ContainerInterface' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ContainerInterface.php', 'tad_DI52_ProtectedValue' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ProtectedValue.php', 'tad_DI52_ServiceProvider' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ServiceProvider.php', 'tad_DI52_ServiceProviderInterface' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ServiceProviderInterface.php', 'xrstf\\Composer52\\AutoloadGenerator' => __DIR__ . '/..' . '/xrstf/composer-php52/lib/xrstf/Composer52/AutoloadGenerator.php', 'xrstf\\Composer52\\Generator' => __DIR__ . '/..' . '/xrstf/composer-php52/lib/xrstf/Composer52/Generator.php');
+        public static $classMap = array('Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php', 'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php', 'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php', 'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php', 'Monolog\\ErrorHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/ErrorHandler.php', 'Monolog\\Formatter\\ChromePHPFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ChromePHPFormatter.php', 'Monolog\\Formatter\\ElasticaFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ElasticaFormatter.php', 'Monolog\\Formatter\\FlowdockFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/FlowdockFormatter.php', 'Monolog\\Formatter\\FluentdFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/FluentdFormatter.php', 'Monolog\\Formatter\\FormatterInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/FormatterInterface.php', 'Monolog\\Formatter\\GelfMessageFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/GelfMessageFormatter.php', 'Monolog\\Formatter\\HtmlFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/HtmlFormatter.php', 'Monolog\\Formatter\\JsonFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/JsonFormatter.php', 'Monolog\\Formatter\\LineFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/LineFormatter.php', 'Monolog\\Formatter\\LogglyFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/LogglyFormatter.php', 'Monolog\\Formatter\\LogstashFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/LogstashFormatter.php', 'Monolog\\Formatter\\MongoDBFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/MongoDBFormatter.php', 'Monolog\\Formatter\\NormalizerFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/NormalizerFormatter.php', 'Monolog\\Formatter\\ScalarFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/ScalarFormatter.php', 'Monolog\\Formatter\\WildfireFormatter' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Formatter/WildfireFormatter.php', 'Monolog\\Handler\\AbstractHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AbstractHandler.php', 'Monolog\\Handler\\AbstractProcessingHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AbstractProcessingHandler.php', 'Monolog\\Handler\\AbstractSyslogHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AbstractSyslogHandler.php', 'Monolog\\Handler\\AmqpHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/AmqpHandler.php', 'Monolog\\Handler\\BrowserConsoleHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/BrowserConsoleHandler.php', 'Monolog\\Handler\\BufferHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/BufferHandler.php', 'Monolog\\Handler\\ChromePHPHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ChromePHPHandler.php', 'Monolog\\Handler\\CouchDBHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/CouchDBHandler.php', 'Monolog\\Handler\\CubeHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/CubeHandler.php', 'Monolog\\Handler\\Curl\\Util' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/Curl/Util.php', 'Monolog\\Handler\\DeduplicationHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/DeduplicationHandler.php', 'Monolog\\Handler\\DoctrineCouchDBHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/DoctrineCouchDBHandler.php', 'Monolog\\Handler\\DynamoDbHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/DynamoDbHandler.php', 'Monolog\\Handler\\ElasticSearchHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ElasticSearchHandler.php', 'Monolog\\Handler\\ErrorLogHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ErrorLogHandler.php', 'Monolog\\Handler\\FilterHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FilterHandler.php', 'Monolog\\Handler\\FingersCrossedHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossedHandler.php', 'Monolog\\Handler\\FingersCrossed\\ActivationStrategyInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossed/ActivationStrategyInterface.php', 'Monolog\\Handler\\FingersCrossed\\ChannelLevelActivationStrategy' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossed/ChannelLevelActivationStrategy.php', 'Monolog\\Handler\\FingersCrossed\\ErrorLevelActivationStrategy' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FingersCrossed/ErrorLevelActivationStrategy.php', 'Monolog\\Handler\\FirePHPHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FirePHPHandler.php', 'Monolog\\Handler\\FleepHookHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FleepHookHandler.php', 'Monolog\\Handler\\FlowdockHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/FlowdockHandler.php', 'Monolog\\Handler\\GelfHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/GelfHandler.php', 'Monolog\\Handler\\GroupHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/GroupHandler.php', 'Monolog\\Handler\\HandlerInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/HandlerInterface.php', 'Monolog\\Handler\\HandlerWrapper' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/HandlerWrapper.php', 'Monolog\\Handler\\HipChatHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/HipChatHandler.php', 'Monolog\\Handler\\IFTTTHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/IFTTTHandler.php', 'Monolog\\Handler\\InsightOpsHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/InsightOpsHandler.php', 'Monolog\\Handler\\LogEntriesHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/LogEntriesHandler.php', 'Monolog\\Handler\\LogglyHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/LogglyHandler.php', 'Monolog\\Handler\\MailHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MailHandler.php', 'Monolog\\Handler\\MandrillHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MandrillHandler.php', 'Monolog\\Handler\\MissingExtensionException' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MissingExtensionException.php', 'Monolog\\Handler\\MongoDBHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/MongoDBHandler.php', 'Monolog\\Handler\\NativeMailerHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/NativeMailerHandler.php', 'Monolog\\Handler\\NewRelicHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/NewRelicHandler.php', 'Monolog\\Handler\\NullHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/NullHandler.php', 'Monolog\\Handler\\PHPConsoleHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/PHPConsoleHandler.php', 'Monolog\\Handler\\PsrHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/PsrHandler.php', 'Monolog\\Handler\\PushoverHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/PushoverHandler.php', 'Monolog\\Handler\\RavenHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RavenHandler.php', 'Monolog\\Handler\\RedisHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RedisHandler.php', 'Monolog\\Handler\\RollbarHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RollbarHandler.php', 'Monolog\\Handler\\RotatingFileHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/RotatingFileHandler.php', 'Monolog\\Handler\\SamplingHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SamplingHandler.php', 'Monolog\\Handler\\SlackHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SlackHandler.php', 'Monolog\\Handler\\SlackWebhookHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SlackWebhookHandler.php', 'Monolog\\Handler\\Slack\\SlackRecord' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/Slack/SlackRecord.php', 'Monolog\\Handler\\SlackbotHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SlackbotHandler.php', 'Monolog\\Handler\\SocketHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SocketHandler.php', 'Monolog\\Handler\\StreamHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/StreamHandler.php', 'Monolog\\Handler\\SwiftMailerHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SwiftMailerHandler.php', 'Monolog\\Handler\\SyslogHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SyslogHandler.php', 'Monolog\\Handler\\SyslogUdpHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SyslogUdpHandler.php', 'Monolog\\Handler\\SyslogUdp\\UdpSocket' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/SyslogUdp/UdpSocket.php', 'Monolog\\Handler\\TestHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/TestHandler.php', 'Monolog\\Handler\\WhatFailureGroupHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/WhatFailureGroupHandler.php', 'Monolog\\Handler\\ZendMonitorHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Handler/ZendMonitorHandler.php', 'Monolog\\Logger' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Logger.php', 'Monolog\\Processor\\GitProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/GitProcessor.php', 'Monolog\\Processor\\IntrospectionProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/IntrospectionProcessor.php', 'Monolog\\Processor\\MemoryPeakUsageProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MemoryPeakUsageProcessor.php', 'Monolog\\Processor\\MemoryProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MemoryProcessor.php', 'Monolog\\Processor\\MemoryUsageProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MemoryUsageProcessor.php', 'Monolog\\Processor\\MercurialProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/MercurialProcessor.php', 'Monolog\\Processor\\ProcessIdProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/ProcessIdProcessor.php', 'Monolog\\Processor\\ProcessorInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/ProcessorInterface.php', 'Monolog\\Processor\\PsrLogMessageProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/PsrLogMessageProcessor.php', 'Monolog\\Processor\\TagProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/TagProcessor.php', 'Monolog\\Processor\\UidProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/UidProcessor.php', 'Monolog\\Processor\\WebProcessor' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Processor/WebProcessor.php', 'Monolog\\Registry' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Registry.php', 'Monolog\\ResettableInterface' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/ResettableInterface.php', 'Monolog\\SignalHandler' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/SignalHandler.php', 'Monolog\\Utils' => __DIR__ . '/..' . '/monolog/monolog/src/Monolog/Utils.php', 'Psr\\Log\\AbstractLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/AbstractLogger.php', 'Psr\\Log\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/log/Psr/Log/InvalidArgumentException.php', 'Psr\\Log\\LogLevel' => __DIR__ . '/..' . '/psr/log/Psr/Log/LogLevel.php', 'Psr\\Log\\LoggerAwareInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerAwareInterface.php', 'Psr\\Log\\LoggerAwareTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerAwareTrait.php', 'Psr\\Log\\LoggerInterface' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerInterface.php', 'Psr\\Log\\LoggerTrait' => __DIR__ . '/..' . '/psr/log/Psr/Log/LoggerTrait.php', 'Psr\\Log\\NullLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/NullLogger.php', 'Psr\\Log\\Test\\DummyTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/DummyTest.php', 'Psr\\Log\\Test\\LoggerInterfaceTest' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/LoggerInterfaceTest.php', 'Psr\\Log\\Test\\TestLogger' => __DIR__ . '/..' . '/psr/log/Psr/Log/Test/TestLogger.php', 'Tribe\\Admin\\Notice\\WP_Version' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/WP_Version.php', 'Tribe\\Customizer\\Control' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Control.php', 'Tribe\\Customizer\\Controls\\Heading' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Heading.php', 'Tribe\\Customizer\\Controls\\Radio' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Radio.php', 'Tribe\\Customizer\\Controls\\Separator' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Separator.php', 'Tribe\\DB_Lock' => __DIR__ . '/../..' . '/src/Tribe/DB_Lock.php', 'Tribe\\Dialog\\View' => __DIR__ . '/../..' . '/src/Tribe/Dialog/View.php', 'Tribe\\Log\\Action_Logger' => __DIR__ . '/../..' . '/src/Tribe/Log/Action_Logger.php', 'Tribe\\Log\\Canonical_Formatter' => __DIR__ . '/../..' . '/src/Tribe/Log/Canonical_Formatter.php', 'Tribe\\Log\\Monolog_Logger' => __DIR__ . '/../..' . '/src/Tribe/Log/Monolog_Logger.php', 'Tribe\\Log\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Log/Service_Provider.php', 'Tribe\\Models\\Post_Types\\Base' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Base.php', 'Tribe\\Models\\Post_Types\\Nothing' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Nothing.php', 'Tribe\\PUE\\Update_Prevention' => __DIR__ . '/../..' . '/src/Tribe/PUE/Update_Prevention.php', 'Tribe\\Repository\\Core_Read_Interface' => __DIR__ . '/../..' . '/src/Tribe/Repository/Core_Read_Interface.php', 'Tribe\\Repository\\Filter_Validation' => __DIR__ . '/../..' . '/src/Tribe/Repository/Filter_Validation.php', 'Tribe\\Service_Providers\\Body_Classes' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Body_Classes.php', 'Tribe\\Service_Providers\\Crons' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Crons.php', 'Tribe\\Service_Providers\\Dialog' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Dialog.php', 'Tribe\\Service_Providers\\PUE' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/PUE.php', 'Tribe\\Service_Providers\\Shortcodes' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Shortcodes.php', 'Tribe\\Service_Providers\\Tooltip' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Tooltip.php', 'Tribe\\Service_Providers\\Widgets' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Widgets.php', 'Tribe\\Shortcode\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Manager.php', 'Tribe\\Shortcode\\Shortcode_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Shortcode_Abstract.php', 'Tribe\\Shortcode\\Shortcode_Interface' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Shortcode_Interface.php', 'Tribe\\Shortcode\\Utils' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Utils.php', 'Tribe\\Tooltip\\View' => __DIR__ . '/../..' . '/src/Tribe/Tooltip/View.php', 'Tribe\\Traits\\Cache_User' => __DIR__ . '/../..' . '/src/Tribe/Traits/Cache_User.php', 'Tribe\\Traits\\With_DB_Lock' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_DB_Lock.php', 'Tribe\\Traits\\With_Meta_Updates_Handling' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_Meta_Updates_Handling.php', 'Tribe\\Traits\\With_Post_Attribute_Detection' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_Post_Attribute_Detection.php', 'Tribe\\Utils\\Body_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Body_Classes.php', 'Tribe\\Utils\\Collection_Interface' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Interface.php', 'Tribe\\Utils\\Collection_Trait' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Trait.php', 'Tribe\\Utils\\Date_I18n' => __DIR__ . '/../..' . '/src/Tribe/Utils/Date_I18n.php', 'Tribe\\Utils\\Date_I18n_Immutable' => __DIR__ . '/../..' . '/src/Tribe/Utils/Date_I18n_Immutable.php', 'Tribe\\Utils\\Element_Attributes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Attributes.php', 'Tribe\\Utils\\Element_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Classes.php', 'Tribe\\Utils\\Lazy_Collection' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Collection.php', 'Tribe\\Utils\\Lazy_Events' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Events.php', 'Tribe\\Utils\\Lazy_String' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_String.php', 'Tribe\\Utils\\Paths' => __DIR__ . '/../..' . '/src/Tribe/Utils/Paths.php', 'Tribe\\Utils\\Post_Thumbnail' => __DIR__ . '/../..' . '/src/Tribe/Utils/Post_Thumbnail.php', 'Tribe\\Utils\\Query' => __DIR__ . '/../..' . '/src/Tribe/Utils/Query.php', 'Tribe\\Utils\\Strings' => __DIR__ . '/../..' . '/src/Tribe/Utils/Strings.php', 'Tribe\\Utils\\Taxonomy' => __DIR__ . '/../..' . '/src/Tribe/Utils/Taxonomy.php', 'Tribe\\Widget\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Widget/Manager.php', 'Tribe\\Widget\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Widget/Widget_Abstract.php', 'Tribe\\Widget\\Widget_Interface' => __DIR__ . '/../..' . '/src/Tribe/Widget/Widget_Interface.php', 'tad_DI52_Container' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/Container.php', 'tad_DI52_ContainerInterface' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ContainerInterface.php', 'tad_DI52_ProtectedValue' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ProtectedValue.php', 'tad_DI52_ServiceProvider' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ServiceProvider.php', 'tad_DI52_ServiceProviderInterface' => __DIR__ . '/..' . '/lucatume/di52/src/tad/DI52/ServiceProviderInterface.php', 'xrstf\\Composer52\\AutoloadGenerator' => __DIR__ . '/..' . '/xrstf/composer-php52/lib/xrstf/Composer52/AutoloadGenerator.php', 'xrstf\\Composer52\\Generator' => __DIR__ . '/..' . '/xrstf/composer-php52/lib/xrstf/Composer52/Generator.php');
         public static function getInitializer(\Composer\Autoload\ClassLoader $loader)
         {
         }
@@ -41536,7 +41895,7 @@ namespace {
          * Create the Fields/Settings for this sections
          *
          * @param  WP_Customize_Section $section The WordPress section instance
-         * @param  WP_Customize_Manager $manager [description]
+         * @param  WP_Customize_Manager $manager WP_Customize_Manager instance.
          *
          * @return void
          */
@@ -42644,7 +43003,7 @@ namespace {
          * WordPress doesn't throw an error when the meta is not present.
          *
          * @since 5.5.0
-         * @since TBD Apply to all Rest Endpoints not only Events.
+         * @since 4.6.0 Apply to all Rest Endpoints not only Events.
          *
          * @param null|bool $delete     Whether to allow metadata deletion of the given type.
          * @param int       $object_id  ID of the object metadata is for.
@@ -45160,6 +45519,43 @@ namespace Tribe\Events\Integrations\Fusion {
         }
     }
 }
+namespace Tribe\Events\Integrations\Hello_Elementor {
+    /**
+     * Class Service_Provider
+     *
+     * @since   5.7.0
+     *
+     * @package Tribe\Events\Integrations\Hello_Elementor
+     */
+    class Service_Provider extends \tad_DI52_ServiceProvider
+    {
+        public function register()
+        {
+        }
+    }
+    /**
+     * Class Templates
+     *
+     * @since   5.7.0
+     *
+     * @package Tribe\Events\Integrations\Hello_Elementor
+     */
+    class Templates
+    {
+        /**
+         * Redirects an Elementor location to the correct one, if required.
+         *
+         * @since 5.7.0
+         *
+         * @param string $template The original Elementor location, e.g. `single` or `archive`.
+         *
+         * @return bool Whether the template location was redirected or not.
+         */
+        public function theme_do_location($template)
+        {
+        }
+    }
+}
 namespace {
     /**
      * Class Tribe__Events__Integrations__Manager
@@ -45259,6 +45655,14 @@ namespace {
          * @since 5.5.0
          */
         public function load_fusion_integration()
+        {
+        }
+        /**
+         * Loads the Hello Elementor theme integration.
+         *
+         * @since 5.7.0
+         */
+        private function load_hello_elementor_integration()
         {
         }
     }
@@ -47053,7 +47457,7 @@ namespace {
         const POSTTYPE = 'tribe_events';
         const VENUE_POST_TYPE = 'tribe_venue';
         const ORGANIZER_POST_TYPE = 'tribe_organizer';
-        const VERSION = '5.6.0';
+        const VERSION = '5.7.0';
         /**
          * Min Pro Addon
          *
@@ -49836,7 +50240,7 @@ namespace {
     class Tribe__Events__Plugin_Register extends \Tribe__Abstract_Plugin_Register
     {
         protected $main_class = 'Tribe__Events__Main';
-        protected $dependencies = ['addon-dependencies' => ['Tribe__Events__Pro__Main' => '5.6.0-dev', 'Tribe__Events__Filterbar__View' => '4.10.0-dev', 'Tribe__Events__Tickets__Eventbrite__Main' => '4.6-dev', 'Tribe__Events__Community__Main' => '4.7.0-dev', 'Tribe__Events__Community__Tickets__Main' => '4.7.2-dev']];
+        protected $dependencies = ['addon-dependencies' => ['Tribe__Events__Pro__Main' => '5.6.1-dev', 'Tribe__Events__Filterbar__View' => '4.10.0-dev', 'Tribe__Events__Tickets__Eventbrite__Main' => '4.6-dev', 'Tribe__Events__Community__Main' => '4.7.0-dev', 'Tribe__Events__Community__Tickets__Main' => '4.7.2-dev']];
         public function __construct()
         {
         }
@@ -56423,6 +56827,181 @@ namespace Tribe\Events\Views\V2 {
         {
         }
     }
+}
+namespace Tribe\Events\Views\V2\Customizer {
+    /**
+     * Class Hooks
+     *
+     * @since 5.7.0
+     *
+     * @package Tribe\Events\Views\V2\Customizer
+     */
+    class Hooks extends \tad_DI52_ServiceProvider
+    {
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 5.7.0
+         */
+        public function register()
+        {
+        }
+        public function add_filters()
+        {
+        }
+        /**
+         * Changes the action the Customizer should use to try and print inline styles to print the inline
+         * styles in the footer.
+         *
+         * @since 5.7.0
+         *
+         * @return string The action the Customizer should use to print inline styles.
+         */
+        public function print_inline_styles_in_footer()
+        {
+        }
+    }
+}
+namespace Tribe\Events\Views\V2\Customizer\Section {
+    /**
+     * Month View
+     *
+     * @since 5.7.0
+     */
+    class Month_View extends \Tribe__Customizer__Section
+    {
+        /**
+         * ID of the section.
+         *
+         * @since 5.7.0
+         *
+         * @access public
+         * @var string
+         */
+        public $ID = 'month_view';
+        /**
+         * Allows sections to be loaded in order for overrides.
+         *
+         * @var integer
+         */
+        public $queue_priority = 20;
+        /**
+         * This method will be executed when the Class is Initialized.
+         *
+         * @since 5.7.0
+         */
+        public function setup()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function setup_defaults()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function setup_arguments()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function setup_content_headings()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function setup_content_settings()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function setup_content_controls()
+        {
+        }
+        /**
+         * Gets the link to the a setting in the TEC Customizer Global Elements.
+         *
+         * @since 5.7.0
+         *
+         * @todo (Stephen): Maybe move this to common? Generalize more or create on for each section?
+         *
+         * @param string $setting    The sting setting "slug" to link to.
+         * @param string $label_text The translated label text for the link.
+         *
+         * @return string The HTML link element.
+         */
+        public function get_global_element_link($setting, $label_text)
+        {
+        }
+        /**
+         * Gets the link to the event background color setting in Customizer.
+         *
+         * @since 5.7.0
+         *
+         * @return string The HTML link element.
+         */
+        public function get_general_settings_link()
+        {
+        }
+        /**
+         * Gets the link to the event background color setting in Customizer.
+         *
+         * @since 5.7.0
+         *
+         * @return string The HTML link element.
+         */
+        public function get_events_background_link()
+        {
+        }
+        /**
+         * Gets the link to the accent color setting in Customizer.
+         *
+         * @since 5.7.0
+         *
+         * @return string The HTML link element.
+         */
+        public function get_accent_color_link()
+        {
+        }
+        /**
+         * Grab the CSS rules template
+         *
+         * @param string $template The Customizer CSS string/template.
+         *
+         * @return string The Customizer CSS string/template, with v2 Month View styles added.
+         */
+        public function get_css_template($template)
+        {
+        }
+    }
+}
+namespace Tribe\Events\Views\V2\Customizer {
+    /**
+     * Class Service_Provider
+     *
+     * @since   5.7.0
+     *
+     * @package Tribe\Events\Views\V2\Customizer
+     */
+    class Service_Provider extends \tad_DI52_ServiceProvider
+    {
+        public function register()
+        {
+        }
+        public function register_hooks()
+        {
+        }
+        public function register_assets()
+        {
+        }
+    }
+}
+namespace Tribe\Events\Views\V2 {
     /**
      * Class Hooks
      *
@@ -57038,7 +57617,7 @@ namespace Tribe\Events\Views\V2 {
         /**
          * Sugar function for the above that determines if the labels should be filtered.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param null|string|int $post_id The current post ID.
          *
@@ -57051,7 +57630,7 @@ namespace Tribe\Events\Views\V2 {
          * Overrides the default iCalendar export link logic to inject a list of event
          * post IDs fitting the Views V2 criteria.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param array<int>|false $event_ids Either a list of event post IDs that has been
          *                                    explicitly requested or `false` to indicate the
@@ -57340,6 +57919,15 @@ namespace Tribe\Events\Views\V2\Interfaces {
          * @return \Tribe\Events\Views\V2\Url|null
          */
         public function get_url_object();
+        /**
+         * Updates the View URL object reference.
+         *
+         * @since 5.7.0
+         *
+         * @param Url $url_object A reference to the the new URL instance
+         *                        the View should use.
+         */
+        public function set_url_object(\Tribe\Events\Views\V2\Url $url_object);
     }
 }
 namespace Tribe\Events\Views\V2 {
@@ -57425,6 +58013,39 @@ namespace Tribe\Events\Views\V2 {
          * @var string
          */
         public static $option_mobile_default = 'mobile_default_view';
+        /**
+         * Registration objects for auto-registered views.
+         *
+         * @since 5.7.0
+         *
+         * @var array
+         */
+        private $view_registration = [];
+        /**
+         * Registers a view such that sensible defaults are registered and hooked.
+         *
+         * @since 5.7.0
+         *
+         * @param string $slug View slug.
+         * @param string $name View name.
+         * @param string $class View class.
+         * @param int $priority View registration priority.
+         *
+         * @return View_Register
+         */
+        public function register_view($slug, $name, $class, $priority = 30)
+        {
+        }
+        /**
+         * Gets all generated View_Register objects.
+         *
+         * @since 5.7.0
+         *
+         * @return array
+         */
+        public function get_view_registration_objects()
+        {
+        }
         /**
          * Returns an associative array of Views currently registered.
          *
@@ -60288,7 +60909,7 @@ namespace Tribe\Events\Views\V2\Utils {
          * events might be sorted this method should not interfere with.
          * The method will perform the check using the "display" date of the events since this is a front-end facing method.
          *
-         * @since  TBD
+         * @since  4.6.0
          *
          * @param array                          $events       WP_Post or numeric ID for events.
          * @param \WP_Post|int                   $event        Event we want to check.
@@ -60841,7 +61462,7 @@ namespace Tribe\Events\Views\V2 {
          * Returns the Event post IDs the View would render in its template, but
          * filtered and formatted for iCalendar export.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param int $per_page The number of events per page to return.
          *
@@ -60850,6 +61471,14 @@ namespace Tribe\Events\Views\V2 {
          *                    used to fetch the Events.
          */
         public function get_ical_ids($per_page);
+        /**
+         * Disable the url management inside of the current view.
+         *
+         * @since 5.7.0
+         *
+         * @return View_Interface A reference to the View-like that is being directed.
+         */
+        public function disable_url_management();
     }
 }
 namespace Tribe\Events\Views\V2\Views\Traits {
@@ -60930,7 +61559,7 @@ namespace Tribe\Events\Views\V2\Views\Traits {
         /**
          * Filters the cached HTML returned for a specific View.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param string $cached_html Cached HTML for a view.
          *
@@ -61951,7 +62580,7 @@ namespace Tribe\Events\Views\V2 {
          * Initializes the View repository args, if required, and
          * applies them to the View repository instance.
          *
-         * @since TBD
+         * @since 4.6.0
          */
         protected function get_repository_args()
         {
@@ -61960,7 +62589,7 @@ namespace Tribe\Events\Views\V2 {
          * Sets up the View repository args to produce the correct list of Events
          * in the context of an iCalendar export.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param int $per_page The number of events per page to show in the iCalendar
          *                      export. The value will override whatever events per page
@@ -61972,7 +62601,7 @@ namespace Tribe\Events\Views\V2 {
         /**
          * Filters the repository arguments that will be used to set up the View repository instance for iCal requests.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param array  $repository_args The repository arguments that will be used to set up the View repository instance.
          *
@@ -61985,6 +62614,160 @@ namespace Tribe\Events\Views\V2 {
          * {@inheritdoc}
          */
         public function get_ical_ids($per_page)
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function set_url_object(\Tribe\Events\Views\V2\Url $url_object)
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function disable_url_management()
+        {
+        }
+        /**
+         * Gets the base object for asset registration.
+         *
+         * @since 5.7.0
+         *
+         * @return \stdClass $object Object to tie registered assets to.
+         */
+        public static function get_asset_origin($slug)
+        {
+        }
+        /**
+         * Registers assets for the view.
+         *
+         * Should be overridden if there are assets for the view.
+         *
+         * @since 5.7.0
+         *
+         * @param \stdClass $object Object to tie registered assets to.
+         */
+        public static function register_assets($object)
+        {
+        }
+    }
+    /**
+     * Class View_Register
+     *
+     * @package Tribe\Events\Views\V2
+     * @since   5.7.0
+     */
+    class View_Register
+    {
+        /**
+         * Slug for the view.
+         *
+         * @var string
+         */
+        protected $slug;
+        /**
+         * Name for the view.
+         *
+         * @var string
+         */
+        protected $name;
+        /**
+         * Class name for the view.
+         *
+         * @var string
+         */
+        protected $class;
+        /**
+         * Priority order for the view registration.
+         *
+         * @var int
+         */
+        protected $priority;
+        /**
+         * View_Register constructor.
+         *
+         * @param string $slug Slug for the view.
+         * @param string $name Name for the view.
+         * @param string $class Class name for the view.
+         * @param int $priority Priority order for the view registration.
+         */
+        public function __construct($slug, $name, $class, $priority = 40)
+        {
+        }
+        /**
+         * Adds actions for view registration.
+         *
+         * @since 5.7.0
+         */
+        protected function add_actions()
+        {
+        }
+        /**
+         * Adds filters for view registration.
+         *
+         * @since 5.7.0
+         */
+        protected function add_filters()
+        {
+        }
+        /**
+         * Add rewrite routes for custom PRO stuff and views.
+         *
+         * @since 5.7.0
+         *
+         * @param \Tribe__Events__Rewrite $rewrite The Tribe__Events__Rewrite object
+         *
+         * @return void
+         */
+        public function filter_add_routes($rewrite)
+        {
+        }
+        /**
+         * Add the required bases for the Pro Views
+         *
+         * @since 5.7.0
+         *
+         * @param array $bases Bases that are already set
+         *
+         * @return array         The modified version of the array of bases
+         */
+        public function filter_add_base_slugs($bases = [])
+        {
+        }
+        /**
+         * Add the required bases for the Summary View.
+         *
+         * @since 5.7.0
+         *
+         * @param array $bases Bases that are already set.
+         *
+         * @return array         The modified version of the array of bases.
+         */
+        public function filter_add_matchers_to_query_vars_map($matchers = [], $rewrite = null)
+        {
+        }
+        /**
+         * Filters the available views.
+         *
+         * @since 5.7.0
+         *
+         * @param array $views An array of available Views.
+         *
+         * @return array The array of available views, including the PRO ones.
+         */
+        public function filter_events_views(array $views = [])
+        {
+        }
+        /**
+         * Add the view to the views selector in the TEC bar.
+         *
+         * @since 5.7.0
+         *
+         * @param array $views The current array of views registered to the tribe bar.
+         *
+         * @return array The views registered with photo view added.
+         */
+        public function filter_tec_bar_views($views)
         {
         }
     }
@@ -62196,13 +62979,20 @@ namespace Tribe\Events\Views\V2\Views {
         {
         }
         /**
-         * ${CARET}
+         * Formats the day results in the format expected for day-by-day grid building.
          *
-         * @since 4.9.13
+         * The method will fetch the required data in chunks to avoid overloading the database.
          *
-         * @return bool
+         * @since 5.7.0
+         *
+         * @param array<int> $view_event_ids    The set of Event Post IDs to build and format the Day
+         * @param bool       $use_site_timezone Whether to use the site timezone to format the event dates or not. The value
+         *                                      descends from the "Timezone Mode" setting.
+         *
+         * @return array<int,\stdClass> A map from each event Post ID to the value object that will represent
+         *                              the Event ID, start date, end date and timezone.
          */
-        protected function using_period_repository()
+        protected function prepare_day_results(array $view_event_ids, $use_site_timezone)
         {
         }
         /**
@@ -62498,6 +63288,7 @@ namespace Tribe\Events\Views\V2\Views {
             'latest-past/event/date-tag',
             'latest-past/event/date/featured',
             'latest-past/event/date/meta',
+            'latest-past/event/featured-image',
             // Add-ons.
             'components/filter-bar',
         ];
@@ -62791,6 +63582,17 @@ namespace Tribe\Events\Views\V2\Views {
          * {@inheritdoc}
          */
         protected function setup_ical_repository_args($per_page)
+        {
+        }
+        /**
+         * Returns a set of messages that will be show to the user in the mobile interaction.
+         *
+         * @since 5.7.0
+         *
+         * @return array<string,array<string|int,string>> A map from message types to messages for
+         *                                                each type.
+         */
+        protected function get_mobile_messages()
         {
         }
     }
@@ -63500,7 +64302,7 @@ namespace Tribe\Events\Views\V2\Widgets {
         /**
          * Add this widget's css group to the VE list of widget groups to load icon styles for.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param array<string> $widgets The list of widgets
          *
@@ -63546,7 +64348,7 @@ namespace Tribe\Events\Views\V2\iCalendar {
     /**
      * Class Request
      *
-     * @since   TBD
+     * @since   4.6.0
      *
      * @package Tribe\Events\Views\V2\iCalendar
      */
@@ -63555,7 +64357,7 @@ namespace Tribe\Events\Views\V2\iCalendar {
         /**
          * A reference to the base implementation of the iCalendar exports handler.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @var iCal
          */
@@ -63563,7 +64365,7 @@ namespace Tribe\Events\Views\V2\iCalendar {
         /**
          * A reference the context used for the request.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @var Context
          */
@@ -63571,7 +64373,7 @@ namespace Tribe\Events\Views\V2\iCalendar {
         /**
          * Request constructor.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @param Context|null $context Which context was used to prepare this request for iCal.
          * @param iCal|null    $ical    Either a reference to an explicit instance of the base
@@ -63585,7 +64387,7 @@ namespace Tribe\Events\Views\V2\iCalendar {
          * Returns the ordered list of event post IDs that match the current
          * iCalendar export request.
          *
-         * @since TBD
+         * @since 4.6.0
          *
          * @return array<int> A list of event post IDs that match the current
          *                    iCalendar export request.
@@ -65135,7 +65937,7 @@ namespace {
         }
     }
     // autoload_real.php @generated by Composer
-    class ComposerAutoloaderInit2e4ace81736a83e6e7e125cdcb9da126
+    class ComposerAutoloaderInitf053c4bb66a5c475c0a4ad83cdad2f2e
     {
         private static $loader;
         public static function loadClassLoader($class)
@@ -65147,11 +65949,11 @@ namespace {
     }
 }
 namespace Composer\Autoload {
-    class ComposerStaticInit2e4ace81736a83e6e7e125cdcb9da126
+    class ComposerStaticInitf053c4bb66a5c475c0a4ad83cdad2f2e
     {
         public static $prefixLengthsPsr4 = array('T' => array('Tribe\\Events\\' => 13));
         public static $prefixDirsPsr4 = array('Tribe\\Events\\' => array(0 => __DIR__ . '/../..' . '/src/Tribe'));
-        public static $classMap = array('Tribe\\Events\\Admin\\Notice\\Legacy_Views_Deprecation' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Deprecation.php', 'Tribe\\Events\\Aggregator\\Processes\\Batch_Imports' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Processes/Batch_Imports.php', 'Tribe\\Events\\Aggregator\\Record\\Batch_Queue' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Record/Batch_Queue.php', 'Tribe\\Events\\Collections\\Lazy_Post_Collection' => __DIR__ . '/../..' . '/src/Tribe/Collections/Lazy_Post_Collection.php', 'Tribe\\Events\\Editor\\Objects\\Editor_Object_Interface' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Editor_Object_Interface.php', 'Tribe\\Events\\Editor\\Objects\\Event' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Event.php', 'Tribe\\Events\\I18n' => __DIR__ . '/../..' . '/src/Tribe/I18n.php', 'Tribe\\Events\\Integrations\\Beaver_Builder' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Beaver_Builder.php', 'Tribe\\Events\\Integrations\\Fusion\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Widget_Shortcode' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Widget_Shortcode.php', 'Tribe\\Events\\Integrations\\WPML\\Views\\V2\\Filters' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WPML/Views/V2/Filters.php', 'Tribe\\Events\\Integrations\\WP_Rocket' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WP_Rocket.php', 'Tribe\\Events\\Models\\Post_Types\\Event' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Event.php', 'Tribe\\Events\\Models\\Post_Types\\Organizer' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Organizer.php', 'Tribe\\Events\\Models\\Post_Types\\Venue' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Venue.php', 'Tribe\\Events\\Service_Providers\\Context' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Context.php', 'Tribe\\Events\\Service_Providers\\First_Boot' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/First_Boot.php', 'Tribe\\Events\\Views\\V2\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Assets.php', 'Tribe\\Events\\Views\\V2\\Customizer' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer.php', 'Tribe\\Events\\Views\\V2\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hooks.php', 'Tribe\\Events\\Views\\V2\\Implementation_Error' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Implementation_Error.php', 'Tribe\\Events\\Views\\V2\\Index' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Index.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\Repository_User_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/Repository_User_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Partial_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Partial_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Url_Provider_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Url_Provider_Interface.php', 'Tribe\\Events\\Views\\V2\\Kitchen_Sink' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Kitchen_Sink.php', 'Tribe\\Events\\Views\\V2\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Manager.php', 'Tribe\\Events\\Views\\V2\\Messages' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Messages.php', 'Tribe\\Events\\Views\\V2\\Query\\Abstract_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Abstract_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Query\\Event_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Event_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Period' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Period.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Result' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Result.php', 'Tribe\\Events\\Views\\V2\\Repository\\Events_Result_Set' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Events_Result_Set.php', 'Tribe\\Events\\Views\\V2\\Rest_Endpoint' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rest_Endpoint.php', 'Tribe\\Events\\Views\\V2\\Rewrite' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rewrite.php', 'Tribe\\Events\\Views\\V2\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template.php', 'Tribe\\Events\\Views\\V2\\Template\\Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Event.php', 'Tribe\\Events\\Views\\V2\\Template\\Excerpt' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Excerpt.php', 'Tribe\\Events\\Views\\V2\\Template\\Featured_Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Featured_Title.php', 'Tribe\\Events\\Views\\V2\\Template\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/JSON_LD.php', 'Tribe\\Events\\Views\\V2\\Template\\Page' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Page.php', 'Tribe\\Events\\Views\\V2\\Template\\Promo' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Promo.php', 'Tribe\\Events\\Views\\V2\\Template\\Settings\\Advanced_Display' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Settings/Advanced_Display.php', 'Tribe\\Events\\Views\\V2\\Template\\Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Title.php', 'Tribe\\Events\\Views\\V2\\Template_Bootstrap' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template_Bootstrap.php', 'Tribe\\Events\\Views\\V2\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Theme_Compatibility.php', 'Tribe\\Events\\Views\\V2\\Url' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Url.php', 'Tribe\\Events\\Views\\V2\\Utils\\Separators' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Separators.php', 'Tribe\\Events\\Views\\V2\\Utils\\Stack' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Stack.php', 'Tribe\\Events\\Views\\V2\\Utils\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/View.php', 'Tribe\\Events\\Views\\V2\\V1_Compat' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/V1_Compat.php', 'Tribe\\Events\\Views\\V2\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View.php', 'Tribe\\Events\\Views\\V2\\View_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Interface.php', 'Tribe\\Events\\Views\\V2\\Views\\By_Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/By_Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Latest_Past_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Latest_Past_View.php', 'Tribe\\Events\\Views\\V2\\Views\\List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Month_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Reflector_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Reflector_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Breakpoint_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Breakpoint_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\HTML_Cache' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/HTML_Cache.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Json_Ld_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Json_Ld_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\List_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/List_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Fast_Forward_Link' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Fast_Forward_Link.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\iCal_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/iCal_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_View.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Admin_Template.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Assets.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Compatibility.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_Abstract.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_List' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_List.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Request' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Request.php');
+        public static $classMap = array('Tribe\\Events\\Admin\\Notice\\Legacy_Views_Deprecation' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Deprecation.php', 'Tribe\\Events\\Aggregator\\Processes\\Batch_Imports' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Processes/Batch_Imports.php', 'Tribe\\Events\\Aggregator\\Record\\Batch_Queue' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Record/Batch_Queue.php', 'Tribe\\Events\\Collections\\Lazy_Post_Collection' => __DIR__ . '/../..' . '/src/Tribe/Collections/Lazy_Post_Collection.php', 'Tribe\\Events\\Editor\\Objects\\Editor_Object_Interface' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Editor_Object_Interface.php', 'Tribe\\Events\\Editor\\Objects\\Event' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Event.php', 'Tribe\\Events\\I18n' => __DIR__ . '/../..' . '/src/Tribe/I18n.php', 'Tribe\\Events\\Integrations\\Beaver_Builder' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Beaver_Builder.php', 'Tribe\\Events\\Integrations\\Fusion\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Widget_Shortcode' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Widget_Shortcode.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Service_Provider.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Templates' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Templates.php', 'Tribe\\Events\\Integrations\\WPML\\Views\\V2\\Filters' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WPML/Views/V2/Filters.php', 'Tribe\\Events\\Integrations\\WP_Rocket' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WP_Rocket.php', 'Tribe\\Events\\Models\\Post_Types\\Event' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Event.php', 'Tribe\\Events\\Models\\Post_Types\\Organizer' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Organizer.php', 'Tribe\\Events\\Models\\Post_Types\\Venue' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Venue.php', 'Tribe\\Events\\Service_Providers\\Context' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Context.php', 'Tribe\\Events\\Service_Providers\\First_Boot' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/First_Boot.php', 'Tribe\\Events\\Views\\V2\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Assets.php', 'Tribe\\Events\\Views\\V2\\Customizer' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Hooks.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Month_View.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hooks.php', 'Tribe\\Events\\Views\\V2\\Implementation_Error' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Implementation_Error.php', 'Tribe\\Events\\Views\\V2\\Index' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Index.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\Repository_User_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/Repository_User_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Partial_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Partial_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Url_Provider_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Url_Provider_Interface.php', 'Tribe\\Events\\Views\\V2\\Kitchen_Sink' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Kitchen_Sink.php', 'Tribe\\Events\\Views\\V2\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Manager.php', 'Tribe\\Events\\Views\\V2\\Messages' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Messages.php', 'Tribe\\Events\\Views\\V2\\Query\\Abstract_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Abstract_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Query\\Event_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Event_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Period' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Period.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Result' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Result.php', 'Tribe\\Events\\Views\\V2\\Repository\\Events_Result_Set' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Events_Result_Set.php', 'Tribe\\Events\\Views\\V2\\Rest_Endpoint' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rest_Endpoint.php', 'Tribe\\Events\\Views\\V2\\Rewrite' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rewrite.php', 'Tribe\\Events\\Views\\V2\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template.php', 'Tribe\\Events\\Views\\V2\\Template\\Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Event.php', 'Tribe\\Events\\Views\\V2\\Template\\Excerpt' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Excerpt.php', 'Tribe\\Events\\Views\\V2\\Template\\Featured_Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Featured_Title.php', 'Tribe\\Events\\Views\\V2\\Template\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/JSON_LD.php', 'Tribe\\Events\\Views\\V2\\Template\\Page' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Page.php', 'Tribe\\Events\\Views\\V2\\Template\\Promo' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Promo.php', 'Tribe\\Events\\Views\\V2\\Template\\Settings\\Advanced_Display' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Settings/Advanced_Display.php', 'Tribe\\Events\\Views\\V2\\Template\\Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Title.php', 'Tribe\\Events\\Views\\V2\\Template_Bootstrap' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template_Bootstrap.php', 'Tribe\\Events\\Views\\V2\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Theme_Compatibility.php', 'Tribe\\Events\\Views\\V2\\Url' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Url.php', 'Tribe\\Events\\Views\\V2\\Utils\\Separators' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Separators.php', 'Tribe\\Events\\Views\\V2\\Utils\\Stack' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Stack.php', 'Tribe\\Events\\Views\\V2\\Utils\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/View.php', 'Tribe\\Events\\Views\\V2\\V1_Compat' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/V1_Compat.php', 'Tribe\\Events\\Views\\V2\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View.php', 'Tribe\\Events\\Views\\V2\\View_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Interface.php', 'Tribe\\Events\\Views\\V2\\View_Register' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Register.php', 'Tribe\\Events\\Views\\V2\\Views\\By_Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/By_Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Latest_Past_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Latest_Past_View.php', 'Tribe\\Events\\Views\\V2\\Views\\List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Month_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Reflector_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Reflector_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Breakpoint_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Breakpoint_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\HTML_Cache' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/HTML_Cache.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Json_Ld_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Json_Ld_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\List_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/List_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Fast_Forward_Link' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Fast_Forward_Link.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\iCal_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/iCal_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_View.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Admin_Template.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Assets.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Compatibility.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_Abstract.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_List' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_List.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Request' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Request.php');
         public static function getInitializer(\Composer\Autoload\ClassLoader $loader)
         {
         }
@@ -66454,7 +67256,7 @@ namespace {
      * Validation of Null or Numerical values for Shortcode Attributes.
      * We don't use absint() since -1 is a common number used to indicate "all" or "infinite".
      *
-     * @since TBD
+     * @since 4.13.2
      *
      * @param mixed $value Which value will be validated.
      *
@@ -66906,6 +67708,24 @@ namespace {
      * @return Closure
      */
     function di52_instanceClosure(\tad_DI52_Container $container, $classOrInterface, array $vars = array())
+    {
+    }
+    /**
+     * If this function is defined, then Hello Elementor will call it to allow filtering
+     * the template location.
+     *
+     * This function works a bit like the `do_parse_request` filter in WordPress Core: it
+     * allows our code to either take charge of handling the template discovery or let
+     * Elementor go through its own resolution.
+     *
+     * @since 5.7.0
+     *
+     * @param string $template The template that Elementor is currently filtering; e.g.
+     *                         `single` or `archive`.
+     *
+     * @return bool Whether the template was correctly handled or not.
+     */
+    function elementor_theme_do_location($template)
     {
     }
     /**
@@ -69020,6 +69840,18 @@ namespace {
     {
     }
     /**
+     * Gets a view permalink.
+     *
+     * @since 5.7.0
+     *
+     * @param bool|int|null $term
+     *
+     * @return string $permalink
+     */
+    function tribe_get_view_permalink($slug, $term = \null)
+    {
+    }
+    /**
      * Link to Grid View
      *
      * Returns a link to the general or category calendar grid view
@@ -70324,6 +71156,19 @@ namespace {
      * @return bool
      */
     function tribe_is_organizer_label_customized()
+    {
+    }
+    /**
+     * Registers a view.
+     *
+     * @since 5.7.0
+     *
+     * @param string $slug View slug.
+     * @param string $name View name.
+     * @param string $class View class.
+     * @param int $priority View registration priority.
+     */
+    function tribe_register_view($slug, $name, $class, $priority = 50)
     {
     }
     /**
