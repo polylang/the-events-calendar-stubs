@@ -1,4 +1,4 @@
-# The Events Calendar Stubs
+# The Events Calendar Stubs 5.7.0
 
 This package provides stub declarations for [The Events Calendar](https://wordpress.org/plugins/the-events-calendar/).
 These stubs can help plugin and theme developers leverage static analysis tools like [PHPStan](https://phpstan.org/).

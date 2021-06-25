@@ -3,7 +3,6 @@
 	"description": "The Events Calendar function and class declaration stubs for static analysis.",
 	"license": "GPL-3.0-or-later",
 	"homepage": "https://github.com/polylang/the-events-calendar-stubs",
-	"version": "5.7.0",
 	"type": "library",
 	"repositories": [
 		{
