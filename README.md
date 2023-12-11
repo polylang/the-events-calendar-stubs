@@ -3,11 +3,11 @@
 This package provides stub declarations for [The Events Calendar](https://wordpress.org/plugins/the-events-calendar/).
 These stubs can help plugin and theme developers leverage static analysis tools like [PHPStan](https://phpstan.org/).
 
-Stubs are generated directly from the source using [giacocorsiglia/stubs-generator](https://github.com/GiacoCorsiglia/php-stubs-generator).
+Stubs are generated directly from the source using [php-stubs/generator](https://github.com/php-stubs/generator).
 
 ## Requirements
 
-- PHP >=7.1
+- PHP >=7.3
 
 ## Installation
 
