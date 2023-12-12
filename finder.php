@@ -7,6 +7,13 @@ return \StubsGenerator\Finder::create()
 			'vendor/the-events-calendar/the-events-calendar/src',
 		]
 	)
+	->notPath(
+		[
+			'Events/Integrations',
+			'Tribe/Event_Status/Compatibility/Filter_Bar/Events_Status_Filter.php',
+			'woocommerce/action-scheduler',
+		]
+	)
 	->append(
 		\StubsGenerator\Finder::create()
 			->in(
@@ -17,7 +24,6 @@ return \StubsGenerator\Finder::create()
 			->notPath(
 				[
 					'src/Tribe/Debug_Bar',
-					'vendor/freemius',
 				]
 			)
 	)
