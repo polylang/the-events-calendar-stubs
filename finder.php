@@ -11,6 +11,7 @@ return \StubsGenerator\Finder::create()
 		[
 			'Events/Integrations',
 			'Tribe/Event_Status/Compatibility/Filter_Bar/Events_Status_Filter.php',
+			'woocommerce/action-scheduler',
 		]
 	)
 	->append(
