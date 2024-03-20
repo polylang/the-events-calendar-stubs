@@ -24,6 +24,7 @@ return \StubsGenerator\Finder::create()
 			->notPath(
 				[
 					'src/Tribe/Debug_Bar',
+					'vendor/composer',
 				]
 			)
 	)

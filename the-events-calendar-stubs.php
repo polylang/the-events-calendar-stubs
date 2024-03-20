@@ -2444,6 +2444,8 @@ namespace TEC\Common\Telemetry {
          *
          * @since 5.1.0
          *
+         * @param string $slug The slug of the plugin to show the opt-in modal for.
+         *
          * @return void
          */
         public function show_optin_modal($slug)
@@ -2453,12 +2455,38 @@ namespace TEC\Common\Telemetry {
          * Filters the default opt-in modal args.
          *
          * @since 5.1.0
+         * @deprecated 5.2.2 Use the slug-specific filters instead.
+         *
+         * @param array<string|mixed> $args The current optin modal args.
+         * @param string|null         $slug The slug of the plugin to show the opt-in modal for.
+         *
+         * @return array<string|mixed>
+         */
+        public function filter_optin_args($args, $slug = null) : array
+        {
+        }
+        /**
+         * Filters the TEC opt-in modal args, passing the correct slug.
+         *
+         * @since 5.2.2
          *
          * @param array<string|mixed> $args The current optin modal args.
          *
          * @return array<string|mixed>
          */
-        public function filter_optin_args($args) : array
+        public function filter_tec_optin_args($args) : array
+        {
+        }
+        /**
+         * Filters the ET opt-in modal args, passing the correct slug.
+         *
+         * @since 5.2.2
+         *
+         * @param array<string|mixed> $args The current optin modal args.
+         *
+         * @return array<string|mixed>
+         */
+        public function filter_et_optin_args($args) : array
         {
         }
         /**
@@ -2530,6 +2558,11 @@ namespace TEC\Common\Telemetry {
         public static function clean_up() : void
         {
         }
+        /**
+         * Get the slug of the plugin.
+         *
+         * @since 5.1.0
+         */
         public static function get_plugin_slug()
         {
         }
@@ -2558,10 +2591,11 @@ namespace TEC\Common\Telemetry {
          * @since 5.1.0
          *
          * @param array<string|mixed> $args The current optin modal args.
+         * @param ?string             $slug The Stellar slug being used for Telemetry.
          *
          * @return array<string|mixed>
          */
-        public function filter_optin_args($args) : array
+        public function filter_optin_args($args, $slug = null) : array
         {
         }
         /**
@@ -2611,6 +2645,8 @@ namespace TEC\Common\Telemetry {
          *
          * @since 5.1.0
          *
+         * @param string $slug The plugin slug for Telemetry.
+         *
          * @return void
          */
         public function show_optin_modal($slug) : void
@@ -2632,7 +2668,7 @@ namespace TEC\Common\Telemetry {
          *
          * @since 5.1.0
          *
-         * @return array<string,string> An array of plugins in the format [ 'plugin_slug' => 'plugin_path' ]
+         * @return array<string,string> An array of plugins in the format ['plugin_slug' => 'plugin_path']
          */
         public static function get_tec_telemetry_slugs()
         {
@@ -2643,9 +2679,11 @@ namespace TEC\Common\Telemetry {
          *
          * @since 5.1.0
          *
+         * @param bool|null $opted Whether to opt in or out. If null, will calculate based on existing status.
+         *
          * @return void
          */
-        public function register_tec_telemetry_plugins($opted = NULL)
+        public function register_tec_telemetry_plugins($opted = null)
         {
         }
         /**
@@ -2661,7 +2699,7 @@ namespace TEC\Common\Telemetry {
          *
          * @since 6.1.0
          *
-         * @param bool $opted
+         * @param bool $opted Whether to opt in or out. If null, will calculate based on existing status.
          *
          * @return bool $opted
          */
@@ -4520,6 +4558,14 @@ namespace {
          */
         public static $meta_key = 'tribe-dismiss-notice';
         /**
+         * Request param used to pass the nonce for dismissal.
+         *
+         * @since 5.2.1
+         *
+         * @var string
+         */
+        public static string $nonce_param = 'tec-dismiss-notice-nonce';
+        /**
          * User Meta Key prefix that stores when notices have been dismissed.
          *
          * @since 4.13.0
@@ -4803,6 +4849,18 @@ namespace {
          * @return array An associative array in the shape [ <slug> => [ <html>, <args>, <expire timestamp> ] ]
          */
         protected function get_transients()
+        {
+        }
+        /**
+         * Returns the nonce action for a given notice slug.
+         *
+         * @since 5.2.1
+         *
+         * @param string $slug Which notice we are handling.
+         *
+         * @return string
+         */
+        protected function get_nonce_action(string $slug) : string
         {
         }
         /**
@@ -5331,12 +5389,16 @@ namespace Tribe\Admin {
 }
 namespace {
     /**
+     * Ajax Dropdown class.
+     */
+    /**
      * Handles common AJAX operations.
      *
      * @since  4.6
      */
     class Tribe__Ajax__Dropdown
     {
+        // phpcs:ignore-next-line  PEAR.NamingConventions.ValidClassName.Invalid
         /**
          * Hooks the AJAX for Select2 Dropdowns
          *
@@ -5352,10 +5414,10 @@ namespace {
          *
          * @since  4.6
          *
-         * @param string|array<string|mixed> $search Search string from Select2
-         * @param int                        $page   When we deal with pagination
-         * @param array<string|mixed>        $args   Which arguments we got from the Template
-         * @param string                     $source What source it is
+         * @param string|array<string|mixed> $search Search string from Select2.
+         * @param int                        $page   When we deal with pagination.
+         * @param array<string|mixed>        $args   Which arguments we got from the Template.
+         * @param string                     $source What source it is.
          *
          * @return array<string|mixed>
          */
@@ -5382,9 +5444,9 @@ namespace {
          *
          * @since 4.12.17
          *
-         * @param array<WP_Post>    $posts
-         * @param null|int $selected
-         * @param boolean  $pagination
+         * @param array<WP_Post> $posts      Array of WP_Post objects.
+         * @param null|int       $selected   Selected item ID.
+         * @param boolean        $pagination Whether or not we have pagination.
          *
          * @return array
          */
@@ -5396,11 +5458,9 @@ namespace {
          *
          * @since  4.6
          *
-         * @param array<int|object>   &$terms  Array of Terms from `get_terms`.
-         * @param array<string|mixed> &$into   Variable where we will store the.
-         * @param integer              $parent Used for the recursion.
-         *
-         * @return array<string|mixed>
+         * @param array<int|object>   $terms  Array of Terms from `get_terms`.
+         * @param array<string|mixed> $into   Variable where we will store the.
+         * @param integer             $parent Used for the recursion.
          */
         public function sort_terms_hierarchically(&$terms, &$into, $parent = 0)
         {
@@ -5410,7 +5470,7 @@ namespace {
          *
          * @since  4.6
          *
-         * @param object|array<string|mixed> $results The Select2 results
+         * @param object|array<string|mixed> $results The Select2 results.
          *
          * @return array<string|mixed>
          */
@@ -5418,11 +5478,12 @@ namespace {
         {
         }
         /**
-         * Parses the Params coming from Select2 Search box
+         * Parses the Params coming from Select2 Search box.
          *
          * @since  4.6
+         * @since 5.1.17 Added an allow list of params to restrict the shape of the database queries.
          *
-         * @param array<string|mixed> $params Params to overwrite the defaults
+         * @param array<string|mixed> $params Params to overwrite the defaults.
          *
          * @return object
          */
@@ -5434,6 +5495,7 @@ namespace {
          * It is like a Catch All on `wp_ajax_tribe_dropdown` and `wp_ajax_nopriv_tribe_dropdown`
          *
          * @since  4.6
+         * @since 5.1.17 Adding more sanitization to the request params.
          *
          * @return void
          */
@@ -5445,10 +5507,8 @@ namespace {
          *
          * @since  4.6
          *
-         * @param string $name
-         * @param mixed  $arguments
-         *
-         * @return void
+         * @param string $name      The name of the method.
+         * @param mixed  $arguments The arguments passed to the method.
          */
         public function __call($name, $arguments)
         {
@@ -9065,10 +9125,13 @@ namespace {
      *      $data->set_default( 'not found' );
      *
      *      $var_4 = $data['woo']; // "not found"
-     *
+     */
+    /**
+     * Class Tribe__Data
      */
     class Tribe__Data implements \ArrayAccess, \Iterator
     {
+        // phpcs:ignore TEC.Classes.ValidClassName.NotSnakeCase,WordPress.NamingConventions.ValidClassName.InvalidClassName,PEAR.NamingConventions.ValidClassName.Invalid,Generic.Classes.OpeningBraceSameLine.ContentAfterBrace
         /**
          * @var int
          */
@@ -9085,23 +9148,20 @@ namespace {
         /**
          * Tribe__Data constructor.
          *
-         * @param array|object $data    An array or object of data.
-         * @param mixed        $default The default value that should be returned if a key is not set
+         * @param array|object $data          An array or object of data.
+         * @param mixed        $default_value The default value that should be returned if a key is not set.
          */
-        public function __construct($data = [], $default = \false)
+        public function __construct($data = [], $default_value = \false)
         {
         }
         /**
          * Whether a offset exists
          *
          * @link  http://php.net/manual/en/arrayaccess.offsetexists.php
-         * @param mixed $offset <p>
-         *                      An offset to check for.
-         *                      </p>
-         * @return boolean true on success or false on failure.
-         *                      </p>
-         *                      <p>
-         *                      The return value will be casted to boolean if non-boolean was returned.
+         *
+         * @param mixed $offset An offset to check for.
+         *
+         * @return boolean true on success or false on failure. The return value will be cast to boolean if non-boolean was returned.
          * @since 4.11.0
          */
         public function offsetExists($offset) : bool
@@ -9111,12 +9171,14 @@ namespace {
          * Offset to retrieve
          *
          * @link  http://php.net/manual/en/arrayaccess.offsetget.php
-         * @param mixed $offset <p>
-         *                      The offset to retrieve.
-         *                      </p>
+         *
+         * @param mixed $offset The offset to retrieve.
+         *
          * @return mixed Can return all value types.
+         *
          * @since 4.11.0
          */
+        #[\ReturnTypeWillChange]
         public function offsetGet($offset)
         {
         }
@@ -9124,29 +9186,27 @@ namespace {
          * Offset to set
          *
          * @link  http://php.net/manual/en/arrayaccess.offsetset.php
-         * @param mixed $offset <p>
-         *                      The offset to assign the value to.
-         *                      </p>
-         * @param mixed $value  <p>
-         *                      The value to set.
-         *                      </p>
+         *
+         * @param mixed $offset The offset to assign the value to.
+         * @param mixed $value  The value to set.
+         *
          * @return void
          * @since 4.11.0
          */
-        public function offsetSet($offset, $value)
+        public function offsetSet($offset, $value) : void
         {
         }
         /**
          * Offset to unset
          *
          * @link  http://php.net/manual/en/arrayaccess.offsetunset.php
-         * @param mixed $offset <p>
-         *                      The offset to unset.
-         *                      </p>
+         *
+         * @param mixed $offset The offset to unset.
+         *
          * @return void
          * @since 4.11.0
          */
-        public function offsetUnset($offset)
+        public function offsetUnset($offset) : void
         {
         }
         /**
@@ -9160,7 +9220,7 @@ namespace {
         /**
          * Sets the data this object will manage.
          *
-         * @param array $data
+         * @param array $data The data this object will manage.
          */
         public function set_data(array $data)
         {
@@ -9176,18 +9236,21 @@ namespace {
         /**
          * Sets the default value that should be returned when a key is not set.
          *
-         * @param mixed $default
+         * @param mixed $default_value The default value that should be returned if a key is not set.
          */
-        public function set_default($default)
+        public function set_default($default_value)
         {
         }
         /**
          * Return the current element
          *
          * @link  http://php.net/manual/en/iterator.current.php
+         *
          * @return mixed Can return any type.
+         *
          * @since 4.11.0
          */
+        #[\ReturnTypeWillChange]
         public function current()
         {
         }
@@ -9198,16 +9261,19 @@ namespace {
          * @return void Any returned value is ignored.
          * @since 4.11.0
          */
-        public function next()
+        public function next() : void
         {
         }
         /**
          * Return the key of the current element
          *
          * @link  http://php.net/manual/en/iterator.key.php
+         *
          * @return mixed scalar on success, or null on failure.
+         *
          * @since 4.11.0
          */
+        #[\ReturnTypeWillChange]
         public function key()
         {
         }
@@ -9219,7 +9285,7 @@ namespace {
          * Returns true on success or false on failure.
          * @since 4.11.0
          */
-        public function valid()
+        public function valid() : bool
         {
         }
         /**
@@ -9229,7 +9295,7 @@ namespace {
          * @return void Any returned value is ignored.
          * @since 4.11.0
          */
-        public function rewind()
+        public function rewind() : void
         {
         }
         /**
@@ -9239,7 +9305,7 @@ namespace {
          *
          * @since 4.6
          */
-        public function to_array()
+        public function to_array() : array
         {
         }
     }
@@ -9462,13 +9528,15 @@ namespace {
          * the specified format, returning an empty string if this is not possible.
          *
          * @since 5.1.5 Make use of `wp_date` for i18n.
+         * @since 5.2.2 Adding timezone param.
          *
-         * @param $dt_string
-         * @param $new_format
+         * @param string|int  $dt_string  The date or timestamp to be converted.
+         * @param string      $new_format The date format to convert to.
+         * @param null|string $timezone   Optional timezone the date string is in.
          *
          * @return string
          */
-        public static function reformat($dt_string, $new_format)
+        public static function reformat($dt_string, $new_format, $timezone = \null) : string
         {
         }
         /**
@@ -12268,6 +12336,33 @@ namespace {
         public function block_data()
         {
         }
+        /**
+         * Returns the block type argument that should be used to register the block in the `register_block_type`
+         * function.
+         *
+         * @see register_block_type() for the values that can be used in the `block_type` argument.
+         *
+         * @since 5.2.0
+         *
+         * @return string|WP_Block_Type The block type argument that will be used to register the block.
+         */
+        public function get_registration_block_type()
+        {
+        }
+        /**
+         * Allows extending blocks to modify and update the arguments used to register the block
+         * in the `register_block_type` function.
+         *
+         * @since 5.2.0
+         *
+         * @param array<string,mixed> $args The default arguments the block would be registered with if this method is not
+         *                                  overridden.
+         *
+         * @return array<string,mixed> The arguments to use when registering the block.
+         */
+        public function get_registration_args(array $args) : array
+        {
+        }
     }
 }
 namespace Tribe\Editor {
@@ -14304,7 +14399,7 @@ namespace {
         }
     }
     /**
-     * Class Locations
+     * Class Tribe__Languages__Locations
      *
      * Localized lists of locations, like countries and states.
      */
@@ -14364,6 +14459,18 @@ namespace {
          * }
          */
         public function build_us_states_array()
+        {
+        }
+        /**
+         * Get a country name based on a country code.
+         *
+         * @since 5.2.1
+         *
+         * @param string $country_code A 2-digit country code.
+         *
+         * @return string The full country name.
+         */
+        public function get_country_based_on_code($country_code)
         {
         }
     }
@@ -16128,7 +16235,7 @@ namespace {
         const OPTIONNAME = 'tribe_events_calendar_options';
         const OPTIONNAMENETWORK = 'tribe_events_calendar_network_options';
         const FEED_URL = 'https://theeventscalendar.com/feed/';
-        const VERSION = '5.1.15.2';
+        const VERSION = '5.2.3';
         protected $plugin_context;
         protected $plugin_context_class;
         /**
@@ -17515,7 +17622,7 @@ namespace {
          */
         public $pue_key_status_option_name;
         /**
-         * used to hold the install_key if set (included here for addons that will extend PUE to use install key checks)
+         * Used to hold the install_key if set (included here for addons that will extend PUE to use install key checks).
          *
          * @var bool
          */
@@ -17523,7 +17630,7 @@ namespace {
         /**
          * For setting the dismiss upgrade option (per plugin).
          *
-         * @var
+         * @var string
          */
         public $dismiss_upgrade;
         /**
@@ -17699,7 +17806,7 @@ namespace {
         /**
          * Compile  a list of addons
          *
-         * @param array $addons list of addons
+         * @param array $addons List of addons.
          *
          * @return array list of addons
          */
@@ -17709,7 +17816,7 @@ namespace {
         /**
          * Inserts license key fields on license key page
          *
-         * @param array $fields List of fields
+         * @param array $fields List of fields.
          *
          * @return array Modified list of fields.
          */
@@ -17719,7 +17826,6 @@ namespace {
         /**
          * Inserts the javascript that makes the ajax checking
          * work on the license key page
-         *
          */
         public function do_license_key_javascript()
         {
@@ -17727,8 +17833,8 @@ namespace {
         /**
          * Filter the success message on license key page
          *
-         * @param string $message
-         * @param string $tab
+         * @param string $message Success message.
+         * @param string $tab     Tab name.
          *
          * @return string
          */
@@ -17746,7 +17852,7 @@ namespace {
         /**
          * Build full stats for endpoints
          *
-         * @param array $stats Initial stats
+         * @param array $stats Initial stats.
          *
          * @return array
          */
@@ -17764,8 +17870,8 @@ namespace {
         /**
          * Get current license key, optionally of a specific type.
          *
-         * @param string $type        The type of key to get (any, network, local, default)
-         * @param string $return_type The type of data to return (key, origin)
+         * @param string $type        The type of key to get (any, network, local, default).
+         * @param string $return_type The type of data to return (key, origin).
          *
          * @return string
          */
@@ -17775,8 +17881,8 @@ namespace {
         /**
          * Update license key for specific type of license.
          *
-         * @param string $license_key The new license key value
-         * @param string $type        The type of key to update (network or local)
+         * @param string $license_key The new license key value.
+         * @param string $type        The type of key to update (network or local).
          */
         public function update_key($license_key, $type = 'local')
         {
@@ -17784,7 +17890,7 @@ namespace {
         /**
          * Checks for the license key status with MT servers.
          *
-         * @param string $key
+         * @param string $key     The license key to check.
          * @param bool   $network Whether the key to check for is a network one or not.
          *
          * @return array An associative array containing the license status response.
@@ -17792,6 +17898,9 @@ namespace {
         public function validate_key($key, $network = \false)
         {
         }
+        /**
+         * Get the message for an expired license.
+         */
         public function get_license_expired_message()
         {
         }
@@ -17820,11 +17929,18 @@ namespace {
         /**
          * Displays a PUE message on the page if it is relevant
          *
-         * @param string $page
+         * @param string $page The current page.
          */
         public function maybe_display_json_error_on_plugins_page($page)
         {
         }
+        /**
+         * Adds the PUE message to the plugin notices array.
+         *
+         * @param array $notices The current plugin notices.
+         *
+         * @return array
+         */
         public function add_notice_to_plugin_notices($notices)
         {
         }
@@ -17836,7 +17952,7 @@ namespace {
          *
          * @see Tribe__PUE__Checker::request_info()
          *
-         * @param $query_args
+         * @param array $query_args Additional query arguments to append to the request.
          *
          * @return Tribe__PUE__Plugin_Info|null
          */
@@ -17903,7 +18019,7 @@ namespace {
         /**
          * Get plugin update state
          *
-         * @param boolean $force_recheck
+         * @param boolean $force_recheck Whether to force a recheck of the update status.
          *
          * @return object
          */
@@ -17923,10 +18039,10 @@ namespace {
          *
          * The results are stored in the DB option specified in $pue_option_name.
          *
-         * @param array   $updates
-         * @param boolean $force_recheck
+         * @param array|object $updates       Existing updates.
+         * @param boolean      $force_recheck Whether to force a recheck of the update status.
          *
-         * @return array
+         * @return array|object
          */
         public function check_for_updates($updates = [], $force_recheck = \false)
         {
@@ -17934,9 +18050,9 @@ namespace {
         /**
          * Clears out the site external site option and re-checks the license key
          *
-         * @param string $value
-         * @param string $field_id
-         * @param object $validated_field
+         * @param string $value           The value of the option.
+         * @param string $field_id        The ID of the field.
+         * @param object $validated_field The validated field.
          *
          * @return string
          */
@@ -17949,9 +18065,9 @@ namespace {
          *
          * @see plugins_api()
          *
-         * @param mixed        $result
-         * @param string       $action
-         * @param array|object $args
+         * @param mixed        $result The result object or NULL.
+         * @param string       $action The type of information being requested from the Plugin Install API.
+         * @param array|object $args   Arguments used to query for installer pages from the Plugin Install API.
          *
          * @return mixed
          */
@@ -17966,8 +18082,7 @@ namespace {
          *
          * @uses add_filter() This method is a convenience wrapper for add_filter().
          *
-         * @param callback $callback
-         *
+         * @param callback $callback The callback function.
          */
         public function add_query_arg_filter($callback)
         {
@@ -17981,8 +18096,7 @@ namespace {
          *
          * @uses add_filter() This method is a convenience wrapper for add_filter().
          *
-         * @param callback $callback
-         *
+         * @param callback $callback The callback function.
          */
         public function add_http_request_arg_filter($callback)
         {
@@ -17999,8 +18113,7 @@ namespace {
          *
          * @uses add_filter() This method is a convenience wrapper for add_filter().
          *
-         * @param callback $callback
-         *
+         * @param callback $callback The callback function.
          */
         public function add_result_filter($callback)
         {
@@ -18008,12 +18121,11 @@ namespace {
         /**
          * Insert an array after a specified key within another array.
          *
-         * @param $key
-         * @param $source_array
-         * @param $insert_array
+         * @param string $key          The key to insert after.
+         * @param array  $source_array The array to insert into.
+         * @param array  $insert_array The array to insert.
          *
          * @return array
-         *
          */
         public static function array_insert_after_key($key, $source_array, $insert_array)
         {
@@ -18021,10 +18133,9 @@ namespace {
         /**
          * Add this plugin key to the list of keys
          *
-         * @param array $keys
+         * @param array $keys The list of keys.
          *
          * @return array $keys
-         *
          */
         public function return_install_key($keys = [])
         {
@@ -18431,10 +18542,13 @@ namespace {
         public $origin_url;
         public $zip_url;
         public $icon_svg_url;
+        public $auth_url;
         public $file_prefix;
         public $author;
         public $author_homepage;
         public $requires;
+        public $auth_required;
+        public $is_authorized;
         public $tested;
         public $upgrade_notice;
         public $rating;
@@ -18548,6 +18662,14 @@ namespace {
         public $license_error;
         public $auth_url;
         /**
+         * @var bool
+         */
+        public $api_expired;
+        /**
+         * @var bool
+         */
+        public $api_upgrade;
+        /**
          * Create a new instance of Tribe__PUE__Utility from its JSON-encoded representation.
          *
          * @param string $json
@@ -18571,9 +18693,11 @@ namespace {
         /**
          * Transform the update into the format used by WordPress native plugin API.
          *
+         * @param ?string $plugin_file Plugin bootstrap file path.
+         *
          * @return object
          */
-        public function to_wp_format()
+        public function to_wp_format($plugin_file = \null)
         {
         }
     }
@@ -20849,9 +20973,17 @@ namespace Tribe\Repository {
          *
          * Mind that "all" means "all the posts matching all the filters" so pagination applies.
          *
-         * @return array
+         * @since 4.1.3
+         * @since 5.2.0 Added the `$return_generator` and `$batch_size` parameters.
+         *
+         * @param bool $return_generator Whether to return a generator of post IDs instead of an array of post IDs.
+         * @param int  $batch_size       The number of post IDs to fetch at a time when using a generator; ignored
+         *                               if `$return_generator` is false.
+         *
+         * @return array<int>|Generator<int> An array of all the matching post IDs, or a generator of them
+         *                                   if `$return_generator` is true.
          */
-        public function all();
+        public function all($return_generator = false, int $batch_size = 50);
         /**
          * Sets the offset on the query.
          *
@@ -21118,9 +21250,17 @@ namespace Tribe\Repository {
         /**
          * Gets the ids of the posts matching the query.
          *
-         * @return array An array containing the post IDs to update.
+         * @since 4.1.3
+         * @since 5.2.0 Added the `$return_generator` and `$batch_size` parameters.
+         *
+         * @param bool $return_generator Whether to return a generator of post IDs instead of an array of post IDs.
+         * @param int  $batch_size       The number of post IDs to fetch at a time when using a generator; ignored
+         *                               if `$return_generator` is false.
+         *
+         * @return array<int>|Generator<int> An array of all the matching post IDs, or a generator of them
+         *                                   if `$return_generator` is true.
          */
-        public function get_ids();
+        public function get_ids($return_generator = false, int $batch_size = 50);
     }
 }
 namespace {
@@ -21500,7 +21640,7 @@ namespace {
          * each callback method to add, at least, one WHERE clause using the repository
          * own `where_clause` method.
          *
-         * @param array $callbacks       One or more WHERE callbacks that will be called
+         * @param array $callbacks        One or more WHERE callbacks that will be called
          *                                this repository. The callbacks have the shape
          *                                [ <method>, <...args>]
          *
@@ -21610,10 +21750,10 @@ namespace {
          *
          * @since 4.9.5
          *
-         * @param array          $settings An array of settings to define how the hash should be produced in the shape
+         * @param array         $settings  An array of settings to define how the hash should be produced in the shape
          *                                 `[ 'exclude' => [ 'ex_1', ... ], 'include' => [ 'inc_1', ... ] ]`. This array
          *                                 will apply both to the Repository filters and the query vars.
-         * @param WP_Query|null $query An optional query object to include in the hashing.
+         * @param WP_Query|null $query     An optional query object to include in the hashing.
          *
          * @return string The generated hash string.
          *
@@ -21624,10 +21764,10 @@ namespace {
          *
          * @since 4.9.5
          *
-         * @param array          $settings An array of settings to define how the hash should be produced in the shape
+         * @param array         $settings  An array of settings to define how the hash should be produced in the shape
          *                                 `[ 'exclude' => [ 'ex_1', ... ], 'include' => [ 'inc_1', ... ] ]`. This array
          *                                 will apply both to the Repository filters and the query vars.
-         * @param WP_Query|null $query An optional query object to include in the hashing.
+         * @param WP_Query|null $query     An optional query object to include in the hashing.
          *
          * @return array An array of hash data components.
          */
@@ -21645,12 +21785,13 @@ namespace {
          *
          * @since 4.9.6
          *
-         * @param array  $fields         The fields to add WHERE clauses for. The fields can be post fields, custom fields or
-         *                               taxonomy terms.
+         * @param array  $fields         The fields to add WHERE clauses for. The fields can be post fields, custom fields
+         *                               or taxonomy terms.
          * @param string $compare        The comparison operator to use, e.g. 'LIKE' or '>'.
-         * @param mixed  $value          The value, or values, to compare with; the format will be set depending on the type of
-         *                               each value.
-         * @param string $where_relation The relation to join the WHERE clauses with, either 'OR' or 'AND'; default to 'OR'.
+         * @param mixed  $value          The value, or values, to compare with; the format will be set depending on the
+         *                               type of each value.
+         * @param string $where_relation The relation to join the WHERE clauses with, either 'OR' or 'AND'; default to
+         *                               'OR'.
          * @param string $value_relation The relation to join the value clauses in case the value is an array, either 'OR'
          *                               or 'AND'; defaults to 'OR'.
          *
@@ -21666,7 +21807,7 @@ namespace {
          *
          * @since 4.9.9
          *
-         * @param  \WP_Query  $query An query instance.
+         * @param \WP_Query $query An query instance.
          *
          * @return \Tribe__Repository__Interface The repository instance, for chaining.
          * @throws \Tribe__Repository__Usage_Error If trying to set the query after a fetching operation is done.
@@ -21723,6 +21864,24 @@ namespace {
          * @return string|null The SQL code for the last query built and ran by the repository, if any.
          */
         public function get_last_sql() : ?string;
+        /**
+         * Returns the request for the current context.
+         *
+         * @since 5.2.0
+         *
+         * @return string|null The request context.
+         */
+        public function get_request_context() : ?string;
+        /**
+         * Sets the request context for the current request.
+         *
+         * @since 5.2.0
+         *
+         * @param string|null $context The request context.
+         *
+         * @return void
+         */
+        public function set_request_context(string $context = \null) : self;
     }
 }
 namespace Tribe\Traits {
@@ -21798,6 +21957,14 @@ namespace {
         use \Tribe\Traits\With_Meta_Updates_Handling;
         use \Tribe\Traits\With_Post_Attribute_Detection;
         const MAX_NUMBER_OF_POSTS_PER_PAGE = 99999999999;
+        /**
+         * The context of the current query.
+         *
+         * @since 5.2.0
+         *
+         * @var string|null
+         */
+        protected ?string $request_context = \null;
         /**
          * @var  array An array of keys that cannot be updated on this repository.
          */
@@ -22077,7 +22244,7 @@ namespace {
         /**
          * {@inheritdoc}
          */
-        public function all()
+        public function all($return_generator = \false, int $batch_size = 50)
         {
         }
         /**
@@ -22348,7 +22515,7 @@ namespace {
         /**
          * {@inheritdoc}
          */
-        public function get_ids()
+        public function get_ids($return_generator = \false, int $batch_size = 50)
         {
         }
         /**
@@ -22385,9 +22552,9 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param       string     $key
-         * @param       string|int $value
-         * @param array            $postarr
+         * @param string     $key
+         * @param string|int $value
+         * @param array      $postarr
          */
         protected function update_postarr_dates($key, $value, array &$postarr)
         {
@@ -22404,9 +22571,9 @@ namespace {
          * @param string $key   Argument key.
          * @param mixed  $value Argument value.
          *
+         * @return $this
          * @throws Tribe__Repository__Usage_Error
          *
-         * @return $this
          */
         public function set($key, $value)
         {
@@ -22460,13 +22627,12 @@ namespace {
          *
          * @since 4.10.3
          *
-         * @throws Tribe__Repository__Usage_Error If the comparison operator requires and no value provided.
-         *
          * @param string|array $meta_keys     One or more `meta_keys` relating the queried post type(s)
          *                                    to another post type.
          * @param string       $compare       The SQL comparison operator.
          * @param string       $meta_field    One (a column in the `postmeta` table) that should match
-         *                                    the comparison criteria; required if the comparison operator is not `EXISTS` or
+         *                                    the comparison criteria; required if the comparison operator is not `EXISTS`
+         *                                    or
          *                                    `NOT EXISTS`.
          * @param string|array $meta_values   One or more values the post field(s) should be compared to;
          *                                    required if the comparison operator is not `EXISTS` or `NOT EXISTS`.
@@ -22474,6 +22640,8 @@ namespace {
          *                                    Example with this as true: `value = X OR value IS NULL`.
          *
          * @return $this
+         * @throws Tribe__Repository__Usage_Error If the comparison operator requires and no value provided.
+         *
          */
         public function where_meta_related_by_meta($meta_keys, $compare, $meta_field = \null, $meta_values = \null, $or_not_exists = \false)
         {
@@ -22485,7 +22653,7 @@ namespace {
          * each callback method to add, at least, one WHERE clause using the repository
          * own `where_clause` method.
          *
-         * @param array $callbacks       One or more WHERE callbacks that will be called
+         * @param array $callbacks        One or more WHERE callbacks that will be called
          *                                this repository. The callbacks have the shape
          *                                [ <method>, <...args>]
          *
@@ -22546,8 +22714,8 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param      string $key
-         * @param      mixed  $value
+         * @param string $key
+         * @param mixed  $value
          *
          * @return array
          * @throws Tribe__Repository__Usage_Error If a filter is called with wrong arguments.
@@ -22650,11 +22818,11 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param string|array $values One or more values to use to build
-         *                             the interval
-         *                             .
-         * @param string       $format The format that should be used to escape
-         *                             the values; default to '%s'.
+         * @param string|array $values   One or more values to use to build
+         *                               the interval
+         *                               .
+         * @param string       $format   The format that should be used to escape
+         *                               the values; default to '%s'.
          * @param string       $operator The operator the interval is being prepared for;
          *                               defaults to `IN`.
          *
@@ -22804,8 +22972,8 @@ namespace {
          *
          * @since 4.9.5
          *
-         * @param      int|array $to_delete  The post ID to delete or an array of post IDs to delete.
-         * @param bool           $background Whether the callback will be used in background delete operations or not.
+         * @param int|array $to_delete  The post ID to delete or an array of post IDs to delete.
+         * @param bool      $background Whether the callback will be used in background delete operations or not.
          *
          * @return callable The callback to use.
          */
@@ -22823,8 +22991,8 @@ namespace {
          *
          * @since 4.9.5
          *
-         * @param      int|array $to_update  The post ID to update or an array of post IDs to update.
-         * @param bool           $background Whether the callback will be used in background update operations or not.
+         * @param int|array $to_update  The post ID to update or an array of post IDs to update.
+         * @param bool      $background Whether the callback will be used in background update operations or not.
          *
          * @return callable The callback to use.
          */
@@ -22862,7 +23030,7 @@ namespace {
          *
          * @since 4.9.5
          *
-         * @param int $code The error code.
+         * @param int    $code    The error code.
          * @param string $message The error message.
          */
         public function cast_error_to_exception($code, $message)
@@ -22891,7 +23059,7 @@ namespace {
          *
          * @since 4.9.5
          *
-         * @param array    $postarr     The post array that will be used for the creation.
+         * @param array $postarr The post array that will be used for the creation.
          *
          * @return callable The callback to use.
          */
@@ -22927,7 +23095,7 @@ namespace {
          * @param array    $postarr The array to look into.
          * @param string   $key     The key to retrieve.
          * @param int|null $post_id The post ID to fetch the value for.
-         * @param mixed $default The default value to return if nothing was found.
+         * @param mixed    $default The default value to return if nothing was found.
          *
          * @return mixed The found value if any.
          */
@@ -23026,7 +23194,7 @@ namespace {
          *
          * @param string $relation The relation to check.
          *
-         * @throws \Tribe__Repository__Usage_Error If the relation is not a valid one.
+         * @throws Tribe__Repository__Usage_Error If the relation is not a valid one.
          */
         protected function validate_relation($relation)
         {
@@ -23052,16 +23220,16 @@ namespace {
          *
          * @since 4.9.6
          *
-         * @param string|array $fields  One or more fields to build the clause for.
-         * @param string       $compare The comparison operator to use to build the
-         * @param string|array $values One or more values to build the WHERE clause for.
-         * @param string       $value_format The format, a `$wpdb::prepare()` compatible one, to use to format the values.
+         * @param string|array $fields         One or more fields to build the clause for.
+         * @param string       $compare        The comparison operator to use to build the
+         * @param string|array $values         One or more values to build the WHERE clause for.
+         * @param string       $value_format   The format, a `$wpdb::prepare()` compatible one, to use to format the values.
          * @param string       $where_relation The relation to apply between each WHERE fragment.
          * @param string       $value_relation The relation to apply between each value fragment.
          *
          * @return string The built WHERE clause.
          *
-         * @throws \Tribe__Repository__Usage_Error If the relations are not valid or another WHERE building issue happens.
+         * @throws Tribe__Repository__Usage_Error If the relations are not valid or another WHERE building issue happens.
          */
         protected function build_fields_where_clause($fields, $compare, $values, $value_format = '%s', $where_relation = 'OR', $value_relation = 'OR')
         {
@@ -23074,10 +23242,11 @@ namespace {
          * @since 4.9.6
          *
          * @param string|array $taxonomy The taxonomy, or taxonomies, to fetch the terms for.
-         * @param string $compare The comparison operator to use, e.g. 'LIKE' or '=>'.
-         * @param string|array $value An array of values to compare the terms slug or names with.
-         * @param string $relation The relation, either 'OR' or 'AND', to apply to the matching.
-         * @param string $format The format, a `$wpdb::prepare()` supported one, to use to format the values for the query.
+         * @param string       $compare  The comparison operator to use, e.g. 'LIKE' or '=>'.
+         * @param string|array $value    An array of values to compare the terms slug or names with.
+         * @param string       $relation The relation, either 'OR' or 'AND', to apply to the matching.
+         * @param string       $format   The format, a `$wpdb::prepare()` supported one, to use to format the values for
+         *                               the query.
          *
          * @return array An array of term IDs matching the query, if any.
          */
@@ -23134,6 +23303,62 @@ namespace {
          * {@inheritDoc}
          */
         public function get_last_sql() : ?string
+        {
+        }
+        /**
+         * Returns a Generator that will yield all the IDs requested avoiding unbound queries.
+         *
+         * @since 5.2.0
+         *
+         * @return Generator<int> The Generator that will yield all the IDs requested.
+         *
+         * @throws Tribe__Repository__Usage_Error If the batch size is less than 1.
+         */
+        protected function get_ids_generator(int $batch_size = 50) : \Generator
+        {
+        }
+        /**
+         * Returns a Generator that will yield all the posts requested avoiding unbound queries.
+         *
+         * @since 5.2.0
+         *
+         * @return Generator<WP_Post|mixed> The Generator that will yield all the posts requested,
+         *                                  formatted according to the repository's `format_item` method.
+         *
+         * @throws Tribe__Repository__Usage_Error If the batch size is less than 1.
+         */
+        protected function get_all_generator(int $batch_size = 50) : \Generator
+        {
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public function first_id() : ?int
+        {
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public function get_request_context() : ?string
+        {
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public function set_request_context(string $context = \null) : self
+        {
+        }
+        /**
+         * Maps the query results to an array using a callback.
+         *
+         * @since 5.2.0
+         *
+         * @param callable $mapper The callback to use to map the results. The callback should have signature
+         *                         `function ( mixed $item, string|int $key, array<mixed> $items ): mixed`.
+         *
+         * @return array<mixed> The mapped results.
+         */
+        public function map(callable $mapper) : array
         {
         }
     }
@@ -23208,7 +23433,7 @@ namespace {
         /**
          * {@inheritdoc}
          */
-        public function all()
+        public function all($return_generator = \false, int $batch_size = 50)
         {
         }
         /**
@@ -23287,6 +23512,12 @@ namespace {
          * {@inheritdoc}
          */
         public function first()
+        {
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public function first_id() : ?int
         {
         }
         /**
@@ -23422,7 +23653,7 @@ namespace {
         /**
          * {@inheritdoc}
          */
-        public function get_ids()
+        public function get_ids($return_generator = \false, int $batch_size = 50)
         {
         }
         /**
@@ -23687,6 +23918,18 @@ namespace {
          * {@inheritDoc}
          */
         public function get_last_sql() : ?string
+        {
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public function get_request_context() : ?string
+        {
+        }
+        /**
+         * {@inheritDoc}
+         */
+        public function set_request_context(string $context = \null) : self
         {
         }
     }
@@ -33221,30 +33464,6 @@ namespace {
         {
         }
     }
-    // autoload_real.php @generated by Composer
-    class ComposerAutoloaderInit43ec74747c68c7396bedc0a710526d75
-    {
-        public static function loadClassLoader($class)
-        {
-        }
-        /**
-         * @return \Composer\Autoload\ClassLoader
-         */
-        public static function getLoader()
-        {
-        }
-    }
-}
-namespace Composer\Autoload {
-    class ComposerStaticInit43ec74747c68c7396bedc0a710526d75
-    {
-        public static $prefixLengthsPsr4 = array('l' => array('lucatume\\DI52\\' => 14), 'T' => array('Tribe\\' => 6, 'TEC\\Common\\' => 11), 'S' => array('StellarWP\\Telemetry\\Views_Dir\\' => 30, 'StellarWP\\Telemetry\\Assets_Dir\\' => 31, 'StellarWP\\Telemetry\\' => 20, 'StellarWP\\Installer\\Assets_JS\\' => 30, 'StellarWP\\Installer\\Admin_Views\\' => 32, 'StellarWP\\Installer\\' => 20, 'StellarWP\\DB\\' => 13, 'StellarWP\\ContainerContract\\' => 28), 'P' => array('Psr\\Log\\' => 8, 'Psr\\Container\\' => 14), 'M' => array('Monolog\\' => 8), 'F' => array('Firebase\\JWT\\' => 13));
-        public static $prefixDirsPsr4 = array('lucatume\\DI52\\' => array(0 => __DIR__ . '/..' . '/lucatume/di52/src'), 'Tribe\\' => array(0 => __DIR__ . '/../..' . '/src/Tribe'), 'TEC\\Common\\' => array(0 => __DIR__ . '/../..' . '/src/Common'), 'StellarWP\\Telemetry\\Views_Dir\\' => array(0 => __DIR__ . '/..' . '/stellarwp/telemetry/src/views'), 'StellarWP\\Telemetry\\Assets_Dir\\' => array(0 => __DIR__ . '/..' . '/stellarwp/telemetry/src/resources'), 'StellarWP\\Telemetry\\' => array(0 => __DIR__ . '/..' . '/stellarwp/telemetry/src/Telemetry'), 'StellarWP\\Installer\\Assets_JS\\' => array(0 => __DIR__ . '/..' . '/stellarwp/installer/src/assets/js'), 'StellarWP\\Installer\\Admin_Views\\' => array(0 => __DIR__ . '/..' . '/stellarwp/installer/src/admin-views'), 'StellarWP\\Installer\\' => array(0 => __DIR__ . '/..' . '/stellarwp/installer/src/Installer'), 'StellarWP\\DB\\' => array(0 => __DIR__ . '/..' . '/stellarwp/db/src/DB'), 'StellarWP\\ContainerContract\\' => array(0 => __DIR__ . '/..' . '/stellarwp/container-contract/src'), 'Psr\\Log\\' => array(0 => __DIR__ . '/..' . '/psr/log/Psr/Log'), 'Psr\\Container\\' => array(0 => __DIR__ . '/..' . '/psr/container/src'), 'Monolog\\' => array(0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog'), 'Firebase\\JWT\\' => array(0 => __DIR__ . '/..' . '/firebase/php-jwt/src'));
-        public static $classMap = array('Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php', 'TEC\\Common\\Configuration\\Configuration' => __DIR__ . '/../..' . '/src/Common/Configuration/Configuration.php', 'TEC\\Common\\Configuration\\Configuration_Loader' => __DIR__ . '/../..' . '/src/Common/Configuration/Configuration_Loader.php', 'TEC\\Common\\Configuration\\Configuration_Provider_Interface' => __DIR__ . '/../..' . '/src/Common/Configuration/Configuration_Provider_Interface.php', 'TEC\\Common\\Configuration\\Constants_Provider' => __DIR__ . '/../..' . '/src/Common/Configuration/Constants_Provider.php', 'TEC\\Common\\Context\\Post_Request_Type' => __DIR__ . '/../..' . '/src/Common/Context/Post_Request_Type.php', 'TEC\\Common\\Contracts\\Container' => __DIR__ . '/../..' . '/src/Common/Contracts/Container.php', 'TEC\\Common\\Contracts\\Provider\\Controller' => __DIR__ . '/../..' . '/src/Common/Contracts/Provider/Controller.php', 'TEC\\Common\\Contracts\\Service_Provider' => __DIR__ . '/../..' . '/src/Common/Contracts/Service_Provider.php', 'TEC\\Common\\Editor\\Full_Site\\Template_Utils' => __DIR__ . '/../..' . '/src/Common/Editor/Full_Site/Template_Utils.php', 'TEC\\Common\\Exceptions\\Container_Exception' => __DIR__ . '/../..' . '/src/Common/Exceptions/Container_Exception.php', 'TEC\\Common\\Exceptions\\Not_Bound_Exception' => __DIR__ . '/../..' . '/src/Common/Exceptions/Not_Bound_Exception.php', 'TEC\\Common\\Integrations\\Integration_Abstract' => __DIR__ . '/../..' . '/src/Common/Integrations/Integration_Abstract.php', 'TEC\\Common\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Common/Integrations/Provider.php', 'TEC\\Common\\Integrations\\Traits\\Module_Integration' => __DIR__ . '/../..' . '/src/Common/Integrations/Traits/Module_Integration.php', 'TEC\\Common\\Integrations\\Traits\\Plugin_Integration' => __DIR__ . '/../..' . '/src/Common/Integrations/Traits/Plugin_Integration.php', 'TEC\\Common\\Integrations\\Traits\\Server_Integration' => __DIR__ . '/../..' . '/src/Common/Integrations/Traits/Server_Integration.php', 'TEC\\Common\\Integrations\\Traits\\Theme_Integration' => __DIR__ . '/../..' . '/src/Common/Integrations/Traits/Theme_Integration.php', 'TEC\\Common\\Libraries\\Installer\\Provider' => __DIR__ . '/../..' . '/src/Common/Libraries/Installer/Provider.php', 'TEC\\Common\\Libraries\\Provider' => __DIR__ . '/../..' . '/src/Common/Libraries/Provider.php', 'TEC\\Common\\Site_Health\\Factory' => __DIR__ . '/../..' . '/src/Common/Site_Health/Factory.php', 'TEC\\Common\\Site_Health\\Fields\\Generic_Info_Field' => __DIR__ . '/../..' . '/src/Common/Site_Health/Fields/Generic_Info_Field.php', 'TEC\\Common\\Site_Health\\Fields\\Post_Status_Count_Field' => __DIR__ . '/../..' . '/src/Common/Site_Health/Fields/Post_Status_Count_Field.php', 'TEC\\Common\\Site_Health\\Info_Field_Abstract' => __DIR__ . '/../..' . '/src/Common/Site_Health/Info_Field_Abstract.php', 'TEC\\Common\\Site_Health\\Info_Field_Interface' => __DIR__ . '/../..' . '/src/Common/Site_Health/Info_Field_Interface.php', 'TEC\\Common\\Site_Health\\Info_Section_Abstract' => __DIR__ . '/../..' . '/src/Common/Site_Health/Info_Section_Abstract.php', 'TEC\\Common\\Site_Health\\Info_Section_Interface' => __DIR__ . '/../..' . '/src/Common/Site_Health/Info_Section_Interface.php', 'TEC\\Common\\Site_Health\\Provider' => __DIR__ . '/../..' . '/src/Common/Site_Health/Provider.php', 'TEC\\Common\\Storage\\Timed_Option' => __DIR__ . '/../..' . '/src/Common/Storage/Timed_Option.php', 'TEC\\Common\\Telemetry\\Migration' => __DIR__ . '/../..' . '/src/Common/Telemetry/Migration.php', 'TEC\\Common\\Telemetry\\Opt_In' => __DIR__ . '/../..' . '/src/Common/Telemetry/Opt_In.php', 'TEC\\Common\\Telemetry\\Provider' => __DIR__ . '/../..' . '/src/Common/Telemetry/Provider.php', 'TEC\\Common\\Telemetry\\Telemetry' => __DIR__ . '/../..' . '/src/Common/Telemetry/Telemetry.php', 'TEC\\Common\\Translations_Loader' => __DIR__ . '/../..' . '/src/Common/Translations_Loader.php', 'Tribe\\Admin\\Conditional_Content\\Black_Friday' => __DIR__ . '/../..' . '/src/Tribe/Admin/Conditional_Content/Black_Friday.php', 'Tribe\\Admin\\Conditional_Content\\Datetime_Conditional_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Admin/Conditional_Content/Datetime_Conditional_Abstract.php', 'Tribe\\Admin\\Conditional_Content\\End_Of_Year_Sale' => __DIR__ . '/../..' . '/src/Tribe/Admin/Conditional_Content/End_Of_Year_Sale.php', 'Tribe\\Admin\\Conditional_Content\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Conditional_Content/Service_Provider.php', 'Tribe\\Admin\\Notice\\Date_Based' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Date_Based.php', 'Tribe\\Admin\\Notice\\Marketing\\Black_Friday' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing/Black_Friday.php', 'Tribe\\Admin\\Notice\\Marketing\\End_Of_Year_Sale' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing/End_Of_Year_Sale.php', 'Tribe\\Admin\\Notice\\Marketing\\Stellar_Sale' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing/Stellar_Sale.php', 'Tribe\\Admin\\Notice\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Service_Provider.php', 'Tribe\\Admin\\Notice\\WP_Version' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/WP_Version.php', 'Tribe\\Admin\\Pages' => __DIR__ . '/../..' . '/src/Tribe/Admin/Pages.php', 'Tribe\\Admin\\Settings' => __DIR__ . '/../..' . '/src/Tribe/Admin/Settings.php', 'Tribe\\Admin\\Troubleshooting' => __DIR__ . '/../..' . '/src/Tribe/Admin/Troubleshooting.php', 'Tribe\\Admin\\Upsell_Notice\\Main' => __DIR__ . '/../..' . '/src/Tribe/Admin/Upsell_Notice/Main.php', 'Tribe\\Admin\\Wysiwyg' => __DIR__ . '/../..' . '/src/Tribe/Admin/Wysiwyg.php', 'Tribe\\Customizer\\Control' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Control.php', 'Tribe\\Customizer\\Controls\\Heading' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Heading.php', 'Tribe\\Customizer\\Controls\\Number' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Number.php', 'Tribe\\Customizer\\Controls\\Radio' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Radio.php', 'Tribe\\Customizer\\Controls\\Range_Slider' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Range_Slider.php', 'Tribe\\Customizer\\Controls\\Separator' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Separator.php', 'Tribe\\Customizer\\Controls\\Toggle' => __DIR__ . '/../..' . '/src/Tribe/Customizer/Controls/Toggle.php', 'Tribe\\DB_Lock' => __DIR__ . '/../..' . '/src/Tribe/DB_Lock.php', 'Tribe\\Dialog\\View' => __DIR__ . '/../..' . '/src/Tribe/Dialog/View.php', 'Tribe\\Editor\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Editor/Compatibility.php', 'Tribe\\Editor\\Compatibility\\Classic_Editor' => __DIR__ . '/../..' . '/src/Tribe/Editor/Compatibility/Classic_Editor.php', 'Tribe\\Editor\\Compatibility\\Divi' => __DIR__ . '/../..' . '/src/Tribe/Editor/Compatibility/Divi.php', 'Tribe\\Log\\Action_Logger' => __DIR__ . '/../..' . '/src/Tribe/Log/Action_Logger.php', 'Tribe\\Log\\Canonical_Formatter' => __DIR__ . '/../..' . '/src/Tribe/Log/Canonical_Formatter.php', 'Tribe\\Log\\Monolog_Logger' => __DIR__ . '/../..' . '/src/Tribe/Log/Monolog_Logger.php', 'Tribe\\Log\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Log/Service_Provider.php', 'Tribe\\Models\\Post_Types\\Base' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Base.php', 'Tribe\\Models\\Post_Types\\Nothing' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Nothing.php', 'Tribe\\Onboarding\\Hints_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Onboarding/Hints_Abstract.php', 'Tribe\\Onboarding\\Main' => __DIR__ . '/../..' . '/src/Tribe/Onboarding/Main.php', 'Tribe\\Onboarding\\Tour_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Onboarding/Tour_Abstract.php', 'Tribe\\PUE\\Update_Prevention' => __DIR__ . '/../..' . '/src/Tribe/PUE/Update_Prevention.php', 'Tribe\\Repository\\Core_Read_Interface' => __DIR__ . '/../..' . '/src/Tribe/Repository/Core_Read_Interface.php', 'Tribe\\Repository\\Filter_Validation' => __DIR__ . '/../..' . '/src/Tribe/Repository/Filter_Validation.php', 'Tribe\\Service_Providers\\Body_Classes' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Body_Classes.php', 'Tribe\\Service_Providers\\Crons' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Crons.php', 'Tribe\\Service_Providers\\Dialog' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Dialog.php', 'Tribe\\Service_Providers\\Onboarding' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Onboarding.php', 'Tribe\\Service_Providers\\PUE' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/PUE.php', 'Tribe\\Service_Providers\\Shortcodes' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Shortcodes.php', 'Tribe\\Service_Providers\\Tooltip' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Tooltip.php', 'Tribe\\Service_Providers\\Widgets' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Widgets.php', 'Tribe\\Shortcode\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Manager.php', 'Tribe\\Shortcode\\Shortcode_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Shortcode_Abstract.php', 'Tribe\\Shortcode\\Shortcode_Interface' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Shortcode_Interface.php', 'Tribe\\Shortcode\\Utils' => __DIR__ . '/../..' . '/src/Tribe/Shortcode/Utils.php', 'Tribe\\Tooltip\\View' => __DIR__ . '/../..' . '/src/Tribe/Tooltip/View.php', 'Tribe\\Traits\\Cache_User' => __DIR__ . '/../..' . '/src/Tribe/Traits/Cache_User.php', 'Tribe\\Traits\\With_DB_Lock' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_DB_Lock.php', 'Tribe\\Traits\\With_Meta_Updates_Handling' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_Meta_Updates_Handling.php', 'Tribe\\Traits\\With_Post_Attribute_Detection' => __DIR__ . '/../..' . '/src/Tribe/Traits/With_Post_Attribute_Detection.php', 'Tribe\\Utils\\Body_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Body_Classes.php', 'Tribe\\Utils\\Collection_Interface' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Interface.php', 'Tribe\\Utils\\Collection_Trait' => __DIR__ . '/../..' . '/src/Tribe/Utils/Collection_Trait.php', 'Tribe\\Utils\\Compatibility_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Compatibility_Classes.php', 'Tribe\\Utils\\Date_I18n' => __DIR__ . '/../..' . '/src/Tribe/Utils/Date_I18n.php', 'Tribe\\Utils\\Date_I18n_Immutable' => __DIR__ . '/../..' . '/src/Tribe/Utils/Date_I18n_Immutable.php', 'Tribe\\Utils\\Element_Attributes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Attributes.php', 'Tribe\\Utils\\Element_Classes' => __DIR__ . '/../..' . '/src/Tribe/Utils/Element_Classes.php', 'Tribe\\Utils\\Lazy_Collection' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Collection.php', 'Tribe\\Utils\\Lazy_Events' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_Events.php', 'Tribe\\Utils\\Lazy_String' => __DIR__ . '/../..' . '/src/Tribe/Utils/Lazy_String.php', 'Tribe\\Utils\\Paths' => __DIR__ . '/../..' . '/src/Tribe/Utils/Paths.php', 'Tribe\\Utils\\Post_Thumbnail' => __DIR__ . '/../..' . '/src/Tribe/Utils/Post_Thumbnail.php', 'Tribe\\Utils\\Query' => __DIR__ . '/../..' . '/src/Tribe/Utils/Query.php', 'Tribe\\Utils\\Strings' => __DIR__ . '/../..' . '/src/Tribe/Utils/Strings.php', 'Tribe\\Utils\\Taxonomy' => __DIR__ . '/../..' . '/src/Tribe/Utils/Taxonomy.php', 'Tribe\\Utils\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Utils/Theme_Compatibility.php', 'Tribe\\Values\\Abstract_Currency' => __DIR__ . '/../..' . '/src/Tribe/Values/Abstract_Currency.php', 'Tribe\\Values\\Abstract_Value' => __DIR__ . '/../..' . '/src/Tribe/Values/Abstract_Value.php', 'Tribe\\Values\\Currency_Interface' => __DIR__ . '/../..' . '/src/Tribe/Values/Currency_Interface.php', 'Tribe\\Values\\Value_Calculation' => __DIR__ . '/../..' . '/src/Tribe/Values/Value_Calculation.php', 'Tribe\\Values\\Value_Formatting' => __DIR__ . '/../..' . '/src/Tribe/Values/Value_Formatting.php', 'Tribe\\Values\\Value_Interface' => __DIR__ . '/../..' . '/src/Tribe/Values/Value_Interface.php', 'Tribe\\Values\\Value_Update' => __DIR__ . '/../..' . '/src/Tribe/Values/Value_Update.php', 'Tribe\\Widget\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Widget/Manager.php', 'Tribe\\Widget\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Widget/Widget_Abstract.php', 'Tribe\\Widget\\Widget_Interface' => __DIR__ . '/../..' . '/src/Tribe/Widget/Widget_Interface.php');
-        public static function getInitializer(\Composer\Autoload\ClassLoader $loader)
-        {
-        }
-    }
 }
 namespace TEC\Common\Firebase\JWT {
     class BeforeValidException extends \UnexpectedValueException
@@ -34627,7 +34846,7 @@ namespace TEC\Common\Psr\Container {
     /**
      * Base interface representing a generic exception in a container.
      */
-    interface ContainerExceptionInterface
+    interface ContainerExceptionInterface extends \Throwable
     {
     }
 }
@@ -40053,6 +40272,20 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Concerns {
         {
         }
         /**
+         * Upsert allows for inserting or updating a row depending on whether it already exists.
+         *
+         * @since 1.0.8
+         *
+         * @param array<string, string|int|float|bool|null> $data The data to insert or update.
+         * @param array $match The columns to match on.
+         * @param string|array|null $format Array of formats to be mapped to each value in $data. If string, the format will be used for all values in $data.
+         *
+         * @return false|int Number of rows updated/inserted, false on error.
+         */
+        public function upsert($data, $match = [], $format = null)
+        {
+        }
+        /**
          * @since 1.0.0
          *
          * @return false|int
@@ -41799,6 +42032,2237 @@ namespace TEC\Common\StellarWP\Installer\Utils {
         }
     }
 }
+namespace TEC\Common\StellarWP\Models {
+    class Config
+    {
+        /**
+         * @var ?string
+         */
+        protected static $hookPrefix;
+        /**
+         * @var string
+         */
+        protected static $invalidArgumentException = \InvalidArgumentException::class;
+        /**
+         * Gets the hook prefix.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public static function getHookPrefix() : string
+        {
+        }
+        /**
+         * Gets the InvalidArgumentException class.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public static function getInvalidArgumentException() : string
+        {
+        }
+        /**
+         * Resets the class back to default.
+         *
+         * @since 1.0.0
+         *
+         * @return void
+         */
+        public static function reset()
+        {
+        }
+        /**
+         * Sets the hook prefix.
+         *
+         * @since 1.0.0
+         *
+         * @param string $hook_prefix
+         *
+         * @return void
+         */
+        public static function setHookPrefix(string $hook_prefix)
+        {
+        }
+        /**
+         * Allow for overriding the InvalidArgumentException class.
+         *
+         * @since 1.0.0
+         *
+         * @param string $class
+         *
+         * @return void
+         */
+        public static function setInvalidArgumentException(string $class)
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Models\Contracts {
+    /**
+     * @since 1.0.0
+     */
+    interface Arrayable
+    {
+        /**
+         * Get the instance as an array.
+         *
+         * @since 1.0.0
+         *
+         * @return array
+         */
+        public function toArray() : array;
+    }
+    interface Model
+    {
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string,mixed> $attributes Attributes.
+         */
+        public function __construct(array $attributes = []);
+        /**
+         * Fills the model with an array of attributes.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string,mixed> $attributes Attributes.
+         *
+         * @return Model
+         */
+        public function fill(array $attributes) : \TEC\Common\StellarWP\Models\Contracts\Model;
+        /**
+         * Returns an attribute from the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Attribute name.
+         *
+         * @return mixed
+         *
+         * @throws RuntimeException
+         */
+        public function getAttribute(string $key);
+        /**
+         * Returns the attributes that have been changed since last sync.
+         *
+         * @since 1.0.0
+         *
+         * @return array
+         */
+        public function getDirty() : array;
+        /**
+         * Returns the model's original attribute values.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $key Attribute name.
+         *
+         * @return mixed|array
+         */
+        public function getOriginal(string $key = null);
+        /**
+         * Determines if the model has the given property.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Property name.
+         *
+         * @return bool
+         */
+        public function hasProperty(string $key) : bool;
+        /**
+         * Determines if a given attribute is clean.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $attribute Attribute name.
+         *
+         * @return bool
+         */
+        public function isClean(string $attribute = null) : bool;
+        /**
+         * Determines if a given attribute is dirty.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $attribute Attribute name.
+         *
+         * @return bool
+         */
+        public function isDirty(string $attribute = null) : bool;
+        /**
+         * Validates an attribute to a PHP type.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Attribute name.
+         * @param mixed  $value Attribute value.
+         *
+         * @return bool
+         */
+        public function isPropertyTypeValid(string $key, $value) : bool;
+        /**
+         * Returns the property keys.
+         *
+         * @since 1.0.0
+         *
+         * @return int[]|string[]
+         */
+        public static function propertyKeys() : array;
+        /**
+         * Sets an attribute on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Attribute name.
+         * @param mixed  $value Attribute value.
+         *
+         * @return Model
+         */
+        public function setAttribute(string $key, $value) : \TEC\Common\StellarWP\Models\Contracts\Model;
+        /**
+         * Syncs the original attributes with the current.
+         *
+         * @since 1.0.0
+         *
+         * @return Model
+         */
+        public function syncOriginal() : \TEC\Common\StellarWP\Models\Contracts\Model;
+        /**
+         * Dynamically retrieves attributes on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Attribute name.
+         *
+         * @return mixed
+         */
+        public function __get(string $key);
+        /**
+         * Determines if an attribute exists on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Attribute name.
+         *
+         * @return bool
+         */
+        public function __isset(string $key);
+        /**
+         * Dynamically sets attributes on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Attribute name.
+         * @param mixed  $value Attribute value.
+         *
+         * @return void
+         */
+        public function __set(string $key, $value);
+    }
+    /**
+     * @since 1.0.0
+     */
+    interface ModelCrud
+    {
+        /**
+         * @since 1.0.0
+         *
+         * @param int $id
+         *
+         * @return Model
+         */
+        public static function find($id);
+        /**
+         * @since 1.0.0
+         *
+         * @param array $attributes
+         *
+         * @return Model
+         */
+        public static function create(array $attributes);
+        /**
+         * @since 1.0.0
+         *
+         * @return Model
+         */
+        public function save();
+        /**
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function delete() : bool;
+        /**
+         * @since 1.0.0
+         *
+         * @return ModelQueryBuilder
+         */
+        public static function query();
+    }
+    /**
+     * @since 1.0.0
+     */
+    interface ModelFromQueryBuilderObject
+    {
+        /**
+         * @since 1.0.0
+         *
+         * @param $object
+         *
+         * @return Model
+         */
+        public static function fromQueryBuilderObject($object);
+    }
+    /**
+     * @since 1.0.0
+     */
+    interface ModelHasFactory
+    {
+        /**
+         * @since 1.0.0
+         *
+         * @return ModelFactory
+         */
+        public static function factory();
+    }
+    /**
+     * @since 1.0.0
+     */
+    interface ModelReadOnly
+    {
+        /**
+         * @since 1.0.0
+         *
+         * @param int $id
+         *
+         * @return Model
+         */
+        public static function find($id);
+        /**
+         * @since 1.0.0
+         *
+         * @return ModelQueryBuilder
+         */
+        public static function query();
+        /**
+         * @since 1.0.0
+         *
+         * @param $object
+         *
+         * @return Model
+         */
+        public static function fromQueryBuilderObject($object);
+    }
+}
+namespace TEC\Common\StellarWP\Models {
+    abstract class DataTransferObject
+    {
+        /**
+         * Convert data from a query result object to a Model.
+         *
+         * @since 1.0.0
+         *
+         * @param $object
+         *
+         * @return self
+         */
+        public static abstract function fromObject($object);
+        /**
+         * Convert data from this object to a Model.
+         *
+         * @since 1.0.0
+         *
+         * @return Model
+         */
+        public abstract function toModel() : \TEC\Common\StellarWP\Models\Model;
+    }
+    abstract class Model implements \TEC\Common\StellarWP\Models\Contracts\Model, \TEC\Common\StellarWP\Models\Contracts\Arrayable, \JsonSerializable
+    {
+        /**
+         * The model's attributes.
+         *
+         * @var array<string,mixed>
+         */
+        protected $attributes = [];
+        /**
+         * The model attribute's original state.
+         *
+         * @var array<string,mixed>
+         */
+        protected $original = [];
+        /**
+         * The model properties assigned to their types.
+         *
+         * @var array<string,string>
+         */
+        protected $properties = [];
+        /**
+         * The model relationships assigned to their relationship types.
+         *
+         * @var array<string,string>
+         */
+        protected $relationships = [];
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string,mixed> $attributes Attributes.
+         */
+        public function __construct(array $attributes = [])
+        {
+        }
+        /**
+         * Fills the model with an array of attributes.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string,mixed> $attributes Attributes.
+         *
+         * @return ModelInterface
+         */
+        public function fill(array $attributes) : \TEC\Common\StellarWP\Models\Contracts\Model
+        {
+        }
+        /**
+         * Returns an attribute from the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key     Attribute name.
+         * @param mixed  $default Default value. Default is null.
+         *
+         * @return mixed
+         *
+         * @throws RuntimeException
+         */
+        public function getAttribute(string $key, $default = null)
+        {
+        }
+        /**
+         * Returns the attributes that have been changed since last sync.
+         *
+         * @since 1.0.0
+         *
+         * @return array<string,mixed>
+         */
+        public function getDirty() : array
+        {
+        }
+        /**
+         * Returns the model's original attribute values.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $key Attribute name.
+         *
+         * @return mixed|array
+         */
+        public function getOriginal(string $key = null)
+        {
+        }
+        /**
+         * Returns the default value for a property if one is provided, otherwise null.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Property name.
+         *
+         * @return mixed|null
+         */
+        protected function getPropertyDefault(string $key)
+        {
+        }
+        /**
+         * Returns the defaults for all the properties. If a default is omitted it defaults to null.
+         *
+         * @since 1.0.0
+         *
+         * @return array<string,mixed>
+         */
+        protected function getPropertyDefaults() : array
+        {
+        }
+        /**
+         * Get the property type
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Property name.
+         *
+         * @return string
+         */
+        protected function getPropertyType(string $key) : string
+        {
+        }
+        /**
+         * Returns a relationship.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Relationship name.
+         *
+         * @return Model|Model[]
+         */
+        protected function getRelationship(string $key)
+        {
+        }
+        /**
+         * Returns true if an attribute exists. Otherwise, false.
+         *
+         * @since 1.1.0
+         *
+         * @param string $key Attribute name.
+         *
+         * @return bool
+         */
+        protected function hasAttribute(string $key) : bool
+        {
+        }
+        /**
+         * Checks whether a relationship has already been loaded.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Relationship name.
+         *
+         * @return bool
+         */
+        protected function hasCachedRelationship(string $key) : bool
+        {
+        }
+        /**
+         * Determines if the model has the given property.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Property name.
+         *
+         * @return bool
+         */
+        public function hasProperty(string $key) : bool
+        {
+        }
+        /**
+         * Determine if a given attribute is clean.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $attribute Attribute name.
+         *
+         * @return bool
+         */
+        public function isClean(string $attribute = null) : bool
+        {
+        }
+        /**
+         * Determine if a given attribute is dirty.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $attribute Attribute name.
+         *
+         * @return bool
+         */
+        public function isDirty(string $attribute = null) : bool
+        {
+        }
+        /**
+         * Validates an attribute to a PHP type.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Property name.
+         * @param mixed  $value Property value.
+         *
+         * @return bool
+         */
+        public function isPropertyTypeValid(string $key, $value) : bool
+        {
+        }
+        /**
+         * Returns the object vars.
+         *
+         * @since 1.0.0
+         *
+         * @return array<string,mixed>
+         */
+        #[\ReturnTypeWillChange]
+        public function jsonSerialize()
+        {
+        }
+        /**
+         * Returns the property keys.
+         *
+         * @since 1.0.0
+         *
+         * @return int[]|string[]
+         */
+        public static function propertyKeys() : array
+        {
+        }
+        /**
+         * Sets an attribute on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Attribute name.
+         * @param mixed  $value Attribute value.
+         *
+         * @return ModelInterface
+         */
+        public function setAttribute(string $key, $value) : \TEC\Common\StellarWP\Models\Contracts\Model
+        {
+        }
+        /**
+         * Sets multiple attributes on the model.
+         *
+         * @since 1.2.0
+         *
+         * @param array<string,mixed> $attributes Attributes to set.
+         *
+         * @return ModelInterface
+         */
+        public function setAttributes(array $attributes) : \TEC\Common\StellarWP\Models\Contracts\Model
+        {
+        }
+        /**
+         * Syncs the original attributes with the current.
+         *
+         * @since 1.0.0
+         *
+         * @return ModelInterface
+         */
+        public function syncOriginal() : \TEC\Common\StellarWP\Models\Contracts\Model
+        {
+        }
+        /**
+         * Returns attributes.
+         *
+         * @since 1.0.0
+         *
+         * @return array<string,mixed>
+         */
+        public function toArray() : array
+        {
+        }
+        /**
+         * Validates that the given property exists
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Property name.
+         *
+         * @return void
+         */
+        protected function validatePropertyExists(string $key)
+        {
+        }
+        /**
+         * Validates that the given value is a valid type for the given property.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Property name.
+         * @param mixed  $value Property value.
+         *
+         * @return void
+         */
+        protected function validatePropertyType(string $key, $value)
+        {
+        }
+        /**
+         * Dynamically retrieves attributes on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Attribute name.
+         *
+         * @return mixed
+         */
+        public function __get(string $key)
+        {
+        }
+        /**
+         * Determines if an attribute exists on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Attribute name.
+         *
+         * @return bool
+         */
+        public function __isset(string $key)
+        {
+        }
+        /**
+         * Dynamically sets attributes on the model.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key   Attribute name.
+         * @param mixed  $value Attribute value.
+         *
+         * @return void
+         */
+        public function __set(string $key, $value)
+        {
+        }
+    }
+    /**
+     * @template M
+     */
+    abstract class ModelFactory
+    {
+        /**
+         * @var class-string<M>
+         */
+        protected $model;
+        /**
+         * @var int The number of models to create.
+         */
+        protected $count = 1;
+        /**
+         * @since 1.0.0
+         *
+         * @param class-string<M> $model
+         *
+         * @return void
+         */
+        public function __construct($model)
+        {
+        }
+        /**
+         * Define the model's default state.
+         */
+        public abstract function definition() : array;
+        /**
+         * @since 1.0.0
+         *
+         * @param array $attributes
+         *
+         * @return M|M[]
+         */
+        public function make(array $attributes = [])
+        {
+        }
+        /**
+         * @since 1.0.0
+         *
+         * @param array $attributes
+         *
+         * @return M|M[]
+         * @throws Exception
+         */
+        public function create(array $attributes = [])
+        {
+        }
+        /**
+         * Creates an instance of the model from the attributes and definition.
+         *
+         * @since 1.0.0
+         *
+         * @return M
+         */
+        protected function makeInstance(array $attributes)
+        {
+        }
+        /**
+         * Configure the factory.
+         *
+         * @since 1.0.0
+         */
+        public function configure() : self
+        {
+        }
+        /**
+         * Sets the number of models to generate.
+         *
+         * @since 1.0.0
+         */
+        public function count(int $count) : self
+        {
+        }
+    }
+    /**
+     * @since 1.0.0
+     */
+    class ModelQueryBuilder extends \TEC\Common\StellarWP\DB\QueryBuilder\QueryBuilder
+    {
+        /**
+         * @var class-string<Model>
+         */
+        protected $model;
+        /**
+         * @param class-string<Model> $modelClass
+         */
+        public function __construct(string $modelClass)
+        {
+        }
+        /**
+         * Returns the number of rows returned by a query
+         *
+         * @since 1.0.0
+         *
+         * @param null|string $column
+         */
+        public function count($column = null) : int
+        {
+        }
+        /**
+         * Get row
+         *
+         * @since 1.0.0
+         *
+         * @param string $output
+         *
+         * @return Model|null
+         */
+        public function get($output = OBJECT) : ?\TEC\Common\StellarWP\Models\Model
+        {
+        }
+        /**
+         * Get results
+         *
+         * @since 1.0.0
+         *
+         * @return Model[]|null
+         */
+        public function getAll($output = OBJECT) : ?array
+        {
+        }
+        /**
+         * Get row as model
+         *
+         * @since 1.0.0
+         *
+         * @param object|null $row
+         *
+         * @return Model|null
+         */
+        protected function getRowAsModel($row)
+        {
+        }
+        /**
+         * Get results as models
+         *
+         * @since 1.0.0
+         *
+         * @param object[] $results
+         *
+         * @return Model[]|null
+         */
+        protected function getAllAsModel(array $results)
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Models\Repositories\Contracts {
+    interface Deletable
+    {
+        /**
+         * Inserts a model record.
+         *
+         * @since 1.0.0
+         *
+         * @param Model $model
+         *
+         * @return bool
+         */
+        public function delete(\TEC\Common\StellarWP\Models\Contracts\Model $model) : bool;
+    }
+    interface Insertable
+    {
+        /**
+         * Inserts a model record.
+         *
+         * @since 1.0.0
+         *
+         * @param Model $model
+         *
+         * @return Model
+         */
+        public function insert(\TEC\Common\StellarWP\Models\Contracts\Model $model) : \TEC\Common\StellarWP\Models\Contracts\Model;
+    }
+    interface Updatable
+    {
+        /**
+         * Inserts a model record.
+         *
+         * @since 1.0.0
+         *
+         * @param Model $model
+         *
+         * @return Model
+         */
+        public function update(\TEC\Common\StellarWP\Models\Contracts\Model $model) : \TEC\Common\StellarWP\Models\Contracts\Model;
+    }
+}
+namespace TEC\Common\StellarWP\Models\Repositories {
+    abstract class Repository
+    {
+        /**
+         * Prepare a query builder for the repository.
+         *
+         * @since 1.0.0
+         *
+         * @return ModelQueryBuilder
+         */
+        abstract function prepareQuery() : \TEC\Common\StellarWP\Models\ModelQueryBuilder;
+    }
+}
+namespace TEC\Common\StellarWP\Models\ValueObjects {
+    /**
+     * Model Relationships
+     *
+     * @since 2.19.6
+     *
+     * @method static HAS_ONE();
+     * @method static HAS_MANY();
+     * @method static MANY_TO_MANY();
+     * @method static BELONGS_TO();
+     * @method static BELONGS_TO_MANY();
+     */
+    class Relationship
+    {
+        const HAS_ONE = 'has-one';
+        const HAS_MANY = 'has-many';
+        const MANY_TO_MANY = 'many-to-many';
+        const BELONGS_TO = 'belongs-to';
+        const BELONGS_TO_MANY = 'belongs-to-many';
+    }
+}
+namespace TEC\Common\StellarWP\Schema {
+    /**
+     * Class Activation
+     *
+     * @since   1.0.0
+     *
+     * @package StellarWP\WPTables
+     */
+    class Activation
+    {
+        /**
+         * The name of the transient that will be used to flag whether the library activated
+         * or not.
+         *
+         * @since 1.0.0
+         */
+        const ACTIVATION_TRANSIENT = 'stellar_schema_builder_initialized';
+        /**
+         * Handles the activation of the feature functions.
+         *
+         * @since 1.0.0
+         */
+        public static function activate()
+        {
+        }
+        /**
+         * Checks the state to determine if whether we can create custom tables.
+         *
+         * This method will run once a day (using transients).
+         *
+         * @since 1.0.0
+         */
+        public static function init()
+        {
+        }
+    }
+    class Builder
+    {
+        /**
+         * Container.
+         *
+         * @var object
+         */
+        protected $container;
+        /**
+         * StellarWP\DB class.
+         *
+         * @var string
+         */
+        protected $db;
+        /**
+         * Constructor.
+         *
+         * @param string|null $db StellarWP\DB class.
+         * @param object $container Container instance.
+         */
+        public function __construct($db = null, $container = null)
+        {
+        }
+        /**
+         * Whether all the custom tables exist or not. Does not check custom fields.
+         *
+         * Note: the method will return `false` if even one table is missing.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $group An optional group name to restrict the check to.
+         *
+         * @return bool Whether all custom tables exist or not. Does not check custom fields.
+         */
+        public function all_tables_exist($group = null)
+        {
+        }
+        /**
+         * Trigger actions to drop the custom tables.
+         *
+         * @since 1.0.0
+         */
+        public function down()
+        {
+        }
+        /**
+         * Empties the plugin custom tables.
+         *
+         * @since 1.0.0
+         */
+        public function empty_custom_tables()
+        {
+        }
+        /**
+         * Get the registered field handlers.
+         *
+         * @since 1.0.0
+         *
+         * @return Fields\Collection
+         */
+        public function get_registered_field_schemas() : \TEC\Common\StellarWP\Schema\Fields\Collection
+        {
+        }
+        /**
+         * Get the md5 hash of all the registered schemas classes with their versions.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public function get_registered_schemas_version_hash() : string
+        {
+        }
+        /**
+         * Get the registered table handlers.
+         *
+         * @since 1.0.0
+         *
+         * @return Tables\Collection
+         */
+        public function get_registered_table_schemas() : \TEC\Common\StellarWP\Schema\Tables\Collection
+        {
+        }
+        /**
+         * Get the registered table handlers that need updates.
+         *
+         * @since 1.0.0
+         *
+         * @return Tables\Collection
+         */
+        public function get_table_schemas_that_need_updates()
+        {
+        }
+        /**
+         * Filters the list of tables for a blog adding the ones created by the plugin.
+         *
+         * @since 1.0.0
+         *
+         * @param array $tables An array of table names for the blog.
+         *
+         * @return array<string> A filtered array of table names, including prefix.
+         */
+        public function filter_tables_list($tables)
+        {
+        }
+        /**
+         * Registers the custom table names as properties on the `wpdb` global.
+         *
+         * @since 1.0.0
+         */
+        public function register_custom_tables_names()
+        {
+        }
+        /**
+         * Creates or updates the custom tables the plugin will use.
+         *
+         * @since 1.0.0
+         *
+         * @param bool $force Whether to force the creation or update of the tables or not.
+         *
+         * @return array<mixed> A list of each creation or update result.
+         */
+        public function up($force = false)
+        {
+        }
+        /**
+         * A proxy method to update the tables without forcing
+         * them.
+         *
+         * If the `update_tables` was directly hooked to the blog
+         * switches, then the blog ID, a positive integer, would be
+         * cast to a truthy value and force the table updates when
+         * not really required to.
+         *
+         * @since 1.0.0
+         *
+         * @return array<mixed> A list of each creation or update result.
+         */
+        public function update_blog_tables()
+        {
+        }
+    }
+    class Config
+    {
+        /**
+         * Get the container.
+         *
+         * @return ContainerInterface
+         */
+        public static function get_container() : \TEC\Common\StellarWP\ContainerContract\ContainerInterface
+        {
+        }
+        /**
+         * Get the StellarWP\DB class.
+         *
+         * @return string
+         */
+        public static function get_db() : string
+        {
+        }
+        /**
+         * Returns whether the container has been set.
+         *
+         * @return bool
+         */
+        public static function has_container() : bool
+        {
+        }
+        /**
+         * Returns whether the db has been set.
+         *
+         * @return bool
+         */
+        public static function has_db() : bool
+        {
+        }
+        /**
+         * Set the container object.
+         *
+         * @param ContainerInterface $container Container object.
+         */
+        public static function set_container(\TEC\Common\StellarWP\ContainerContract\ContainerInterface $container)
+        {
+        }
+        /**
+         * Set the StellarWP\DB class.
+         *
+         * @param string $db_class StellarWP\DB class.
+         */
+        public static function set_db(string $db_class)
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema\Fields {
+    class Collection implements \ArrayAccess, \Countable, \Iterator
+    {
+        /**
+         * Adds a table to the collection.
+         *
+         * @since 1.0.0
+         *
+         * @param Schema_Interface $field Field instance.
+         *
+         * @return mixed
+         */
+        public function add(\TEC\Common\StellarWP\Schema\Fields\Contracts\Schema_Interface $field)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function count() : int
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        #[\ReturnTypeWillChange]
+        public function current()
+        {
+        }
+        /**
+         * Alias method for offsetGet.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Field slug.
+         *
+         * @return Schema_Interface
+         */
+        public function get(string $key) : \TEC\Common\StellarWP\Schema\Fields\Contracts\Schema_Interface
+        {
+        }
+        /**
+         * Gets fields by table.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string>|string $tables Tables to filter fields by.
+         * @param \Iterator $iterator Optional. Iterator to filter.
+         *
+         * @return Filters\Table_FilterIterator
+         */
+        public function get_by_table($tables, $iterator = null) : \TEC\Common\StellarWP\Schema\Fields\Filters\Table_FilterIterator
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function key() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function next() : void
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function offsetExists($offset) : bool
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        #[\ReturnTypeWillChange]
+        public function offsetGet($offset)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        #[\ReturnTypeWillChange]
+        public function offsetSet($offset, $value) : void
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        #[\ReturnTypeWillChange]
+        public function offsetUnset($offset) : void
+        {
+        }
+        /**
+         * Helper function for removing a table from the collection.
+         *
+         * @since 1.0.0
+         *
+         * @param string $name Table name.
+         */
+        public function remove($name) : void
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function rewind() : void
+        {
+        }
+        /**
+         * Sets a table in the collection.
+         *
+         * @since 1.0.0
+         *
+         * @param string $name Field name.
+         * @param Schema_Interface $field Field instance.
+         *
+         * @return mixed
+         */
+        public function set($name, \TEC\Common\StellarWP\Schema\Fields\Contracts\Schema_Interface $field)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function valid() : bool
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema\Fields\Contracts {
+    /**
+     * Interface Custom_Field_Interface
+     *
+     * @since   1.0.0
+     *
+     * @package TEC\Common\StellarWP\Schema\Fields\Contracts
+     */
+    interface Schema_Interface
+    {
+        /**
+         * Allows extending classes that require it to run some methods
+         * immediately after the table creation or update.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string,string> $results A map of results in the format
+         *                                      returned by the `dbDelta` function.
+         *
+         * @return array<string,string> A map of results in the format returned by
+         *                              the `dbDelta` function.
+         */
+        public function after_update(array $results);
+        /**
+         * Drop the custom fields.
+         *
+         * @since 1.0.0
+         *
+         * @return bool `true` if successful operation, `false` to indicate a failure.
+         */
+        public function drop();
+        /**
+         * Gets the custom slug identifier that should identify this field schema.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public static function get_schema_slug();
+        /**
+         * Returns the SQL to be injected into CREATE TABLE statement for the fields and indexes being created in the format supported
+         * by the `dbDelta` function.
+         *
+         * @since 1.0.0
+         *
+         * @return string The table creation SQL for the fields and indexes being created, in the format supported
+         *                by the `dbDelta` function.
+         */
+        public function get_sql();
+        /**
+         * The organizational group this field schema belongs to.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public static function group_name();
+        /**
+         * A reference to the table definition we are modifying with new fields.
+         *
+         * @since 1.0.0
+         *
+         * @return Table|null
+         */
+        public function table_schema();
+    }
+    /**
+     * Class Field
+     *
+     * @since   1.0.0
+     *
+     * @package TEC\Common\StellarWP\Schema\Fields\Contracts
+     */
+    abstract class Field implements \TEC\Common\StellarWP\Schema\Fields\Contracts\Schema_Interface
+    {
+        /**
+         * @since 1.0.0
+         *
+         * @var string|null The version number for this schema definition.
+         */
+        const SCHEMA_VERSION = null;
+        /**
+         * @since 1.0.0
+         *
+         * @var string The base table name.
+         */
+        protected static $base_table_name = '';
+        /**
+         * @var object The dependency injection container.
+         */
+        protected $container;
+        /**
+         * @var string The db class.
+         */
+        protected $db;
+        /**
+         * @since 1.0.0
+         *
+         * @var string The slug used to identify the custom field alterations.
+         */
+        protected static $schema_slug = '';
+        /**
+         * @since 1.0.0
+         *
+         * @var array<string> Custom fields defined in this field schema.
+         */
+        protected $fields = [];
+        /**
+         * @var string The organizational group this field set belongs to.
+         */
+        protected static $group = '';
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         *
+         * @param string $db StellarWP\DB object.
+         * @param object $container The container to use.
+         */
+        public function __construct($db = null, $container = null)
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function after_update(array $results)
+        {
+        }
+        /**
+         * Gets the base table name.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public static function base_table_name()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function drop()
+        {
+        }
+        /**
+         * Returns whether a fields' schema definition exists in the table or not.
+         *
+         * @since 1.0.0
+         *
+         * @return bool Whether a set of fields exists in the database or not.
+         */
+        public function exists()
+        {
+        }
+        /**
+         * Fields being added to the table.
+         *
+         * @since 1.0.0
+         *
+         * @return array<string>
+         */
+        public function fields()
+        {
+        }
+        /**
+         * The base table name of the schema.
+         *
+         * @since 1.0.0
+         */
+        public static function get_schema_slug()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function get_sql()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        protected abstract function get_definition();
+        /**
+         * Gets the field schema's version.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public function get_version() : string
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public static function group_name()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function table_schema()
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema\Fields\Filters {
+    class Table_FilterIterator extends \FilterIterator implements \Countable
+    {
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         *
+         * @param string|array<string> $tables Tables to filter.
+         * @param \Iterator $iterator Iterator to filter.
+         */
+        public function __construct($tables, \Iterator $iterator)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function accept() : bool
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function count() : int
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema {
+    /**
+     * Class Full_Activation_Provider
+     *
+     * @since   1.0.0
+     *
+     * @package StellarWP\Schema
+     */
+    class Full_Activation_Provider
+    {
+        /**
+         * Constructor.
+         *
+         * @param object $container
+         */
+        public function __construct($container = null)
+        {
+        }
+        /**
+         * Registers the filters and implementations required by the Custom Tables implementation.
+         *
+         * @since 1.0.0
+         *
+         * @return bool Whether the Provider did register or not.
+         */
+        public function register()
+        {
+        }
+    }
+    /**
+     * A helper class for registering StellarWP Schema resources.
+     */
+    class Register
+    {
+        /**
+         * Register a field schema.
+         *
+         * @since 1.0.0
+         *
+         * @param string|Fields\Contracts\Field $field Field class.
+         *
+         * @return Fields\Contracts\Schema_Interface
+         */
+        public static function field($field)
+        {
+        }
+        /**
+         * Register multiple field schemas.
+         *
+         * @since 1.0.0
+         *
+         * @param array<mixed> $fields Fields to register.
+         *
+         * @return Fields\Collection
+         */
+        public static function fields(array $fields)
+        {
+        }
+        /**
+         * Removes a field from the register.
+         *
+         * @since 1.0.0
+         *
+         * @param string|Fields\Contracts\Schema_Interface $field Field Schema class.
+         *
+         * @return Fields\Contracts\Schema_Interface
+         */
+        public static function remove_field($field)
+        {
+        }
+        /**
+         * Removes a table from the register.
+         *
+         * @since 1.0.0
+         *
+         * @param string|Tables\Contracts\Schema_Interface $table Table Schema class.
+         *
+         * @return Tables\Contracts\Schema_Interface
+         */
+        public static function remove_table($table)
+        {
+        }
+        /**
+         * Register a table schema.
+         *
+         * @since 1.0.0
+         *
+         * @param string|Tables\Contracts\Table $table Table class.
+         *
+         * @return Tables\Contracts\Schema_Interface
+         */
+        public static function table($table)
+        {
+        }
+        /**
+         * Register multiple table schemas.
+         *
+         * @since 1.0.0
+         *
+         * @param array<mixed> $tables Tables to register.
+         *
+         * @return Tables\Collection
+         */
+        public static function tables(array $tables)
+        {
+        }
+    }
+    class Schema
+    {
+        const VERSION = '1.1.0';
+        /**
+         * Gets the Builder.
+         *
+         * @since 1.0.0
+         *
+         * @return Builder
+         */
+        public static function builder()
+        {
+        }
+        /**
+         * Gets the field collection.
+         *
+         * @since 1.0.0
+         *
+         * @return Fields\Collection
+         */
+        public static function fields()
+        {
+        }
+        /**
+         * Initializes the service provider.
+         *
+         * @since 1.0.0
+         */
+        public static function init() : void
+        {
+        }
+        /**
+         * Constructor.
+         *
+         * @param object $container
+         */
+        public function __construct($container = null)
+        {
+        }
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 1.0.0
+         */
+        public function register()
+        {
+        }
+        /**
+         * Gets the table collection.
+         *
+         * @since 1.0.0
+         *
+         * @return Tables\Collection
+         */
+        public static function tables()
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema\Tables {
+    class Collection implements \ArrayAccess, \Countable, \Iterator
+    {
+        /**
+         * Adds a table to the collection.
+         *
+         * @since 1.0.0
+         *
+         * @param Schema_Interface $table Table instance.
+         *
+         * @return mixed
+         */
+        public function add(\TEC\Common\StellarWP\Schema\Tables\Contracts\Schema_Interface $table)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function count() : int
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        #[\ReturnTypeWillChange]
+        public function current()
+        {
+        }
+        /**
+         * Alias method for offsetGet.
+         *
+         * @since 1.0.0
+         *
+         * @param string $key Table base name.
+         *
+         * @return Schema_Interface
+         */
+        public function get(string $key) : \TEC\Common\StellarWP\Schema\Tables\Contracts\Schema_Interface
+        {
+        }
+        /**
+         * Gets tables by group.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string>|string $groups Groups to filter tables by.
+         * @param \Iterator $iterator Optional. Iterator to filter.
+         *
+         * @return Filters\Group_FilterIterator
+         */
+        public function get_by_group($groups, $iterator = null) : \TEC\Common\StellarWP\Schema\Tables\Filters\Group_FilterIterator
+        {
+        }
+        /**
+         * Gets tables that need updates.
+         *
+         * @since 1.0.0
+         *
+         * @param \Iterator $iterator Optional. Iterator to filter.
+         *
+         * @return Filters\Needs_Update_FilterIterator
+         */
+        public function get_tables_needing_updates($iterator = null) : \TEC\Common\StellarWP\Schema\Tables\Filters\Needs_Update_FilterIterator
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function key() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function next() : void
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function offsetExists($offset) : bool
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        #[\ReturnTypeWillChange]
+        public function offsetGet($offset)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function offsetSet($offset, $value) : void
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function offsetUnset($offset) : void
+        {
+        }
+        /**
+         * Helper function for removing a table from the collection.
+         *
+         * @since 1.0.0
+         *
+         * @param string $name Table name.
+         */
+        public function remove($name) : void
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function rewind() : void
+        {
+        }
+        /**
+         * Sets a table in the collection.
+         *
+         * @since 1.0.0
+         *
+         * @param string $name Table name.
+         * @param Schema_Interface $table Table instance.
+         *
+         * @return mixed
+         */
+        public function set($name, \TEC\Common\StellarWP\Schema\Tables\Contracts\Schema_Interface $table)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function valid() : bool
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema\Tables\Contracts {
+    /**
+     * Interface Schema_Interface
+     *
+     * @since   1.0.0
+     *
+     * @package TEC\Common\StellarWP\Schema\Tables\Contracts
+     */
+    interface Schema_Interface
+    {
+        /**
+         * Returns the custom table name.
+         *
+         * @since 1.0.0
+         *
+         * @return string The base custom table name.
+         */
+        public static function base_table_name();
+        /**
+         * Drop the custom table.
+         *
+         * @since 1.0.0
+         *
+         * @return boolean `true` if successful operation, `false` to indicate a failure.
+         */
+        public function drop();
+        /**
+         * Empties the custom table.
+         *
+         * @since 1.0.0
+         *
+         * @return int|false The number of removed rows, or `false` to indicate a failure.
+         */
+        public function empty_table();
+        /**
+         * Returns whether a table exists or not in the database.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function exists();
+        /**
+         * The base table name of the schema.
+         *
+         * @since 1.0.0
+         */
+        public static function get_schema_slug();
+        /**
+         * Returns the table creation SQL with all field schema SQL injected,
+         * in the format supported by the `dbDelta` function.
+         *
+         * @since 1.0.0
+         *
+         * @return string The table & field schema creation SQL, in the format supported
+         *                by the `dbDelta` function.
+         */
+        public function get_sql();
+        /**
+         * Gets the table schema's version.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public function get_version() : string;
+        /**
+         * The organizational group this table belongs to.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public static function group_name();
+        /**
+         * References our stored version versus the version defined in the class.
+         *
+         * @since 1.0.0
+         *
+         * @return bool Whether our latest schema has been applied.
+         */
+        public function is_schema_current();
+        /**
+         * Returns the custom table name.
+         *
+         * @since 1.0.0
+         *
+         * @param bool $with_prefix Whether to include the table prefix or not.
+         *
+         * @return string The custom table name, prefixed by the current `wpdb` prefix,
+         *                if required.
+         */
+        public static function table_name($with_prefix = true);
+        /**
+         * Returns the name of the column that is guaranteed to uniquely identify an
+         * entry across updates.
+         *
+         * @since 1.0.0
+         *
+         * @return string The name of the column that is guaranteed to uniquely identify an
+         *                entry across updates.
+         */
+        public static function uid_column();
+        /**
+         * Creates, or updates, the custom table.
+         *
+         * @since 1.0.0
+         *
+         * @return array<string,string> A map of results in the format returned by
+         *                              the `dbDelta` function.
+         */
+        public function update();
+    }
+    abstract class Table implements \TEC\Common\StellarWP\Schema\Tables\Contracts\Schema_Interface
+    {
+        /**
+         * @var string|null The version number for this schema definition.
+         */
+        const SCHEMA_VERSION = null;
+        /**
+         * @var string The base table name.
+         */
+        protected static $base_table_name = '';
+        /**
+         * @var string The db class.
+         */
+        protected $db;
+        /**
+         * @var object The dependency injection container.
+         */
+        protected $container;
+        /**
+         * @var \Iterator The filtered field collection that applies to this table.
+         */
+        protected $field_schemas = null;
+        /**
+         * @var string The organizational group this table belongs to.
+         */
+        protected static $group = '';
+        /**
+         * @since 1.0.0
+         *
+         * @var string|null The slug used to identify the custom table.
+         */
+        protected static $schema_slug;
+        /**
+         * @var string The field that uniquely identifies a row in the table.
+         */
+        protected static $uid_column = '';
+        /**
+         * Ordered collection of table update methods.
+         *
+         * Keys should be the SCHEMA_VERSION and the values should be the method to call.
+         *
+         * @var array<string>
+         */
+        protected $updates = [];
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         *
+         * @param string $db StellarWP\DB object.
+         * @param object $container The container to use.
+         */
+        public function __construct($db = null, $container = null)
+        {
+        }
+        /**
+         * Allows extending classes that require it to run some methods
+         * immediately after the table creation or update.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string,string> $results A map of results in the format
+         *                                      returned by the `dbDelta` function.
+         *
+         * @return array<string,string> A map of results in the format returned by
+         *                              the `dbDelta` function.
+         */
+        protected function after_update(array $results)
+        {
+        }
+        /**
+         * Archives the current stored version of the schema.
+         */
+        public function archive_previous_version()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public static function base_table_name()
+        {
+        }
+        /**
+         * Clear our stored version.
+         */
+        protected function clear_stored_version()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function drop()
+        {
+        }
+        /**
+         * Empties the custom table.
+         *
+         * @since 1.0.0
+         *
+         * @return int|false The number of removed rows, or `false` to indicate a failure.
+         */
+        public function empty_table()
+        {
+        }
+        /**
+         * Returns whether a table exists in the database or not.
+         *
+         * @since 1.0.0
+         *
+         * @return bool Whether a table exists in the database or not.
+         */
+        public function exists()
+        {
+        }
+        /**
+         * Gets the defined fields schemas for the table.
+         *
+         * @since 1.0.0
+         *
+         * @param bool $force Force a refresh of the field collection.
+         *
+         * @return \Iterator
+         */
+        public function get_field_schemas(bool $force = false)
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public static function get_schema_slug()
+        {
+        }
+        /**
+         * Gets the properly namespaced schema version option key.
+         *
+         * @since 1.0.0
+         *
+         * @return string The properly namespaced schema version option key.
+         */
+        public function get_schema_previous_version_option() : string
+        {
+        }
+        /**
+         * Gets the properly namespaced schema version option key.
+         *
+         * @since 1.0.0
+         *
+         * @return string The properly namespaced schema version option key.
+         */
+        public function get_schema_version_option() : string
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function get_sql()
+        {
+        }
+        /**
+         * Gets the previous schema version option value.
+         *
+         * @since 1.0.0
+         *
+         * @return string|null The previous version stored in wp_options.
+         */
+        public function get_stored_previous_version()
+        {
+        }
+        /**
+         * Gets the current schema version option value.
+         *
+         * @since 1.0.0
+         *
+         * @return string|null The current version stored in wp_options.
+         */
+        public function get_stored_version()
+        {
+        }
+        /**
+         * Returns the table creation SQL in the format supported
+         * by the `dbDelta` function.
+         *
+         * @since 1.0.0
+         *
+         * @return string The table creation SQL, in the format supported
+         *                by the `dbDelta` function.
+         */
+        protected abstract function get_definition();
+        /**
+         * {@inheritdoc}
+         */
+        public function get_version() : string
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public static function group_name()
+        {
+        }
+        /**
+         * Checks if an index already exists on the table.
+         *
+         * @since 1.0.0
+         *
+         * @param string      $index      The name of the index to check for.
+         * @param string|null $table_name The table name to search the index for, or `null`
+         *                                to use this table name.
+         *
+         * @return bool Whether the table already has an index or not.
+         */
+        public function has_index($index, $table_name = null)
+        {
+        }
+        /**
+         * Inject field schema definitions into the CREATE TABLE SQL.
+         *
+         * @since 1.0.0
+         *
+         * @param Field_Schema_Interface $field_schema The field schema to inject.
+         * @param string $sql The CREATE TABLE SQL to inject into.
+         *
+         * @return string
+         */
+        protected function inject_field_schema(\TEC\Common\StellarWP\Schema\Fields\Contracts\Schema_Interface $field_schema, $sql) : string
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function is_schema_current()
+        {
+        }
+        /**
+         * Update our stored version with what we have defined.
+         */
+        public function sync_stored_version()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public static function table_name($with_prefix = true)
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public static function uid_column()
+        {
+        }
+        /**
+         * {@inheritdoc}
+         */
+        public function update()
+        {
+        }
+        /**
+         * Checks if a foreign key exists on a table.
+         *
+         * @since TBD
+         *
+         * @param string $foreign_key The foreign key to check for.
+         * @param string|null $table_name The table name to check. Defaults to the current table.
+         *
+         * @return bool Whether the foreign key exists on the table.
+         */
+        public function has_foreign_key(string $foreign_key, string $table_name = null) : bool
+        {
+        }
+    }
+}
+namespace TEC\Common\StellarWP\Schema\Tables\Filters {
+    class Group_FilterIterator extends \FilterIterator implements \Countable
+    {
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         *
+         * @param array<string> $groups Paths to filter.
+         * @param \Iterator $iterator Iterator to filter.
+         */
+        public function __construct(array $groups, \Iterator $iterator)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function accept() : bool
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function count() : int
+        {
+        }
+    }
+    class Needs_Update_FilterIterator extends \FilterIterator implements \Countable
+    {
+        /**
+         * @inheritDoc
+         */
+        public function accept() : bool
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function count() : int
+        {
+        }
+    }
+}
 namespace TEC\Common\StellarWP\Telemetry\Contracts {
     /**
      * Interface Subscriber_Interface
@@ -41945,7 +44409,7 @@ namespace TEC\Common\StellarWP\Telemetry {
          *
          * @since 1.0.0
          *
-         * @var \TEC\Common\StellarWP\ContainerContract\ContainerInterface
+         * @var ?\TEC\Common\StellarWP\ContainerContract\ContainerInterface
          */
         protected static $container;
         /**
@@ -43251,11 +45715,411 @@ namespace TEC\Common\StellarWP\Telemetry {
         }
     }
 }
+namespace TEC\Events\Block_Templates {
+    /**
+     * Interface Block_Template_Contract
+     *
+     * @since 6.3.3 Moved and decoupled from Block API requirements, focusing on Template requirements.
+     * @since 6.2.7
+     */
+    interface Block_Template_Contract
+    {
+        /**
+         * Which is the name/slug of this template block.
+         *
+         * @since 6.3.3
+         *
+         * @return string
+         */
+        public function slug();
+        /**
+         * The Block ID.
+         *
+         * @since 6.2.7
+         *
+         * @return string
+         */
+        public function id() : string;
+        /**
+         * The getter for this template service to retrieve a hydrated WP_Block_Template.
+         *
+         * @since 6.2.7
+         *
+         * @return WP_Block_Template|null
+         */
+        public function get_block_template() : ?\WP_Block_Template;
+    }
+}
+namespace TEC\Events\Block_Templates\Archive_Events {
+    /**
+     * Class Archive_Block_Template
+     *
+     * @since 6.3.3 Moved and renamed class, decoupled from Tribe__Editor__Blocks__Abstract.
+     * @since   6.2.7
+     *
+     * @package TEC\Events\Block_Templates\Archive_Events
+     */
+    class Archive_Block_Template implements \TEC\Events\Block_Templates\Block_Template_Contract
+    {
+        /**
+         * @since 6.3.3
+         *
+         * @var Block The registered block for this template.
+         */
+        protected \TEC\Events\Blocks\Archive_Events\Block $block;
+        /**
+         * Constructor for Single Venue Block Template.
+         *
+         * @since 6.3.3
+         *
+         * @param Block $block The registered Block for Single Venue.
+         */
+        public function __construct(\TEC\Events\Blocks\Archive_Events\Block $block)
+        {
+        }
+        /**
+         * Which is the name/slug of this template block.
+         *
+         * @since 6.3.3
+         *
+         * @return string
+         */
+        public function slug() : string
+        {
+        }
+        /**
+         * The ID of this block.
+         *
+         * @since 6.2.7
+         *
+         * @return string The WP Block Template ID.
+         */
+        public function id() : string
+        {
+        }
+        /**
+         * Creates then returns the WP_Block_Template object for archive events.
+         *
+         * @since 6.2.7
+         *
+         * @return null|WP_Block_Template The hydrated archive events template object.
+         */
+        protected function create_wp_block_template() : ?\WP_Block_Template
+        {
+        }
+        /**
+         * Creates if non-existent theme post, then returns the WP_Block_Template object for archive events.
+         *
+         * @since 6.2.7
+         *
+         * @return null|WP_Block_Template The hydrated archive events template object.
+         */
+        public function get_block_template() : ?\WP_Block_Template
+        {
+        }
+    }
+}
+namespace TEC\Events\Block_Templates {
+    /**
+     * Class Controller
+     *
+     * @since 6.3.3 Moved and decoupled from Block API requirements, focusing on Template requirements.
+     * @since   6.2.7
+     *
+     * @package TEC\Events\Block_Templates
+     */
+    class Controller extends \TEC\Common\Contracts\Provider\Controller
+    {
+        /**
+         * Register the provider.
+         *
+         * @since 6.2.7
+         */
+        public function do_register() : void
+        {
+        }
+        /**
+         * Unhooks actions and filters.
+         *
+         * @since 6.2.7
+         */
+        public function unregister() : void
+        {
+        }
+        /**
+         * Should only be active if we are in a Site Editor theme.
+         *
+         * @since 6.2.7
+         *
+         * @return bool Only active during FS theme.
+         */
+        public function is_active() : bool
+        {
+        }
+        /**
+         * Internal FSE function for asset conditional testing.
+         *
+         * @since 5.14.2
+         *
+         * @return bool Whether The current theme supports full-site editing or not.
+         */
+        public function is_full_site_editor() : bool
+        {
+        }
+        /**
+         * Adds the filters required by the FSE components.
+         *
+         * @since 5.14.2
+         * @since 6.2.7 Adding support for block templates.
+         */
+        protected function add_filters()
+        {
+        }
+        /**
+         * Removes registered filters.
+         *
+         * @since 6.2.7
+         */
+        public function remove_filters()
+        {
+        }
+        /**
+         * Redirect the post type template to our Events Archive slug, as that is what is used for lookup in the database.
+         *
+         * @since 6.2.7
+         *
+         * @param string[] $templates Templates in order of display hierarchy.
+         *
+         * @return string[] Adjusted file name that is parsed to match our block template.
+         */
+        public function filter_archive_template_hierarchy($templates)
+        {
+        }
+        /**
+         * Redirect the post type template to our Single Event slug, as that is what is used for lookup in the database.
+         *
+         * @since 6.2.7
+         *
+         * @param array $templates Templates in order of display hierarchy.
+         *
+         * @return array Adjusted file name that is parsed to match our block template.
+         */
+        public function filter_single_template_hierarchy($templates)
+        {
+        }
+        /**
+         * Adds the archive template to the array of block templates.
+         *
+         * @since 5.14.2
+         * @since 6.2.7 Added support for single event templates.
+         *
+         * @param WP_Block_Template[] $query_result Array of found block templates.
+         * @param array               $query        {
+         *                                          Optional. Arguments to retrieve templates.
+         *
+         * @type array                $slug__in     List of slugs to include.
+         * @type int                  $wp_id        Post ID of customized template.
+         * }
+         *
+         * @return array The modified $query.
+         */
+        public function filter_include_templates($query_result, $query, $template_type)
+        {
+        }
+        /**
+         * Fetch our Block Template by ID.
+         *
+         * @since 6.2.7
+         *
+         * @param null|WP_Block_Template $block_template The filtered template.
+         * @param string                 $id             The block template ID.
+         * @param string                 $template_type  The template type.
+         *
+         * @return null|WP_Block_Template
+         */
+        public function filter_include_template_by_id($block_template, $id, $template_type)
+        {
+        }
+        /**
+         * Filters and returns the available Event Block Template Services, used to locate
+         * WP_Block_Template instances.
+         *
+         * @since 6.2.7
+         *
+         * @param string $template_type The type of templates we are fetching.
+         *
+         * @return Block_Template_Contract[] List of filtered Event Calendar templates.
+         */
+        public function get_filtered_block_templates($template_type = 'wp_template') : array
+        {
+        }
+        /**
+         * If we're using a FSE theme, we always use the full styling.
+         *
+         * @since 5.14.2
+         *
+         * @param string $value The value of the option.
+         *
+         * @return string $value The original value, or an empty string if FSE is active.
+         */
+        public function filter_events_template_setting_option($value)
+        {
+        }
+        /**
+         * Override the get_single_option to return the default event template when FSE is active.
+         *
+         * @since 5.14.2
+         *
+         * @param mixed  $option      Results of option query.
+         * @param string $default     The default value.
+         * @param string $option_name Name of the option.
+         *
+         * @return mixed results of option query.
+         */
+        public function filter_tribe_get_single_option($option, $default, $option_name)
+        {
+        }
+        /**
+         * Overwrite the template option on save if FSE is active.
+         * We only support the default events template for now.
+         *
+         * @since 5.14.2
+         *
+         * @param array<string, mixed> $options   The array of values to save. In the format option key => value.
+         * @param string               $option_id The main option ID.
+         *
+         * @return array<string, mixed> $options   The array of values to save. In the format option key => value.
+         */
+        public function filter_tribe_save_template_option($options, $option_id)
+        {
+        }
+    }
+}
+namespace TEC\Events\Block_Templates\Single_Event {
+    /**
+     * Class Single_Block_Template
+     *
+     * @since 6.3.3 Moved and decoupled from Block API requirements, focusing on Template requirements.
+     * @since   6.2.7
+     *
+     * @package TEC\Events\Block_Templates\Single_Event
+     */
+    class Single_Block_Template implements \TEC\Events\Block_Templates\Block_Template_Contract
+    {
+        /**
+         * @since 6.3.3
+         *
+         * @var Block The registered block for this template.
+         */
+        protected \TEC\Events\Blocks\Single_Event\Block $block;
+        /**
+         * Constructor for Single Event Block Template.
+         *
+         * @since 6.3.3
+         *
+         * @param Block $block The registered Block for Single Event.
+         */
+        public function __construct(\TEC\Events\Blocks\Single_Event\Block $block)
+        {
+        }
+        /**
+         * Which is the name/slug of this template block.
+         *
+         * @since 6.3.3
+         *
+         * @return string
+         */
+        public function slug() : string
+        {
+        }
+        /**
+         * The ID of this block.
+         *
+         * @since 6.2.7
+         *
+         * @return string The WP Block Template ID.
+         */
+        public function id() : string
+        {
+        }
+        /**
+         * Creates then returns the WP_Block_Template object for single event.
+         *
+         * @since 6.2.7
+         *
+         * @return null|WP_Block_Template The hydrated single event template object.
+         */
+        protected function create_wp_block_template() : ?\WP_Block_Template
+        {
+        }
+        /**
+         * Creates if non-existent theme post, then returns the WP_Block_Template object for single events.
+         *
+         * @since 6.2.7
+         *
+         * @return null|WP_Block_Template The hydrated single events template object.
+         */
+        public function get_block_template() : ?\WP_Block_Template
+        {
+        }
+    }
+}
+namespace TEC\Events\Blocks\Archive_Events {
+    /**
+     * Class Block
+     *
+     * @since 6.3.3
+     *
+     * @package TEC\Events\Blocks\Archive_Events
+     */
+    class Block extends \Tribe__Editor__Blocks__Abstract
+    {
+        /**
+         * @since 6.3.3
+         *
+         * @var string The namespace of this template.
+         */
+        protected $namespace = 'tec';
+        /**
+         * Returns the name/slug of this block.
+         *
+         * @since 6.3.3
+         *
+         * @return string The name/slug of this block.
+         */
+        public function slug() : string
+        {
+        }
+        /**
+         * Set the default attributes of this block.
+         *
+         * @since 6.3.3
+         *
+         * @return array<string,mixed> The array of default attributes.
+         */
+        public function default_attributes() : array
+        {
+        }
+        /**
+         * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
+         *
+         * @since 6.3.3
+         *
+         * @param array $attributes The block attributes.
+         *
+         * @return string The block HTML.
+         */
+        public function render($attributes = []) : string
+        {
+        }
+    }
+}
 namespace TEC\Events\Blocks {
     /**
      * Class Controller
      *
-     * @since 6.2.7
+     * @since   6.3.3 Decoupled from Block Templates, focusing on Block requirements and a cleaner separation of concerns.
+     * @since   6.2.7
      *
      * @package TEC\Events\Blocks
      */
@@ -43292,9 +46156,28 @@ namespace TEC\Events\Blocks {
         {
         }
         /**
-         * Registers the Events Archive template.
+         * Registers the Events Archive block.
          *
          * @since 6.2.7
+         * @since 6.3.3 Renamed function.
+         */
+        public function register_archive_events_block()
+        {
+        }
+        /**
+         * Registers the Single Event block.
+         *
+         * @since 6.2.7
+         * @since 6.3.3 Renamed function.
+         */
+        public function register_single_event_block()
+        {
+        }
+        /**
+         * Registers the Events Archive template.
+         *
+         * @since      6.2.7
+         * @deprecated 6.3.3
          */
         public function action_register_archive_template()
         {
@@ -43302,9 +46185,60 @@ namespace TEC\Events\Blocks {
         /**
          * Registers the Single Event template.
          *
-         * @since 6.2.7
+         * @since      6.2.7
+         * @deprecated 6.3.3
          */
         public function action_register_single_event_template()
+        {
+        }
+    }
+}
+namespace TEC\Events\Blocks\Single_Event {
+    /**
+     * Class Block
+     *
+     * @since 6.3.3
+     *
+     * @package TEC\Events\Blocks\Single_Event
+     */
+    class Block extends \Tribe__Editor__Blocks__Abstract
+    {
+        /**
+         * @since 6.3.3
+         *
+         * @var string The namespace of this template.
+         */
+        protected $namespace = 'tec';
+        /**
+         * Returns the name/slug of this block.
+         *
+         * @since 6.3.3
+         *
+         * @return string The name/slug of this block.
+         */
+        public function slug() : string
+        {
+        }
+        /**
+         * Set the default attributes of this block.
+         *
+         * @since 6.3.3
+         *
+         * @return array<string,mixed> The array of default attributes.
+         */
+        public function default_attributes() : array
+        {
+        }
+        /**
+         * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
+         *
+         * @since 6.3.3
+         *
+         * @param array $attributes The block attributes.
+         *
+         * @return string The block HTML.
+         */
+        public function render($attributes = []) : string
         {
         }
     }
@@ -46573,6 +49507,16 @@ namespace TEC\Events\Custom_Tables\V1\Migration {
         public function get($key)
         {
         }
+        /**
+         * Forces the re-initialization of the strings map.
+         *
+         * @since 6.3.0
+         *
+         * @return String_Dictionary For chaining.
+         */
+        public function reinit() : \TEC\Events\Custom_Tables\V1\Migration\String_Dictionary
+        {
+        }
     }
 }
 namespace TEC\Events\Custom_Tables\V1\Models {
@@ -46850,6 +49794,18 @@ namespace TEC\Events\Custom_Tables\V1\Models {
          * @return int
          */
         public function count($column_name = null)
+        {
+        }
+        /**
+         * Run a query and return the results directly from $wpdb->query().
+         *
+         * @since 6.3.1
+         *
+         * @param string $query The SQL query to run on the database.
+         *
+         * @return bool|int|mixed|\mysqli_result|resource|null The query result or null.
+         */
+        protected function query(string $query)
         {
         }
         /**
@@ -48615,6 +51571,14 @@ namespace TEC\Events\Custom_Tables\V1 {
     {
         const DISABLED = 'TEC_CUSTOM_TABLES_V1_DISABLED';
         /**
+         * The custom action that will be fired when the provider registers.
+         *
+         * @since 6.3.0
+         *
+         * @return void
+         */
+        public static string $registration_action = 'tec_ct1_provider_registered';
+        /**
          * Registers the filters and implementations required by the Custom Tables implementation.
          *
          * @since 6.0.0
@@ -49828,6 +52792,7 @@ namespace TEC\Events\Custom_Tables\V1\Updates {
          *
          * @since 6.0.0
          * @since 6.0.13 Fix for "markers" being computed incorrectly, and only fetching provisional IDs.
+         * @since 6.3.1 Fix for latest not detecting provisional IDs (magic property ternary check failure).
          *
          * @return true To indicate the earliest and latest Event dates were updated.
          */
@@ -51492,6 +54457,9 @@ namespace TEC\Events\Custom_Tables\V1\WP_Query\Repository {
 namespace TEC\Events\Editor\Full_Site {
     /**
      * Interface Block_Template_Contract
+     *
+     * @since      6.2.7
+     * @deprecated 6.3.3
      */
     interface Block_Template_Contract
     {
@@ -51539,9 +54507,10 @@ namespace TEC\Events\Editor\Full_Site {
     /**
      * Class Archive_Block_Template
      *
-     * @since   6.2.7
+     * @since      6.2.7
+     * @deprecated 6.3.3
      *
-     * @package TEC\Events\Editor\Full_Site
+     * @package    TEC\Events\Editor\Full_Site
      */
     class Archive_Block_Template extends \Tribe__Editor__Blocks__Abstract implements \TEC\Events\Editor\Full_Site\Block_Template_Contract
     {
@@ -51552,9 +54521,9 @@ namespace TEC\Events\Editor\Full_Site {
          */
         protected $namespace = 'tec';
         /**
-         * @since 6.2.7
-         *
+         * @since       6.2.7
          * @return string The WP Block Template ID.
+         * @deprecated  6.3.3
          */
         public function id() : string
         {
@@ -51562,9 +54531,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Returns the name/slug of this block.
          *
-         * @since 6.2.7
-         *
+         * @since       6.2.7
          * @return string The name/slug of this block.
+         * @deprecated  6.3.3
          */
         public function slug() : string
         {
@@ -51572,9 +54541,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Set the default attributes of this block.
          *
-         * @since 6.2.7
-         *
+         * @since       6.2.7
          * @return array<string,mixed> The array of default attributes.
+         * @deprecated  6.3.3
          */
         public function default_attributes()
         {
@@ -51582,11 +54551,12 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
          *
-         * @since 6.2.7
+         * @since       6.2.7
          *
          * @param array $attributes The block attributes.
          *
          * @return string The block HTML.
+         * @deprecated  6.3.3
          */
         public function render($attributes = []) : string
         {
@@ -51594,9 +54564,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Creates then returns the WP_Block_Template object for archive events.
          *
-         * @since 6.2.7
-         *
+         * @since       6.2.7
          * @return null|WP_Block_Template The hydrated archive events template object.
+         * @deprecated  6.3.3
          */
         protected function create_wp_block_template() : ?\WP_Block_Template
         {
@@ -51604,9 +54574,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Creates if non-existent theme post, then returns the WP_Block_Template object for archive events.
          *
-         * @since 6.2.7
-         *
+         * @since       6.2.7
          * @return null|WP_Block_Template The hydrated archive events template object.
+         * @deprecated  6.3.3
          */
         public function get_block_template() : ?\WP_Block_Template
         {
@@ -51615,16 +54585,18 @@ namespace TEC\Events\Editor\Full_Site {
     /**
      * Class Controller
      *
-     * @since   6.2.7
+     * @since      6.2.7
+     * @deprecated 6.3.3
      *
-     * @package TEC\Events\Editor\Full_Site
+     * @package    TEC\Events\Editor\Full_Site
      */
     class Controller extends \TEC\Common\Contracts\Provider\Controller
     {
         /**
          * Register the provider.
          *
-         * @since 6.2.7
+         * @since      6.2.7
+         * @deprecated 6.3.3
          */
         public function do_register() : void
         {
@@ -51632,7 +54604,8 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Unhooks actions and filters.
          *
-         * @since 6.2.7
+         * @since      6.2.7
+         * @deprecated 6.3.3
          */
         public function unregister() : void
         {
@@ -51640,9 +54613,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Should only be active if we are in a Site Editor theme.
          *
-         * @since 6.2.7
-         *
+         * @since      6.2.7
          * @return bool Only active during FS theme.
+         * @deprecated 6.3.3
          */
         public function is_active() : bool
         {
@@ -51650,9 +54623,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Internal FSE function for asset conditional testing.
          *
-         * @since 5.14.2
-         *
+         * @since      5.14.2
          * @return bool Whether The current theme supports full-site editing or not.
+         * @deprecated 6.3.3
          */
         public function is_full_site_editor() : bool
         {
@@ -51660,8 +54633,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Adds the filters required by the FSE components.
          *
-         * @since 5.14.2
-         * @since 6.2.7 Adding support for block templates.
+         * @since      5.14.2
+         * @since      6.2.7 Adding support for block templates.
+         * @deprecated 6.3.3
          */
         protected function add_filters()
         {
@@ -51669,7 +54643,8 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Removes registered filters.
          *
-         * @since 6.2.7
+         * @since      6.2.7
+         * @deprecated 6.3.3
          */
         public function remove_filters()
         {
@@ -51677,11 +54652,13 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Redirect the post type template to our Events Archive slug, as that is what is used for lookup in the database.
          *
-         * @since 6.2.7
+         * @since      6.2.7
          *
          * @param string[] $templates Templates in order of display hierarchy.
          *
          * @return string[] Adjusted file name that is parsed to match our block template.
+         * @deprecated 6.3.3
+         *
          */
         public function filter_archive_template_hierarchy($templates)
         {
@@ -51689,11 +54666,13 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Redirect the post type template to our Single Event slug, as that is what is used for lookup in the database.
          *
-         * @since 6.2.7
+         * @since      6.2.7
          *
          * @param array $templates Templates in order of display hierarchy.
          *
          * @return array Adjusted file name that is parsed to match our block template.
+         * @deprecated 6.3.3
+         *
          */
         public function filter_single_template_hierarchy($templates)
         {
@@ -51701,7 +54680,8 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Registers the Events Archive template.
          *
-         * @since 5.14.2
+         * @since      5.14.2
+         * @deprecated 6.3.3
          */
         public function action_register_archive_template()
         {
@@ -51709,7 +54689,8 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Registers the Single Event template.
          *
-         * @since 6.2.7
+         * @since      6.2.7
+         * @deprecated 6.3.3
          */
         public function action_register_single_event_template()
         {
@@ -51717,8 +54698,8 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Adds the archive template to the array of block templates.
          *
-         * @since 5.14.2
-         * @since 6.2.7 Added support for single event templates.
+         * @since      5.14.2
+         * @since      6.2.7 Added support for single event templates.
          *
          * @param WP_Block_Template[] $query_result Array of found block templates.
          * @param array               $query        {
@@ -51730,6 +54711,8 @@ namespace TEC\Events\Editor\Full_Site {
          *
          *
          * @return array The modified $query.
+         * @deprecated 6.3.3
+         *
          */
         public function filter_include_templates($query_result, $query, $template_type)
         {
@@ -51737,13 +54720,15 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Fetch our Block Template by ID.
          *
-         * @since 6.2.7
+         * @since      6.2.7
          *
          * @param null|WP_Block_Template $block_template The filtered template.
          * @param string                 $id             The block template ID.
          * @param string                 $template_type  The template type.
          *
          * @return null|WP_Block_Template
+         * @deprecated 6.3.3
+         *
          */
         public function filter_include_template_by_id($block_template, $id, $template_type)
         {
@@ -51752,11 +54737,13 @@ namespace TEC\Events\Editor\Full_Site {
          * Filters and returns the available Event Block Template Services, used to locate
          * WP_Block_Template instances.
          *
-         * @since 6.2.7
+         * @since      6.2.7
          *
          * @param string $template_type The type of templates we are fetching.
          *
          * @return Block_Template_Contract[] List of filtered Event Calendar templates.
+         * @deprecated 6.3.3
+         *
          */
         public function get_filtered_block_templates($template_type = 'wp_template') : array
         {
@@ -51764,11 +54751,13 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * If we're using a FSE theme, we always use the full styling.
          *
-         * @since 5.14.2
+         * @since      5.14.2
          *
          * @param string $value The value of the option.
          *
          * @return string $value The original value, or an empty string if FSE is active.
+         * @deprecated 6.3.3
+         *
          */
         public function filter_events_template_setting_option($value)
         {
@@ -51776,13 +54765,15 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Override the get_single_option to return the default event template when FSE is active.
          *
-         * @since 5.14.2
+         * @since      5.14.2
          *
          * @param mixed  $option      Results of option query.
          * @param string $default     The default value.
          * @param string $option_name Name of the option.
          *
          * @return mixed results of option query.
+         * @deprecated 6.3.3
+         *
          */
         public function filter_tribe_get_single_option($option, $default, $option_name)
         {
@@ -51791,12 +54782,14 @@ namespace TEC\Events\Editor\Full_Site {
          * Overwrite the template option on save if FSE is active.
          * We only support the default events template for now.
          *
-         * @since 5.14.2
+         * @since      5.14.2
          *
          * @param array<string, mixed> $options   The array of values to save. In the format option key => value.
          * @param string               $option_id The main option ID.
          *
          * @return array<string, mixed> $options   The array of values to save. In the format option key => value.
+         * @deprecated 6.3.3
+         *
          */
         public function filter_tribe_save_template_option($options, $option_id)
         {
@@ -51805,9 +54798,10 @@ namespace TEC\Events\Editor\Full_Site {
     /**
      * Class Single_Block_Templates
      *
-     * @since   6.2.7
+     * @since      6.2.7
+     * @deprecated 6.3.3
      *
-     * @package TEC\Events\Editor\Full_Site
+     * @package    TEC\Events\Editor\Full_Site
      */
     class Single_Block_Template extends \Tribe__Editor__Blocks__Abstract implements \TEC\Events\Editor\Full_Site\Block_Template_Contract
     {
@@ -51820,9 +54814,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Returns the name/slug of this block.
          *
-         * @since 6.2.7
-         *
+         * @since      6.2.7
          * @return string The name/slug of this block.
+         * @deprecated 6.3.3
          */
         public function slug() : string
         {
@@ -51830,9 +54824,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * The ID of this block.
          *
-         * @since 6.2.7
-         *
+         * @since      6.2.7
          * @return string The WP Block Template ID.
+         * @deprecated 6.3.3
          */
         public function id() : string
         {
@@ -51840,9 +54834,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Set the default attributes of this block.
          *
-         * @since 6.2.7
-         *
+         * @since      6.2.7
          * @return array<string,mixed> The array of default attributes.
+         * @deprecated 6.3.3
          */
         public function default_attributes() : array
         {
@@ -51850,11 +54844,12 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Since we are dealing with a Dynamic type of Block we need a PHP method to render it.
          *
-         * @since 6.2.7
+         * @since      6.2.7
          *
          * @param array $attributes The block attributes.
          *
          * @return string The block HTML.
+         * @deprecated 6.3.3
          */
         public function render($attributes = []) : string
         {
@@ -51862,9 +54857,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Creates then returns the WP_Block_Template object for single event.
          *
-         * @since 6.2.7
-         *
+         * @since      6.2.7
          * @return null|WP_Block_Template The hydrated single event template object.
+         * @deprecated 6.3.3
          */
         protected function create_wp_block_template() : ?\WP_Block_Template
         {
@@ -51872,9 +54867,9 @@ namespace TEC\Events\Editor\Full_Site {
         /**
          * Creates if non-existent theme post, then returns the WP_Block_Template object for single events.
          *
-         * @since 6.2.7
-         *
+         * @since      6.2.7
          * @return null|WP_Block_Template The hydrated single events template object.
+         * @deprecated 6.3.3
          */
         public function get_block_template() : ?\WP_Block_Template
         {
@@ -56076,28 +59071,81 @@ namespace {
         {
         }
     }
+    /**
+     * Class Tribe__Events__Aggregator__Record__Abstract
+     *
+     * Abstract for EA records.
+     */
     abstract class Tribe__Events__Aggregator__Record__Abstract
     {
+        //phpcs:ignore TEC.Classes.ValidClassName.NotSnakeCase, PEAR.NamingConventions.ValidClassName.Invalid, Generic.Classes.OpeningBraceSameLine.ContentAfterBrace
         /**
          * Meta key prefix for ea-record data
          *
          * @var string
          */
         public static $meta_key_prefix = '_tribe_aggregator_';
+        /**
+         * Holds the post ID of the record.
+         *
+         * @var string|int
+         */
         public $id;
+        /**
+         * Holds the current post object.
+         *
+         * @var WP_Post
+         */
         public $post;
+        /**
+         * Holds the post meta data for the current post.
+         *
+         * @var array
+         */
         public $meta;
+        /**
+         * Holds the current record ping status.
+         *
+         * @var string
+         */
         public $type;
+        /**
+         * Holds the cron frequency(ies).
+         *
+         * @var array|stdClass
+         */
         public $frequency;
+        /**
+         * Is this a scheduled import?
+         *
+         * @var bool
+         */
         public $is_schedule = \false;
+        /**
+         * Is this a manual import?
+         *
+         * @var bool
+         */
         public $is_manual = \false;
+        /**
+         * The error encountered during the last query.
+         *
+         * @var string
+         */
         public $last_wpdb_error = '';
+        /**
+         * @var Tribe__Image__Uploader
+         */
+        public $image_uploader;
         /**
          * An associative array of origins and the settings they define a policy for.
          *
          * @var array
          */
         protected $origin_import_policies = ['url' => ['show_map_link']];
+        /**
+         * @var array
+         */
         public static $unique_id_fields = ['meetup' => ['source' => 'meetup_id', 'target' => 'EventMeetupID'], 'eventbrite' => ['source' => 'eventbrite_id', 'target' => 'EventBriteID'], 'ical' => ['source' => 'uid', 'target' => 'uid'], 'gcal' => ['source' => 'uid', 'target' => 'uid'], 'ics' => ['source' => 'uid', 'target' => 'uid'], 'url' => ['source' => 'id', 'target' => 'EventOriginalID']];
         /**
          * @var array
@@ -56120,7 +59168,9 @@ namespace {
          */
         public $origin;
         /**
-         * Setup all the hooks and filters
+         * Setup all the hooks and filters.
+         *
+         * @param WP_Post|int $post The post object or post ID to load.
          *
          * @return void
          */
@@ -56134,7 +59184,9 @@ namespace {
          */
         public abstract function get_label();
         /**
-         * Loads the WP_Post associated with this record
+         * Loads the WP_Post associated with this record.
+         *
+         * @param WP_Post|int $post The post object or post ID to load.
          */
         public function load($post = \null)
         {
@@ -56142,7 +59194,7 @@ namespace {
         /**
          * Sets up meta fields by de-prefixing them into the array
          *
-         * @param array $meta Meta array
+         * @param array $meta Meta array.
          */
         public function setup_meta($meta)
         {
@@ -56150,8 +59202,8 @@ namespace {
         /**
          * Updates import record meta
          *
-         * @param string $key   Meta key
-         * @param mixed  $value Meta value
+         * @param string $key   Meta key.
+         * @param mixed  $value Meta value.
          */
         public function update_meta($key, $value)
         {
@@ -56159,7 +59211,7 @@ namespace {
         /**
          * Deletes import record meta
          *
-         * @param string $key Meta key
+         * @param string $key Meta key.
          */
         public function delete_meta($key)
         {
@@ -56189,11 +59241,11 @@ namespace {
         {
         }
         /**
-         * Creates an import record
+         * Creates an import record.
          *
-         * @param string $type Type of record to create - manual or schedule
-         * @param array  $args Post type args
-         * @param array  $meta Post meta
+         * @param string $type Type of record to create - manual or schedule.
+         * @param array  $args Post type args.
+         * @param array  $meta Post meta.
          *
          * @return WP_Post|WP_Error
          */
@@ -56203,9 +59255,9 @@ namespace {
         /**
          * Edits an import record
          *
-         * @param int   $post_id
-         * @param array $args Post type args
-         * @param array $meta Post meta
+         * @param int   $post_id Post ID to edit.
+         * @param array $args Post type args.
+         * @param array $meta Post meta.
          *
          * @return WP_Post|WP_Error
          */
@@ -56216,8 +59268,8 @@ namespace {
          * Filter the post_modified dates to be unchanged
          * conditionally hooked to wp_insert_post_data and then unhooked after wp_update_post
          *
-         * @param array $data    new data to be used in the update
-         * @param array $postarr existing post data
+         * @param array $data    New data to be used in the update.
+         * @param array $postarr Existing post data.
          *
          * @return array
          */
@@ -56225,7 +59277,7 @@ namespace {
         {
         }
         /**
-         * Preps post arguments for create/save
+         * Preps post arguments for create/save.
          *
          * @param string $type Type of record to create - manual or schedule.
          * @param object $args Post type args.
@@ -56239,7 +59291,7 @@ namespace {
         /**
          * A simple method to create a Title for the Records
          *
-         * @param mixed $Nparams This method accepts any number of params, they must be string compatible
+         * This method accepts any number of params, they must be string compatible
          *
          * @return string
          */
@@ -56265,8 +59317,8 @@ namespace {
         /**
          * If using WP < 4.4, we need to add meta to the post via update_post_meta
          *
-         * @param int   $id   Post id to add data to
-         * @param array $meta Meta to add to the post
+         * @param int   $id   Post id to add data to.
+         * @param array $meta Meta to add to the post.
          */
         public function maybe_add_meta_via_pre_wp_44_method($id, $meta)
         {
@@ -56275,6 +59327,8 @@ namespace {
          * Queues the import on the Aggregator service
          *
          * @see Tribe__Events__Aggregator__API__Import::create()
+         *
+         * @param array $args Arguments to pass to the API.
          *
          * @return stdClass|WP_Error|int A response object, a `WP_Error` instance on failure or a record
          *                               post ID if the record had to be re-scheduled due to HTTP request
@@ -56292,11 +59346,20 @@ namespace {
         public function get_import_data()
         {
         }
+        /**
+         * Delete record
+         *
+         * @param bool $force Whether to force the deletion or not.
+         *
+         * @return WP_Post|false|null — Post data on success, false or null on failure.
+         */
         public function delete($force = \false)
         {
         }
         /**
          * Sets a status on the record
+         *
+         * @param string $status Status to set.
          *
          * @return int
          */
@@ -56304,9 +59367,11 @@ namespace {
         {
         }
         /**
-         * Marks a record as failed
+         * Marks a record as failed.
          *
-         * @return int
+         * @param ?WP_Error $error Error message to log.
+         *
+         * @return ?WP_Error
          */
         public function set_status_as_failed($error = \null)
         {
@@ -56330,7 +59395,7 @@ namespace {
         /**
          * A quick method to fetch the Child Records to the current on this class
          *
-         * @param array $args WP_Query Arguments
+         * @param array $args WP_Query Arguments.
          *
          * @return WP_Query|WP_Error
          */
@@ -56340,7 +59405,9 @@ namespace {
         /**
          * A quick method to fetch the Child Records by Status
          *
-         * @param string $status Which status, must be a valid EA status
+         * @param string $status Which status, must be a valid EA status.
+         * @param int    $qty    How many records to fetch.
+         * @param array  $args   WP_Query Arguments.
          *
          * @return WP_Query|WP_Error|bool
          */
@@ -56348,7 +59415,11 @@ namespace {
         {
         }
         /**
-         * Gets errors on the record post
+         * Gets errors on the record post.
+         *
+         * @param array $args WP_Comment_Query arguments.
+         *
+         * @return @return WP_Comment[]|int[]|int List of comments or number of found comments if $count argument is true.
          */
         public function get_errors($args = [])
         {
@@ -56356,7 +59427,7 @@ namespace {
         /**
          * Logs an error to the comments of the Record post
          *
-         * @param WP_Error $error Error message to log
+         * @param WP_Error $error Error message to log.
          *
          * @return bool
          */
@@ -56390,8 +59461,8 @@ namespace {
         /**
          * Fetches the status message for the last import attempt on (scheduled) records
          *
-         * @param string $type            Type of message to fetch
-         * @param bool   $lookup_children Whether the function should try to read the last children post status to return a coherent
+         * @param string $type            Type of message to fetch.
+         * @param bool   $lookup_children Whether the function should try to read the last children post status to return a coherent.
          *                                last import status or not, default `false`.
          *
          * @return bool|string Either the message corresponding to the last import status or `false` if the last import status
@@ -56403,7 +59474,7 @@ namespace {
         /**
          * Updates the source name on the import record and its parent (if the parent exists)
          *
-         * @param string $source_name Source name to set on the import record
+         * @param string $source_name Source name to set on the import record.
          */
         public function update_source_name($source_name)
         {
@@ -56427,6 +59498,13 @@ namespace {
         public function has_queue()
         {
         }
+        /**
+         * Returns count of events in the queue.
+         *
+         * @param string $type Type of event to count. "total" will count all events.
+         *
+         * @return int
+         */
         public function get_event_count($type = \null)
         {
         }
@@ -56436,7 +59514,7 @@ namespace {
          * Ensures the import record source name is accurate, checks for errors, and limits import items
          * based on selection
          *
-         * @param array $data Import data
+         * @param array $data Import data.
          *
          * @return array|WP_Error
          */
@@ -56446,7 +59524,7 @@ namespace {
         /**
          * Inserts events, venues, and organizers for the Import Record
          *
-         * @param array $items Dummy data var to allow children to optionally react to passed in data
+         * @param array $items Dummy data var to allow children to optionally react to passed in data.
          *
          * @return Tribe__Events__Aggregator__Record__Activity The import activity record.
          */
@@ -56456,24 +59534,31 @@ namespace {
         /**
          * Gets all ids that already exist in the post meta table from the provided records
          *
-         * @param array $records Array of records
+         * @param array $import_data The import data.
          *
          * @return array
          */
         protected function get_existing_ids_from_import_data($import_data)
         {
         }
+        /**
+         * Filters the import data by the selected IDs.
+         *
+         * @param array $import_data The import data.
+         *
+         * @return array
+         */
         protected function filter_data_by_selected($import_data)
         {
         }
         /**
          * Gets the unique field map for the current origin and the specified post type.
          *
-         * @param string $for
+         * @param string $post_type The linked post type.
          *
          * @return array|null
          */
-        protected function get_unique_field($for = \null)
+        protected function get_unique_field($post_type = \null)
         {
         }
         /**
@@ -56483,9 +59568,9 @@ namespace {
         {
         }
         /**
-         * preserve Event Options
+         * Preserve Event options.
          *
-         * @param array $event Event data
+         * @param array $event Event data.
          *
          * @return array
          */
@@ -56514,10 +59599,10 @@ namespace {
         {
         }
         /**
-         * Whether an origin has more granulat policies concerning an import setting or not.
+         * Whether an origin has more granular policies concerning an import setting or not.
          *
-         * @param string $origin
-         * @param string $setting
+         * @param string $origin The import origin to check.
+         * @param string $setting The setting to check.
          *
          * @return bool
          */
@@ -56543,7 +59628,7 @@ namespace {
          *
          * @since 4.5.9
          *
-         * @param WP_Error|object $import_data
+         * @param WP_Error|object $import_data An error created from the Service response.
          *
          * @return array|WP_Error
          */
@@ -56555,7 +59640,7 @@ namespace {
          *
          * @since 4.5.11
          *
-         * @param WP_post|int $post A post object or post ID
+         * @param WP_post|int $post A post object or post ID.
          */
         public function set_post($post)
         {
@@ -56595,7 +59680,7 @@ namespace {
          *
          * @since 4.6.2
          *
-         * @param bool $should_queue_import If a value is provided here then the `should_queue_import` meta will
+         * @param bool $should_queue_import If a value is provided here then the `should_queue_import` meta will.
          *                                  be set to the boolean representation of that value.
          *
          * @return bool
@@ -56609,8 +59694,8 @@ namespace {
          * @since 4.6.9
          *
          * @param int                                         $organizer_id The organizer post ID.
-         * @param string                                      $image_url
-         * @param Tribe__Events__Aggregator__Record__Activity $activity
+         * @param string                                      $image_url The URL to the image that should be imported.
+         * @param Tribe__Events__Aggregator__Record__Activity $activity The importer activity so far.
          *
          * @return bool Whether the image was attached to the organizer or not.
          */
@@ -56622,9 +59707,9 @@ namespace {
          *
          * @since 4.6.9
          *
-         * @param int                                         $venue_id The venue post ID.
-         * @param string                                      $image_url
-         * @param Tribe__Events__Aggregator__Record__Activity $activity
+         * @param int                                         $venue_id  The venue post ID.
+         * @param string                                      $image_url URL to the image.
+         * @param Tribe__Events__Aggregator__Record__Activity $activity  The importer activity so far.
          *
          * @return bool Whether the image was attached to the venue or not.
          */
@@ -56636,9 +59721,9 @@ namespace {
          *
          * @since 4.6.9
          *
-         * @param int                                         $post_id
-         * @param string                                      $image_url
-         * @param Tribe__Events__Aggregator__Record__Activity $activity
+         * @param int                                         $post_id   The post ID.
+         * @param string                                      $image_url The url to the image.
+         * @param Tribe__Events__Aggregator__Record__Activity $activity  The importer activity so far.
          *
          * @return bool `true` if the image was correctly downloaded and attached, `false` otherwise.
          */
@@ -56651,7 +59736,7 @@ namespace {
          * @since 4.6.9
          *
          * @param array                                       $event The event data.
-         * @param Tribe__Events__Aggregator__Record__Activity $activity
+         * @param Tribe__Events__Aggregator__Record__Activity $activity The importer activity so far.
          *
          * @return bool Whether the image was attached to the event or not.
          */
@@ -56735,7 +59820,7 @@ namespace {
         public function is_polling()
         {
         }
-        /*
+        /**
          *
          * Generates the hash that will be expected in the for the next batch of events.
          *
@@ -67420,13 +70505,13 @@ namespace {
         const POSTTYPE = 'tribe_events';
         const VENUE_POST_TYPE = 'tribe_venue';
         const ORGANIZER_POST_TYPE = 'tribe_organizer';
-        const VERSION = '6.2.8.2';
+        const VERSION = '6.3.4';
         /**
          * Min Pro Addon
          *
          * @deprecated 4.8
          */
-        const MIN_ADDON_VERSION = '6.1.0-dev';
+        const MIN_ADDON_VERSION = '6.2.9-dev';
         /**
          * Min Common
          *
@@ -67451,7 +70536,7 @@ namespace {
          *
          * @since 4.8
          */
-        protected $min_et_version = '5.7.0-dev';
+        protected $min_et_version = '5.8.0-dev';
         /**
          * Args for the event post type
          *
@@ -69556,7 +72641,7 @@ namespace {
          *
          * @var string[][]
          */
-        protected $dependencies = ['addon-dependencies' => ['Tribe__Events__Pro__Main' => '6.1.0-dev', 'Tribe__Events__Filterbar__View' => '5.5.0-dev', 'Tribe__Events__Community__Main' => '4.10.10-dev', 'Tribe__Events__Community__Tickets__Main' => '4.9.3-dev', 'Tribe__Tickets__Main' => '5.7.0-dev', 'Tribe__Tickets_Plus__Main' => '5.8.0-dev', 'Tribe__Events__Tickets__Eventbrite__Main' => '4.6.14-dev', 'Tribe\\Events\\Virtual' => '1.15.5-dev', 'TEC\\Event_Automator' => '1.3.1-dev']];
+        protected $dependencies = ['addon-dependencies' => ['Tribe__Events__Pro__Main' => '6.3.0-dev', 'Tribe__Events__Filterbar__View' => '5.5.0-dev', 'Tribe__Events__Community__Main' => '4.10.10-dev', 'Tribe__Events__Community__Tickets__Main' => '4.9.3-dev', 'Tribe__Tickets__Main' => '5.8.1-dev', 'Tribe__Tickets_Plus__Main' => '5.9.0-dev', 'Tribe__Events__Tickets__Eventbrite__Main' => '4.6.14-dev', 'Tribe\\Events\\Virtual' => '1.15.5-dev', 'TEC\\Event_Automator' => '1.3.1-dev']];
         public function __construct()
         {
         }
@@ -73570,70 +76655,6 @@ namespace {
         }
     }
     /**
-     * Class Tribe__Events__Revisions__Post
-     *
-     * Handles the saving operations of a generic post revision.
-     *
-     * @since 4.2.5
-     */
-    class Tribe__Events__Revisions__Post
-    {
-        /**
-         * @var WP_Post
-         */
-        protected $post;
-        /**
-         * Tribe__Events__Revisions__Post constructor.
-         *
-         * @param WP_Post $post
-         */
-        public function __construct(\WP_Post $post)
-        {
-        }
-        /**
-         * @param int|WP_Post $post
-         *
-         * @return Tribe__Events__Revisions__Post
-         */
-        public static function new_from_post($post)
-        {
-        }
-        /**
-         * Saves the revision.
-         */
-        public function save()
-        {
-        }
-    }
-    /**
-     * Class Tribe__Events__Revisions__Event
-     *
-     * Handles the saving operations of an event revision.
-     *
-     * @since 4.2.5
-     */
-    class Tribe__Events__Revisions__Event extends \Tribe__Events__Revisions__Post
-    {
-        /**
-         * @var Tribe__Events__Meta__Save
-         */
-        protected $meta_save;
-        /**
-         * Tribe__Events__Revisions__Event constructor.
-         *
-         * @param Tribe__Events__Meta__Save|null $meta_save
-         */
-        public function __construct(\WP_Post $post, \Tribe__Events__Meta__Save $meta_save = \null)
-        {
-        }
-        /**
-         * Saves the revision.
-         */
-        public function save()
-        {
-        }
-    }
-    /**
      * Class Tribe__Events__Revisions__Preview
      */
     class Tribe__Events__Revisions__Preview
@@ -73821,6 +76842,15 @@ namespace {
          * @return Tribe__Events__Rewrite
          */
         public function tag($regex, $args = array())
+        {
+        }
+        /**
+         * Will adjust the `pagination_base` property in cases where the locale for the site is updated,
+         * and the page field needs to be interpreted with the translated value.
+         *
+         * @since 6.3.1
+         */
+        public function filter_pagination_base() : void
         {
         }
         protected function remove_hooks()
@@ -74028,8 +77058,10 @@ namespace {
         {
         }
     }
+    // phpcs:disable PEAR.NamingConventions.ValidClassName.Invalid
+    // phpcs:disable StellarWP.Classes.ValidClassName.NotSnakeCase
     /**
-     * Setup the Event Details Shortcode to be able to place the Details for a Event on other pages
+     * Setup the Event Details Shortcode to be able to place the Details for a Event on other pages.
      *
      * @since 4.1
      */
@@ -74085,7 +77117,7 @@ namespace {
          *
          * @since  4.1
          *
-         * @param  array $args    The Shortcode arguments
+         * @param  array $args The Shortcode arguments.
          *
          * @return string
          */
@@ -77387,6 +80419,8 @@ namespace Tribe\Events\Views\V2\Query {
     }
 }
 namespace Tribe\Events\Views\V2\Repository {
+    // Remove when BTRIA-595 is dealt with.
+    // phpcs:disable Squiz.Commenting.FunctionComment.InvalidNoReturn
     /**
      * Class Event_Period
      *
@@ -77469,8 +80503,9 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param array $args An associative array of arguments to filter
-         *                    the posts by in the shape [ <key>, <value> ]. * * @return Tribe__Repository__Read_Interface
+         * @param array $args An associative array of arguments to filter the posts by in the shape [ <key>, <value> ].
+         *
+         * @return Tribe__Repository__Read_Interface
          */
         public function by_args(array $args)
         {
@@ -77480,8 +80515,8 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param string $key
-         * @param mixed  $value
+         * @param string $key   The key to filter by.
+         * @param mixed  $value The value to filter by.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77492,6 +80527,9 @@ namespace Tribe\Events\Views\V2\Repository {
          * {@inheritDoc}
          *
          * @since 4.9.13
+         *
+         * @param string $key   The key to filter by.
+         * @param mixed  $value The value to filter by.
          */
         public function by($key, $value = null)
         {
@@ -77514,7 +80552,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param int $page
+         * @param int $page The page number to fetch.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77528,7 +80566,7 @@ namespace Tribe\Events\Views\V2\Repository {
          * filter to force more readable code; by default posts per page is set to
          * the pagination defaults for the post type.
          *
-         * @param int $per_page
+         * @param int $per_page The number of posts to retrieve per page.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77543,7 +80581,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @return int
+         * @return int The number of posts found matching the query.
          */
         public function found()
         {
@@ -77553,9 +80591,14 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * Mind that "all" means "all the posts matching all the filters" so pagination applies.
          *
-         * @return array
+         * @param bool $return_generator Whether to return a generator of post IDs instead of an array of post IDs.
+         * @param int  $batch_size       The number of post IDs to fetch at a time when using a generator; ignored
+         *                               if `$return_generator` is false.
+         *
+         * @return array<int>|Generator<int> An array of all the matching post IDs, or a generator of them
+         *                                   if `$return_generator` is true.
          */
-        public function all()
+        public function all($return_generator = false, int $batch_size = 50)
         {
         }
         /**
@@ -77566,7 +80609,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param int  $offset
+         * @param int  $offset    The offset to set.
          * @param bool $increment Whether to increment the offset by the value
          *                        or replace it.
          *
@@ -77583,7 +80626,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param string $order
+         * @param string $order The order direction; optional; defaults to `ASC`.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77615,7 +80658,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param string $fields
+         * @param string $fields The fields to return.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77629,7 +80672,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param array|int $post_ids
+         * @param array|int $post_ids The post IDs to filter by.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77643,7 +80686,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param array|int $post_ids
+         * @param array|int $post_ids The post IDs to filter by.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77657,7 +80700,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param array|int $post_id
+         * @param array|int $post_id The post ID to filter by.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77671,7 +80714,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param array $post_ids
+         * @param array $post_ids The post IDs to filter by.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77685,7 +80728,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param array $post_ids
+         * @param array $post_ids The post IDs to filter by.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77696,10 +80739,10 @@ namespace Tribe\Events\Views\V2\Repository {
          * Sugar method to set the `s` argument.
          *
          * Successive calls will replace the search string.
-         * This is the default WordPress searh, to search by title,
+         * This is the default WordPress search, to search by title,
          * content or excerpt only use the `title`, `content`, `excerpt` filters.
          *
-         * @param $search
+         * @param string $search The search string.
          *
          * @return Tribe__Repository__Read_Interface
          */
@@ -77717,7 +80760,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @return int
+         * @return int The number of posts found matching the query in the current page.
          */
         public function count()
         {
@@ -77764,7 +80807,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @since 4.7.19
          *
-         * @param int $n
+         * @param int $n The 1-based index of the post to return.
          *
          * @return WP_Post|mixed|null
          *
@@ -77781,6 +80824,8 @@ namespace Tribe\Events\Views\V2\Repository {
          * return the first n posts of all those matching the query.
          *
          * @since 4.7.19
+         *
+         * @param int $n The number of posts to return.
          *
          * @return array An array of posts matching the query.
          *
@@ -77825,7 +80870,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @see   \wp_list_filter()
          */
-        public function filter($args = array(), $operator = 'AND')
+        public function filter($args = [], $operator = 'AND')
         {
         }
         /**
@@ -77846,7 +80891,7 @@ namespace Tribe\Events\Views\V2\Repository {
          *
          * @see   \wp_list_sort()
          */
-        public function sort($orderby = array(), $order = 'ASC', $preserve_keys = false)
+        public function sort($orderby = [], $order = 'ASC', $preserve_keys = false)
         {
         }
         /**
@@ -77863,10 +80908,16 @@ namespace Tribe\Events\Views\V2\Repository {
          * Gets the ids of the posts matching the query.
          *
          * @since 4.9.13
+         * @since 5.2.0 Added the `$return_generator` and `$batch_size` parameters.
          *
-         * @return array An array containing the post IDs to update.
+         * @param bool $return_generator Whether to return a generator of post IDs instead of an array of post IDs.
+         * @param int  $batch_size       The number of post IDs to fetch at a time when using a generator; ignored
+         *                               if `$return_generator` is false.
+         *
+         * @return array<int>|Generator<int> An array of all the matching post IDs, or a generator of them
+         *                                   if `$return_generator` is true.
          */
-        public function get_ids()
+        public function get_ids($return_generator = false, int $batch_size = 50)
         {
         }
         /**
@@ -77909,6 +80960,9 @@ namespace Tribe\Events\Views\V2\Repository {
          * Queries the database to fetch the sets.
          *
          * @since 4.9.13
+         *
+         * @param \DateTimeInterface $start The period start date.
+         * @param \DateTimeInterface $end   The period end date.
          *
          * @return array|false Either the results of the query, or `false` on error.
          */
@@ -77985,7 +81039,7 @@ namespace Tribe\Events\Views\V2\Repository {
         {
         }
         /**
-         * Queries the database to fetch all the values of a single meta entry for all the post IDs in the datatbase or in
+         * Queries the database to fetch all the values of a single meta entry for all the post IDs in the database or in
          * a defined interval.
          *
          * @since 4.9.13
@@ -84985,6 +88039,76 @@ namespace {
         }
     }
     /**
+     * Class Tribe__Events__Revisions__Post
+     *
+     * Handles the saving operations of a generic post revision.
+     *
+     * @since      4.2.5
+     * @since      6.3.0 Deprecated the class.
+     *
+     * @deprecated 6.3.0
+     */
+    class Tribe__Events__Revisions__Post
+    {
+        /**
+         * @var WP_Post
+         */
+        protected $post;
+        /**
+         * Tribe__Events__Revisions__Post constructor.
+         *
+         * @param WP_Post $post
+         */
+        public function __construct(\WP_Post $post)
+        {
+        }
+        /**
+         * @param int|WP_Post $post
+         *
+         * @return Tribe__Events__Revisions__Post
+         */
+        public static function new_from_post($post)
+        {
+        }
+        /**
+         * Saves the revision.
+         */
+        public function save()
+        {
+        }
+    }
+    /**
+     * Class Tribe__Events__Revisions__Event
+     *
+     * Handles the saving operations of an event revision.
+     *
+     * @since 4.2.5
+     * @since 6.3.0
+     *
+     * @deprecated
+     */
+    class Tribe__Events__Revisions__Event extends \Tribe__Events__Revisions__Post
+    {
+        /**
+         * @var Tribe__Events__Meta__Save
+         */
+        protected $meta_save;
+        /**
+         * Tribe__Events__Revisions__Event constructor.
+         *
+         * @param Tribe__Events__Meta__Save|null $meta_save
+         */
+        public function __construct(\WP_Post $post, \Tribe__Events__Meta__Save $meta_save = \null)
+        {
+        }
+        /**
+         * Saves the revision.
+         */
+        public function save()
+        {
+        }
+    }
+    /**
      * @deprecated 6.0.0
      */
     class Tribe__Events__Bar
@@ -85546,7 +88670,7 @@ namespace {
         }
     }
     // autoload_real.php @generated by Composer
-    class ComposerAutoloaderInitf1826f72bdc3508f80565dff22e569cb
+    class ComposerAutoloaderInit50298795addec7e328ecc086aec86c51
     {
         public static function loadClassLoader($class)
         {
@@ -85560,11 +88684,11 @@ namespace {
     }
 }
 namespace Composer\Autoload {
-    class ComposerStaticInitf1826f72bdc3508f80565dff22e569cb
+    class ComposerStaticInit50298795addec7e328ecc086aec86c51
     {
         public static $prefixLengthsPsr4 = array('T' => array('Tribe\\Events\\' => 13, 'TEC\\Events\\' => 11));
         public static $prefixDirsPsr4 = array('Tribe\\Events\\' => array(0 => __DIR__ . '/../..' . '/src/Tribe'), 'TEC\\Events\\' => array(0 => __DIR__ . '/../..' . '/src/Events'));
-        public static $classMap = array('Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php', 'TEC\\Events\\Blocks\\Controller' => __DIR__ . '/../..' . '/src/Events/Blocks/Controller.php', 'TEC\\Events\\Configuration\\Provider' => __DIR__ . '/../..' . '/src/Events/Configuration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Activation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Activation.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Event_Cleaner' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Event_Cleaner.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Occurrences_Generator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Occurrences_Generator.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Feedback_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Feedback_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Google_Form_Feedback' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Google_Form_Feedback.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Full_Activation_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Full_Activation_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Health_Check' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Health_Check.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Phase_View_Renderer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Phase_View_Renderer.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Progress_Modal' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Progress_Modal.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Template' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Template.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Upgrade_Tab' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Upgrade_Tab.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Ajax' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Ajax.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Asset_Loader' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Asset_Loader.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\Download_Report_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/Download_Report_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\File_Download' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/File_Download.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Expected_Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Expected_Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Maintenance_Mode' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Maintenance_Mode.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process_Worker' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process_Worker.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report_Categories' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report_Categories.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Site_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Site_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\State' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/State.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Null_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Null_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Single_Event_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Single_Event_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Strategy_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Strategy_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Boolean_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Boolean_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\End_Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/End_Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Integer_Key_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Integer_Key_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Numeric_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Numeric_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Text_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Text_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Timezone_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Timezone_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model_Date_Attributes' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model_Date_Attributes.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Occurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Occurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Post_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Post_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Ignore_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Ignore_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Integer_Key' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Integer_Key.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Occurrence_Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Occurrence_Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Positive_Integer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Positive_Integer.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Present' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Present.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Range_Dates' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Range_Dates.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\String_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/String_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Timezone' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Timezone.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\ValidatorInterface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/ValidatorInterface.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Whole_Number' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Whole_Number.php', 'TEC\\Events\\Custom_Tables\\V1\\Notices' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Notices.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider_Contract' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider_Contract.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Field' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Field.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Table' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Table.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Schema_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Schema_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Field_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Field_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Provider_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Provider_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Table_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Table_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Occurrences' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Occurrences.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Core_Tables' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Core_Tables.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Database_Transactions' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Database_Transactions.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Dates_Representation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Dates_Representation.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Observable_Filtering' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Observable_Filtering.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Reflection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Reflection.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Timezones' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Timezones.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Unbound_Queries' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Unbound_Queries.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_WP_Query_Introspection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_WP_Query_Introspection.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Meta_Watcher' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Meta_Watcher.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Requests' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Requests.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\By_Day_View_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/By_Day_View_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Customizer_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Customizer_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Meta_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Meta_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Base_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Base_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Admin_List_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Admin_List_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Only_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Only_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\WP_Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/WP_Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Custom_Tables_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Custom_Tables_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\WP_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/WP_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Redirection_Schema' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Redirection_Schema.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Custom_Tables_Query_Filters' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Custom_Tables_Query_Filters.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Query_Replace' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Query_Replace.php', 'TEC\\Events\\Editor\\Full_Site\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Archive_Block_Template.php', 'TEC\\Events\\Editor\\Full_Site\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Block_Template_Contract.php', 'TEC\\Events\\Editor\\Full_Site\\Controller' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Controller.php', 'TEC\\Events\\Editor\\Full_Site\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Single_Block_Template.php', 'TEC\\Events\\Installer\\Provider' => __DIR__ . '/../..' . '/src/Events/Installer/Provider.php', 'TEC\\Events\\Integrations\\Integration_Abstract' => __DIR__ . '/../..' . '/src/Events/Integrations/Integration_Abstract.php', 'TEC\\Events\\Integrations\\Plugins\\Colbri_Page_Builder\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Colbri_Page_Builder/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\RSVP' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/RSVP.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\Ticket' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/Ticket.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Emails' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Emails.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Hooks' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Hooks.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\JSON_LD\\Event_Data' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/JSON_LD/Event_Data.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Template' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Template.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Rank_Math\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Rank_Math/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Apple_Wallet\\Event_Modifier' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Apple_Wallet/Event_Modifier.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Pdf' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Pdf.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Events_Schema' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Events_Schema.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Provider.php', 'TEC\\Events\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Provider.php', 'TEC\\Events\\Legacy\\Views\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Legacy/Views/V1/Provider.php', 'TEC\\Events\\SEO\\Controller' => __DIR__ . '/../..' . '/src/Events/SEO/Controller.php', 'TEC\\Events\\Site_Health\\Info_Section' => __DIR__ . '/../..' . '/src/Events/Site_Health/Info_Section.php', 'TEC\\Events\\Site_Health\\Provider' => __DIR__ . '/../..' . '/src/Events/Site_Health/Provider.php', 'TEC\\Events\\Telemetry\\Provider' => __DIR__ . '/../..' . '/src/Events/Telemetry/Provider.php', 'TEC\\Events\\Telemetry\\Telemetry' => __DIR__ . '/../..' . '/src/Events/Telemetry/Telemetry.php', 'Tribe\\Events\\Admin\\Filter_Bar\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Filter_Bar/Provider.php', 'Tribe\\Events\\Admin\\Notice\\Full_Site_Editor' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Full_Site_Editor.php', 'Tribe\\Events\\Admin\\Notice\\Install_Event_Tickets' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Install_Event_Tickets.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Deprecation' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Deprecation.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Updated' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Updated.php', 'Tribe\\Events\\Admin\\Notice\\Marketing' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing.php', 'Tribe\\Events\\Admin\\Notice\\Timezones' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Timezones.php', 'Tribe\\Events\\Admin\\Notice\\Update' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Update.php', 'Tribe\\Events\\Admin\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Provider.php', 'Tribe\\Events\\Admin\\Settings' => __DIR__ . '/../..' . '/src/Tribe/Admin/Settings.php', 'Tribe\\Events\\Aggregator\\Processes\\Batch_Imports' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Processes/Batch_Imports.php', 'Tribe\\Events\\Aggregator\\Record\\Batch_Queue' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Record/Batch_Queue.php', 'Tribe\\Events\\Collections\\Lazy_Post_Collection' => __DIR__ . '/../..' . '/src/Tribe/Collections/Lazy_Post_Collection.php', 'Tribe\\Events\\Editor\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Editor/Hooks.php', 'Tribe\\Events\\Editor\\Objects\\Editor_Object_Interface' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Editor_Object_Interface.php', 'Tribe\\Events\\Editor\\Objects\\Event' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Event.php', 'Tribe\\Events\\Event_Status\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Admin_Template.php', 'Tribe\\Events\\Event_Status\\Classic_Editor' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Classic_Editor.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Detect' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Detect.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Events_Status_Filter' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Events_Status_Filter.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Event_Meta' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Meta.php', 'Tribe\\Events\\Event_Status\\Event_Status_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Status_Provider.php', 'Tribe\\Events\\Event_Status\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Models\\Event' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Models/Event.php', 'Tribe\\Events\\Event_Status\\Status_Labels' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Status_Labels.php', 'Tribe\\Events\\Event_Status\\Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template.php', 'Tribe\\Events\\Event_Status\\Template_Modifications' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template_Modifications.php', 'Tribe\\Events\\I18n' => __DIR__ . '/../..' . '/src/Tribe/I18n.php', 'Tribe\\Events\\Integrations\\Beaver_Builder' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Beaver_Builder.php', 'Tribe\\Events\\Integrations\\Divi\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Divi/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Widget_Shortcode' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Widget_Shortcode.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Service_Provider.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Templates' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Templates.php', 'Tribe\\Events\\Integrations\\Restrict_Content_Pro\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Restrict_Content_Pro/Service_Provider.php', 'Tribe\\Events\\Integrations\\WPML\\Views\\V2\\Filters' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WPML/Views/V2/Filters.php', 'Tribe\\Events\\Integrations\\WP_Rocket' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WP_Rocket.php', 'Tribe\\Events\\Models\\Post_Types\\Event' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Event.php', 'Tribe\\Events\\Models\\Post_Types\\Organizer' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Organizer.php', 'Tribe\\Events\\Models\\Post_Types\\Venue' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Venue.php', 'Tribe\\Events\\Service_Providers\\Context' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Context.php', 'Tribe\\Events\\Service_Providers\\First_Boot' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/First_Boot.php', 'Tribe\\Events\\Taxonomy\\Event_Tag' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Event_Tag.php', 'Tribe\\Events\\Taxonomy\\Taxonomy_Provider' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Taxonomy_Provider.php', 'Tribe\\Events\\Views\\V2\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Assets.php', 'Tribe\\Events\\Views\\V2\\Customizer' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Configuration' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Configuration.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Hooks.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Notice' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Notice.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Events_Bar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Events_Bar.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Global_Elements' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Global_Elements.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Month_View.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Single_Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Single_Event.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hooks.php', 'Tribe\\Events\\Views\\V2\\Implementation_Error' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Implementation_Error.php', 'Tribe\\Events\\Views\\V2\\Index' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Index.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\Repository_User_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/Repository_User_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Partial_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Partial_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Url_Provider_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Url_Provider_Interface.php', 'Tribe\\Events\\Views\\V2\\Kitchen_Sink' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Kitchen_Sink.php', 'Tribe\\Events\\Views\\V2\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Manager.php', 'Tribe\\Events\\Views\\V2\\Messages' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Messages.php', 'Tribe\\Events\\Views\\V2\\Query\\Event_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Event_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Query\\Hide_From_Upcoming_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Hide_From_Upcoming_Controller.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Period' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Period.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Result' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Result.php', 'Tribe\\Events\\Views\\V2\\Repository\\Events_Result_Set' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Events_Result_Set.php', 'Tribe\\Events\\Views\\V2\\Rest_Endpoint' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rest_Endpoint.php', 'Tribe\\Events\\Views\\V2\\Rewrite' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rewrite.php', 'Tribe\\Events\\Views\\V2\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template.php', 'Tribe\\Events\\Views\\V2\\Template\\Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Event.php', 'Tribe\\Events\\Views\\V2\\Template\\Excerpt' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Excerpt.php', 'Tribe\\Events\\Views\\V2\\Template\\Featured_Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Featured_Title.php', 'Tribe\\Events\\Views\\V2\\Template\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/JSON_LD.php', 'Tribe\\Events\\Views\\V2\\Template\\Page' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Page.php', 'Tribe\\Events\\Views\\V2\\Template\\Promo' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Promo.php', 'Tribe\\Events\\Views\\V2\\Template\\Settings\\Advanced_Display' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Settings/Advanced_Display.php', 'Tribe\\Events\\Views\\V2\\Template\\Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Title.php', 'Tribe\\Events\\Views\\V2\\Template_Bootstrap' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template_Bootstrap.php', 'Tribe\\Events\\Views\\V2\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Theme_Compatibility.php', 'Tribe\\Events\\Views\\V2\\Url' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Url.php', 'Tribe\\Events\\Views\\V2\\Utils\\Separators' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Separators.php', 'Tribe\\Events\\Views\\V2\\Utils\\Stack' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Stack.php', 'Tribe\\Events\\Views\\V2\\Utils\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/View.php', 'Tribe\\Events\\Views\\V2\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View.php', 'Tribe\\Events\\Views\\V2\\View_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Interface.php', 'Tribe\\Events\\Views\\V2\\View_Register' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Register.php', 'Tribe\\Events\\Views\\V2\\Views\\By_Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/By_Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Latest_Past_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Latest_Past_View.php', 'Tribe\\Events\\Views\\V2\\Views\\List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Month_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Reflector_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Reflector_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Breakpoint_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Breakpoint_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\HTML_Cache' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/HTML_Cache.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Json_Ld_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Json_Ld_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\List_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/List_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Fast_Forward_Link' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Fast_Forward_Link.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Noindex' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Noindex.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\iCal_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/iCal_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_View.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Admin_Template.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Assets.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Compatibility.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_Abstract.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_List' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_List.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Google_Calendar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Google_Calendar.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Abstract.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Interface.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_365' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_365.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Live' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Live.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCal' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCal.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCalendar_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCalendar_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Request' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Request.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Single_Events' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Single_Events.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Template.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Traits\\Outlook_Methods' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Traits/Outlook_Methods.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\iCalendar_Handler' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/iCalendar_Handler.php', 'Tribe__Events__Main_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Main_Deprecated.php', 'Tribe__Events__Query_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Query_Deprecated.php');
+        public static $classMap = array('Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php', 'TEC\\Events\\Block_Templates\\Archive_Events\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Archive_Events/Archive_Block_Template.php', 'TEC\\Events\\Block_Templates\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Block_Template_Contract.php', 'TEC\\Events\\Block_Templates\\Controller' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Controller.php', 'TEC\\Events\\Block_Templates\\Single_Event\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Single_Event/Single_Block_Template.php', 'TEC\\Events\\Blocks\\Archive_Events\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Archive_Events/Block.php', 'TEC\\Events\\Blocks\\Controller' => __DIR__ . '/../..' . '/src/Events/Blocks/Controller.php', 'TEC\\Events\\Blocks\\Single_Event\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Single_Event/Block.php', 'TEC\\Events\\Configuration\\Provider' => __DIR__ . '/../..' . '/src/Events/Configuration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Activation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Activation.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Event_Cleaner' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Event_Cleaner.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Occurrences_Generator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Occurrences_Generator.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Feedback_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Feedback_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Google_Form_Feedback' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Google_Form_Feedback.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Full_Activation_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Full_Activation_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Health_Check' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Health_Check.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Phase_View_Renderer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Phase_View_Renderer.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Progress_Modal' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Progress_Modal.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Template' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Template.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Upgrade_Tab' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Upgrade_Tab.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Ajax' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Ajax.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Asset_Loader' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Asset_Loader.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\Download_Report_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/Download_Report_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\File_Download' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/File_Download.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Expected_Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Expected_Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Maintenance_Mode' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Maintenance_Mode.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process_Worker' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process_Worker.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report_Categories' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report_Categories.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Site_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Site_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\State' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/State.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Null_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Null_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Single_Event_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Single_Event_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Strategy_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Strategy_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Boolean_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Boolean_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\End_Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/End_Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Integer_Key_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Integer_Key_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Numeric_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Numeric_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Text_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Text_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Timezone_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Timezone_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model_Date_Attributes' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model_Date_Attributes.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Occurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Occurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Post_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Post_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Ignore_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Ignore_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Integer_Key' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Integer_Key.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Occurrence_Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Occurrence_Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Positive_Integer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Positive_Integer.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Present' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Present.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Range_Dates' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Range_Dates.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\String_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/String_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Timezone' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Timezone.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\ValidatorInterface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/ValidatorInterface.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Whole_Number' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Whole_Number.php', 'TEC\\Events\\Custom_Tables\\V1\\Notices' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Notices.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider_Contract' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider_Contract.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Field' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Field.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Table' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Table.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Schema_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Schema_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Field_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Field_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Provider_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Provider_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Table_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Table_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Occurrences' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Occurrences.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Core_Tables' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Core_Tables.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Database_Transactions' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Database_Transactions.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Dates_Representation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Dates_Representation.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Observable_Filtering' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Observable_Filtering.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Reflection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Reflection.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Timezones' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Timezones.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Unbound_Queries' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Unbound_Queries.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_WP_Query_Introspection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_WP_Query_Introspection.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Meta_Watcher' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Meta_Watcher.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Requests' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Requests.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\By_Day_View_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/By_Day_View_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Customizer_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Customizer_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Meta_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Meta_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Base_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Base_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Admin_List_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Admin_List_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Only_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Only_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\WP_Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/WP_Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Custom_Tables_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Custom_Tables_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\WP_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/WP_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Redirection_Schema' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Redirection_Schema.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Custom_Tables_Query_Filters' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Custom_Tables_Query_Filters.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Query_Replace' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Query_Replace.php', 'TEC\\Events\\Editor\\Full_Site\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Archive_Block_Template.php', 'TEC\\Events\\Editor\\Full_Site\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Block_Template_Contract.php', 'TEC\\Events\\Editor\\Full_Site\\Controller' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Controller.php', 'TEC\\Events\\Editor\\Full_Site\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Single_Block_Template.php', 'TEC\\Events\\Installer\\Provider' => __DIR__ . '/../..' . '/src/Events/Installer/Provider.php', 'TEC\\Events\\Integrations\\Integration_Abstract' => __DIR__ . '/../..' . '/src/Events/Integrations/Integration_Abstract.php', 'TEC\\Events\\Integrations\\Plugins\\Colbri_Page_Builder\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Colbri_Page_Builder/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\RSVP' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/RSVP.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\Ticket' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/Ticket.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Emails' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Emails.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Hooks' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Hooks.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\JSON_LD\\Event_Data' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/JSON_LD/Event_Data.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Template' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Template.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Subsection' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Subsection.php', 'TEC\\Events\\Integrations\\Plugins\\Rank_Math\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Rank_Math/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Apple_Wallet\\Event_Modifier' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Apple_Wallet/Event_Modifier.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Pdf' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Pdf.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Events_Schema' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Events_Schema.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Provider.php', 'TEC\\Events\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Provider.php', 'TEC\\Events\\Legacy\\Views\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Legacy/Views/V1/Provider.php', 'TEC\\Events\\SEO\\Controller' => __DIR__ . '/../..' . '/src/Events/SEO/Controller.php', 'TEC\\Events\\Site_Health\\Info_Section' => __DIR__ . '/../..' . '/src/Events/Site_Health/Info_Section.php', 'TEC\\Events\\Site_Health\\Provider' => __DIR__ . '/../..' . '/src/Events/Site_Health/Provider.php', 'TEC\\Events\\Telemetry\\Provider' => __DIR__ . '/../..' . '/src/Events/Telemetry/Provider.php', 'TEC\\Events\\Telemetry\\Telemetry' => __DIR__ . '/../..' . '/src/Events/Telemetry/Telemetry.php', 'Tribe\\Events\\Admin\\Filter_Bar\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Filter_Bar/Provider.php', 'Tribe\\Events\\Admin\\Notice\\Full_Site_Editor' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Full_Site_Editor.php', 'Tribe\\Events\\Admin\\Notice\\Install_Event_Tickets' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Install_Event_Tickets.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Deprecation' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Deprecation.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Updated' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Updated.php', 'Tribe\\Events\\Admin\\Notice\\Marketing' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing.php', 'Tribe\\Events\\Admin\\Notice\\Timezones' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Timezones.php', 'Tribe\\Events\\Admin\\Notice\\Update' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Update.php', 'Tribe\\Events\\Admin\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Provider.php', 'Tribe\\Events\\Admin\\Settings' => __DIR__ . '/../..' . '/src/Tribe/Admin/Settings.php', 'Tribe\\Events\\Aggregator\\Processes\\Batch_Imports' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Processes/Batch_Imports.php', 'Tribe\\Events\\Aggregator\\Record\\Batch_Queue' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Record/Batch_Queue.php', 'Tribe\\Events\\Collections\\Lazy_Post_Collection' => __DIR__ . '/../..' . '/src/Tribe/Collections/Lazy_Post_Collection.php', 'Tribe\\Events\\Editor\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Editor/Hooks.php', 'Tribe\\Events\\Editor\\Objects\\Editor_Object_Interface' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Editor_Object_Interface.php', 'Tribe\\Events\\Editor\\Objects\\Event' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Event.php', 'Tribe\\Events\\Event_Status\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Admin_Template.php', 'Tribe\\Events\\Event_Status\\Classic_Editor' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Classic_Editor.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Detect' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Detect.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Events_Status_Filter' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Events_Status_Filter.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Event_Meta' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Meta.php', 'Tribe\\Events\\Event_Status\\Event_Status_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Status_Provider.php', 'Tribe\\Events\\Event_Status\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Models\\Event' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Models/Event.php', 'Tribe\\Events\\Event_Status\\Status_Labels' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Status_Labels.php', 'Tribe\\Events\\Event_Status\\Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template.php', 'Tribe\\Events\\Event_Status\\Template_Modifications' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template_Modifications.php', 'Tribe\\Events\\I18n' => __DIR__ . '/../..' . '/src/Tribe/I18n.php', 'Tribe\\Events\\Integrations\\Beaver_Builder' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Beaver_Builder.php', 'Tribe\\Events\\Integrations\\Divi\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Divi/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Widget_Shortcode' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Widget_Shortcode.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Service_Provider.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Templates' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Templates.php', 'Tribe\\Events\\Integrations\\Restrict_Content_Pro\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Restrict_Content_Pro/Service_Provider.php', 'Tribe\\Events\\Integrations\\WPML\\Views\\V2\\Filters' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WPML/Views/V2/Filters.php', 'Tribe\\Events\\Integrations\\WP_Rocket' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WP_Rocket.php', 'Tribe\\Events\\Models\\Post_Types\\Event' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Event.php', 'Tribe\\Events\\Models\\Post_Types\\Organizer' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Organizer.php', 'Tribe\\Events\\Models\\Post_Types\\Venue' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Venue.php', 'Tribe\\Events\\Service_Providers\\Context' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Context.php', 'Tribe\\Events\\Service_Providers\\First_Boot' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/First_Boot.php', 'Tribe\\Events\\Taxonomy\\Event_Tag' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Event_Tag.php', 'Tribe\\Events\\Taxonomy\\Taxonomy_Provider' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Taxonomy_Provider.php', 'Tribe\\Events\\Views\\V2\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Assets.php', 'Tribe\\Events\\Views\\V2\\Customizer' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Configuration' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Configuration.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Hooks.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Notice' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Notice.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Events_Bar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Events_Bar.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Global_Elements' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Global_Elements.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Month_View.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Single_Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Single_Event.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hooks.php', 'Tribe\\Events\\Views\\V2\\Implementation_Error' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Implementation_Error.php', 'Tribe\\Events\\Views\\V2\\Index' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Index.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\Repository_User_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/Repository_User_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Partial_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Partial_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Url_Provider_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Url_Provider_Interface.php', 'Tribe\\Events\\Views\\V2\\Kitchen_Sink' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Kitchen_Sink.php', 'Tribe\\Events\\Views\\V2\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Manager.php', 'Tribe\\Events\\Views\\V2\\Messages' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Messages.php', 'Tribe\\Events\\Views\\V2\\Query\\Event_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Event_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Query\\Hide_From_Upcoming_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Hide_From_Upcoming_Controller.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Period' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Period.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Result' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Result.php', 'Tribe\\Events\\Views\\V2\\Repository\\Events_Result_Set' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Events_Result_Set.php', 'Tribe\\Events\\Views\\V2\\Rest_Endpoint' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rest_Endpoint.php', 'Tribe\\Events\\Views\\V2\\Rewrite' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rewrite.php', 'Tribe\\Events\\Views\\V2\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template.php', 'Tribe\\Events\\Views\\V2\\Template\\Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Event.php', 'Tribe\\Events\\Views\\V2\\Template\\Excerpt' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Excerpt.php', 'Tribe\\Events\\Views\\V2\\Template\\Featured_Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Featured_Title.php', 'Tribe\\Events\\Views\\V2\\Template\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/JSON_LD.php', 'Tribe\\Events\\Views\\V2\\Template\\Page' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Page.php', 'Tribe\\Events\\Views\\V2\\Template\\Promo' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Promo.php', 'Tribe\\Events\\Views\\V2\\Template\\Settings\\Advanced_Display' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Settings/Advanced_Display.php', 'Tribe\\Events\\Views\\V2\\Template\\Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Title.php', 'Tribe\\Events\\Views\\V2\\Template_Bootstrap' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template_Bootstrap.php', 'Tribe\\Events\\Views\\V2\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Theme_Compatibility.php', 'Tribe\\Events\\Views\\V2\\Url' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Url.php', 'Tribe\\Events\\Views\\V2\\Utils\\Separators' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Separators.php', 'Tribe\\Events\\Views\\V2\\Utils\\Stack' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Stack.php', 'Tribe\\Events\\Views\\V2\\Utils\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/View.php', 'Tribe\\Events\\Views\\V2\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View.php', 'Tribe\\Events\\Views\\V2\\View_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Interface.php', 'Tribe\\Events\\Views\\V2\\View_Register' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Register.php', 'Tribe\\Events\\Views\\V2\\Views\\By_Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/By_Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Latest_Past_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Latest_Past_View.php', 'Tribe\\Events\\Views\\V2\\Views\\List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Month_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Reflector_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Reflector_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Breakpoint_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Breakpoint_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\HTML_Cache' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/HTML_Cache.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Json_Ld_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Json_Ld_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\List_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/List_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Fast_Forward_Link' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Fast_Forward_Link.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Noindex' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Noindex.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\iCal_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/iCal_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_View.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Admin_Template.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Assets.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Compatibility.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_Abstract.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_List' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_List.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Google_Calendar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Google_Calendar.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Abstract.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Interface.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_365' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_365.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Live' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Live.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCal' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCal.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCalendar_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCalendar_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Request' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Request.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Single_Events' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Single_Events.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Template.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Traits\\Outlook_Methods' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Traits/Outlook_Methods.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\iCalendar_Handler' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/iCalendar_Handler.php', 'Tribe__Events__Main_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Main_Deprecated.php', 'Tribe__Events__Query_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Query_Deprecated.php');
         public static function getInitializer(\Composer\Autoload\ClassLoader $loader)
         {
         }
@@ -85622,6 +88746,7 @@ namespace Tribe\Events\Views\V2 {
      * Outputs classes for each day "cell".
      *
      * @since 6.0.2
+     * @since 6.2.9 Updated logic to always default to comparing days with today's date.
      *
      * @param array<mixed> $day          The current day data.
      * @param string       $day_date     The current day date, in the `Y-m-d` format.
@@ -86025,7 +89150,7 @@ namespace {
      * Formatted Date
      *
      * Returns formatted date
-     * 
+     *
      * @since 5.11.1 Introduced a temporary locale switch to handle the AM/PM format specifically for French language settings.
      *
      * @category Events
@@ -86120,6 +89245,7 @@ namespace {
      * @category Events
      *
      * @since 4.7.6 Deprecated the $timezone parameter.
+     * @since 5.2.0 Updated filter params.
      *
      * @param int    $event        (optional)
      * @param bool   $display_time If true shows date and time, if false only shows date
@@ -86139,6 +89265,7 @@ namespace {
      * @category Events
      *
      * @since 4.7.6 Deprecated the $timezone parameter.
+     * @since 5.2.0 Updated filter params.
      *
      * @param int    $event        (optional)
      * @param bool   $display_time If true shows date and time, if false only shows date
@@ -90399,15 +93526,17 @@ namespace {
     /**
      * Get all the venues
      *
+     * @since 6.2.9 Applied the `tec_events_custom_tables_v1_normalize_occurrence_id` filter to convert provisional IDs into regular IDs.
+     *
      * @param bool  $only_with_upcoming Only return venues with upcoming events attached to them.
      * @param int   $posts_per_page
      * @param bool  $suppress_filters
      * @param array $args {
-     *		Optional. Array of Query parameters.
+     *      Optional. Array of Query parameters.
      *
-     *		@type int  $event       Only venues linked to this event post ID.
-     *		@type bool $has_events  Only venues that have events.
-     *		@type bool $found_posts Return the number of found venues.
+     *      @type int  $event       Only venues linked to this event post ID.
+     *      @type bool $has_events  Only venues that have events.
+     *      @type bool $found_posts Return the number of found venues.
      * }
      *
      * @return array An array of venue post objects.
