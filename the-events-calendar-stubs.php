@@ -93129,7 +93129,6 @@ namespace Tribe\Events\Views\V2\Repository {
      *
      * @package Tribe\Events\Views\V2\Repository
      */
-    #[\ReturnTypeWillChange]
     class Events_Result_Set implements \Tribe\Utils\Collection_Interface
     {
         use \Tribe\Utils\Collection_Trait;
