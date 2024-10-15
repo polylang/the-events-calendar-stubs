@@ -1,5 +1,6 @@
 <?php
 
+namespace {
 /**
  * Registers the library aliases redirecting calls to the `tad_DI52_`, non-namespaced, class format to the namespaced
  * classes.
@@ -14,6 +15,7 @@ foreach ( $aliases as [$class, $alias] ) {
 	if ( ! class_exists( $alias ) ) {
 		class_alias( $class, $alias );
 	}
+}
 }
 
 namespace TEC\Common\Admin\Entities {

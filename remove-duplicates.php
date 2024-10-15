@@ -27,6 +27,12 @@ function remove_duplicates_and_fix() {
 		return;
 	}
 
+	$aliases_contents = preg_replace(
+		'/^<\?php\n/s',
+		"<?php\n\nnamespace {",
+		$aliases_contents,
+		1
+	) . "\n}";
 	$contents = preg_replace( '/^<\?php/', $aliases_contents, $contents, 1 );
 
 	$to_remove = [
