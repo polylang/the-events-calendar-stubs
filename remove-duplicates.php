@@ -37,10 +37,6 @@ function remove_duplicates_and_fix() {
 		'@tad_DI52_ServiceProvider@' => [ // class alias, see `vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php`.
 			'replacement' => 'TEC\Common\lucatume\DI52\ServiceProvider',
 		],
-		'@^(\s+)(class Events_Result_Set )@m' => [
-			'replacement' => '$1#[\ReturnTypeWillChange]' . \PHP_EOL . '$1$2',
-			'count'       => 1,
-		],
 	];
 	$replaced  = false;
 
