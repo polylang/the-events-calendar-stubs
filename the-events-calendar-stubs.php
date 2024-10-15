@@ -1,5 +1,895 @@
 <?php
 
+namespace TEC\Common\Admin\Entities {
+    /**
+     * Interface Element
+     *
+     * @since 6.1.0
+     */
+    interface Element
+    {
+        /**
+         * Render the element.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render();
+    }
+}
+namespace Tribe\Traits {
+    /**
+     * Trait Array_Access
+     *
+     * @since 6.1.0
+     */
+    trait Array_Access
+    {
+        /**
+         * The data managed by this object.
+         *
+         * @var array
+         */
+        protected $data = [];
+        /**
+         * Check if an offset exists.
+         *
+         * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+         *
+         * @param mixed $offset The offset to check.
+         *
+         * @return bool
+         */
+        public function offsetExists($offset) : bool
+        {
+        }
+        /**
+         * Get an offset.
+         *
+         * @link http://php.net/manual/en/arrayaccess.offsetget.php
+         *
+         * @param mixed $offset The offset to get.
+         *
+         * @return mixed The offset value, or null if it does not exist.
+         */
+        #[\ReturnTypeWillChange]
+        public function offsetGet($offset)
+        {
+        }
+        /**
+         * Set an offset.
+         *
+         * @link http://php.net/manual/en/arrayaccess.offsetset.php
+         *
+         * @param mixed $offset The offset to set.
+         * @param mixed $value  The value to set.
+         *
+         * @return void
+         */
+        public function offsetSet($offset, $value) : void
+        {
+        }
+        /**
+         * Unset an offset.
+         *
+         * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+         *
+         * @param mixed $offset The offset to unset.
+         *
+         * @return void
+         */
+        public function offsetUnset($offset) : void
+        {
+        }
+    }
+}
+namespace TEC\Common\Admin\Entities {
+    /**
+     * Class Base_Entity
+     *
+     * @since 6.1.0
+     */
+    abstract class Base_Entity implements \ArrayAccess, \TEC\Common\Admin\Entities\Element
+    {
+        use \Tribe\Traits\Array_Access;
+        /**
+         * The attributes for the entity.
+         *
+         * @var Attributes|null
+         */
+        protected ?\Tribe\Utils\Element_Attributes $attributes = null;
+        /**
+         * The classes for the entity.
+         *
+         * @var ?Classes
+         */
+        protected ?\Tribe\Utils\Element_Classes $classes = null;
+        /**
+         * Convert the entity output to a string.
+         *
+         * @since 6.1.0
+         *
+         * @return string
+         */
+        public function __toString()
+        {
+        }
+        /**
+         * Get the attributes for the element.
+         *
+         * The attributes retrieved from Element_Attributes::get_attributes_as_string() are already
+         * escaped, so it is not necessary to further escape these attributes.
+         *
+         * @see Element_Attributes::get_attributes_as_string()
+         * @since 6.1.0
+         *
+         * @return string
+         */
+        protected function get_attributes() : string
+        {
+        }
+        /**
+         * Get the classes for the entity.
+         *
+         * @since 6.1.0
+         *
+         * @return string
+         */
+        protected function get_classes() : string
+        {
+        }
+        /**
+         * Get the classes as an attribute.
+         *
+         * @since 6.1.0
+         *
+         * @return string
+         */
+        protected function get_class_attribute() : string
+        {
+        }
+        /**
+         * Set the attributes for the entity.
+         *
+         * @since 6.1.0
+         *
+         * @param Attributes $attributes The attributes to set.
+         *
+         * @return void
+         */
+        protected function set_attributes(\Tribe\Utils\Element_Attributes $attributes)
+        {
+        }
+        /**
+         * Set the classes for the entity.
+         *
+         * @since 6.1.0
+         *
+         * @param Classes $classes The classes for the entity.
+         *
+         * @return void
+         */
+        protected function set_classes(\Tribe\Utils\Element_Classes $classes)
+        {
+        }
+    }
+    /**
+     * Class Br
+     *
+     * @since 6.1.0
+     */
+    class Br extends \TEC\Common\Admin\Entities\Base_Entity
+    {
+        /**
+         * Render the element.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Interface Entity_With_Children
+     *
+     * @since 6.1.0
+     */
+    interface Element_With_Children extends \TEC\Common\Admin\Entities\Element
+    {
+        /**
+         * Get the children of the container.
+         *
+         * @since 6.1.0
+         *
+         * @return Element[]
+         */
+        public function get_children() : array;
+    }
+    /**
+     * Trait Validate_Elements
+     *
+     * @since 6.1.0
+     */
+    trait Validate_Elements
+    {
+        /**
+         * Validate that an object is an instance of a class.
+         *
+         * @since 6.1.0
+         *
+         * @param object $thing     The object to validate.
+         * @param string $classname The class name to validate against.
+         *
+         * @return void
+         * @throws InvalidArgumentException If the object is not an instance of the class.
+         */
+        protected function validate_instanceof($thing, $classname)
+        {
+        }
+    }
+    /**
+     * Class Container.
+     *
+     * This class is a generic container for elements that contain children. Using this
+     * class directly will allow for rending children without any other element
+     * wrapping them.
+     *
+     * @since 6.1.0
+     */
+    class Container extends \TEC\Common\Admin\Entities\Base_Entity implements \TEC\Common\Admin\Entities\Element_With_Children
+    {
+        use \TEC\Common\Admin\Entities\Validate_Elements;
+        /**
+         * The children of the container.
+         *
+         * @var Element[]
+         */
+        protected array $children = [];
+        /**
+         * The type of child elements that the container can contain.
+         *
+         * @var string
+         */
+        protected string $child_type = \TEC\Common\Admin\Entities\Element::class;
+        /**
+         * Add a child to the container.
+         *
+         * @since 6.1.0
+         *
+         * @param Element $child The child to add.
+         *
+         * @return static
+         * @throws InvalidArgumentException If the child is not an instance of the child type.
+         */
+        public function add_child($child)
+        {
+        }
+        /**
+         * Add multiple children to the container.
+         *
+         * @since 6.1.0
+         *
+         * @param Element[] $children The children to add.
+         *
+         * @return static
+         */
+        public function add_children(array $children)
+        {
+        }
+        /**
+         * Get the children of the container.
+         *
+         * @since 6.1.0
+         *
+         * @return Element[]
+         */
+        public function get_children() : array
+        {
+        }
+        /**
+         * Render the children of the container.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        protected function render_children()
+        {
+        }
+        /**
+         * Render the element.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class Div
+     *
+     * @since 6.1.0
+     */
+    class Div extends \TEC\Common\Admin\Entities\Container
+    {
+        /**
+         * Div constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param ?Classes    $classes    The classes for the div.
+         * @param ?Attributes $attributes The attributes for the div.
+         */
+        public function __construct(?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Render the element.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class FieldW_Wrapper
+     *
+     * @since 6.1.0
+     */
+    class Field_Wrapper implements \TEC\Common\Admin\Entities\Element
+    {
+        /**
+         * FieldW_Wrapper constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param Field $field The field to wrap.
+         */
+        public function __construct(\Tribe__Field $field)
+        {
+        }
+        /**
+         * Render the field.
+         *
+         * @since 6.1.0
+         */
+        public function render() : void
+        {
+        }
+        /**
+         * Get the field.
+         *
+         * @since 6.1.0
+         *
+         * @return Field
+         */
+        public function get_field() : \Tribe__Field
+        {
+        }
+    }
+    /**
+     * Class Heading
+     *
+     * @since 6.1.0
+     */
+    class Heading extends \TEC\Common\Admin\Entities\Base_Entity
+    {
+        /**
+         * The heading content.
+         *
+         * @var string
+         */
+        protected string $content = '';
+        /**
+         * The heading level.
+         *
+         * @var int
+         */
+        protected int $level = 1;
+        /**
+         * The maximum heading level.
+         *
+         * @var int
+         */
+        protected int $max_level = 6;
+        /**
+         * Heading constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param string      $content    The content for the heading.
+         * @param int         $level      The level for the heading.
+         * @param ?Classes    $classes    The classes for the heading.
+         * @param ?Attributes $attributes The attributes for the heading.
+         */
+        public function __construct(string $content, int $level = 1, ?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Render the element.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class H2
+     *
+     * @since 6.1.0
+     */
+    class H2 extends \TEC\Common\Admin\Entities\Heading
+    {
+        /**
+         * H2 constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param string      $content    The content for the heading.
+         * @param ?Classes    $classes    The classes for the heading.
+         * @param ?Attributes $attributes The attributes for the heading.
+         */
+        public function __construct(string $content, ?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+    }
+    /**
+     * Class H3
+     *
+     * @since 6.1.0
+     */
+    class H3 extends \TEC\Common\Admin\Entities\Heading
+    {
+        /**
+         * H3 constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param string      $content    The content for the heading.
+         * @param ?Classes    $classes    The classes for the heading.
+         * @param ?Attributes $attributes The attributes for the heading.
+         */
+        public function __construct(string $content, ?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+    }
+    /**
+     * Class Image
+     *
+     * @since 6.1.0
+     */
+    class Image extends \TEC\Common\Admin\Entities\Base_Entity
+    {
+        /**
+         * The URL for the image.
+         *
+         * @var string
+         */
+        protected string $url = '';
+        /**
+         * Image constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param string      $url        The URL for the image.
+         * @param ?Attributes $attributes The attributes for the image element.
+         */
+        public function __construct(string $url, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Render the image.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class Link
+     *
+     * @since 6.1.0
+     */
+    class Link extends \TEC\Common\Admin\Entities\Base_Entity
+    {
+        /**
+         * Link constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param string      $url        The URL for the link.
+         * @param string      $text       The text for the link.
+         * @param ?Classes    $classes    The classes for the link.
+         * @param ?Attributes $attributes The attributes for the link.
+         */
+        public function __construct(string $url, string $text, ?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Render the link.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class List_Item
+     *
+     * @since 6.1.0
+     */
+    class List_Item extends \TEC\Common\Admin\Entities\Container
+    {
+        /**
+         * List_Item constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param ?Classes    $classes    The classes for the list item.
+         * @param ?Attributes $attributes The attributes for the list item.
+         */
+        public function __construct(?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Add a child to the container.
+         *
+         * @since 6.1.0
+         *
+         * @param Element $child The child to add. Cannot be another List Item.
+         *
+         * @return static
+         * @throws InvalidArgumentException If the child is another List Item.
+         */
+        public function add_child($child)
+        {
+        }
+        /**
+         * Render the list item content.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class Paragraph
+     *
+     * @since 6.1.0
+     */
+    class Paragraph extends \TEC\Common\Admin\Entities\Container
+    {
+        /**
+         * Paragraph constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param ?Classes    $classes    The classes for the paragraph.
+         * @param ?Attributes $attributes The attributes for the paragraph.
+         */
+        public function __construct(?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Render the paragraph content.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class Plain_Text
+     *
+     * @since 6.1.0
+     */
+    class Plain_Text extends \TEC\Common\Admin\Entities\Base_Entity
+    {
+        /**
+         * Plain_Text constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param string $content The content for the text.
+         */
+        public function __construct(string $content)
+        {
+        }
+        /**
+         * Render the text content.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class Separator
+     *
+     * @since 6.1.0
+     */
+    class Separator extends \TEC\Common\Admin\Entities\Base_Entity
+    {
+        /**
+         * Separator constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param ?Classes    $classes    The classes for the separator.
+         * @param ?Attributes $attributes The attributes for the separator.
+         */
+        public function __construct(?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Render the element.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+    /**
+     * Class Unordered_List
+     *
+     * @since 6.1.0
+     */
+    class Unordered_List extends \TEC\Common\Admin\Entities\Container
+    {
+        use \TEC\Common\Admin\Entities\Validate_Elements;
+        /**
+         * The type of child elements that the container can contain.
+         *
+         * @var string
+         */
+        protected string $child_type = \TEC\Common\Admin\Entities\List_Item::class;
+        /**
+         * Unordered_List constructor.
+         *
+         * @since 6.1.0
+         *
+         * @param ?Classes    $classes    The classes for the unordered list.
+         * @param ?Attributes $attributes The attributes for the unordered list.
+         */
+        public function __construct(?\Tribe\Utils\Element_Classes $classes = null, ?\Tribe\Utils\Element_Attributes $attributes = null)
+        {
+        }
+        /**
+         * Add a child to the container.
+         *
+         * @since 6.1.0
+         *
+         * @param List_Item $child The child to add.
+         *
+         * @return static
+         * @throws InvalidArgumentException If the child is not an instance of the child type.
+         */
+        public function add_child($child)
+        {
+        }
+        /**
+         * Add multiple children to the container.
+         *
+         * @since 6.1.0
+         *
+         * @param List_Item[] $children The children to add.
+         *
+         * @return static
+         * @throws InvalidArgumentException If any of the children are not an instance of the child type.
+         */
+        public function add_children(array $children)
+        {
+        }
+        /**
+         * Render the unordered list content.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+    }
+}
+namespace TEC\Common\Admin {
+    /**
+     * Class Section
+     *
+     * @since 6.1.0
+     */
+    abstract class Section
+    {
+        use \TEC\Common\Admin\Entities\Validate_Elements;
+        /**
+         * Title for the sidebar.
+         *
+         * @var ?Heading
+         */
+        protected ?\TEC\Common\Admin\Entities\Heading $title = null;
+        /**
+         * Set the title for the sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @param Heading $heading The title for the sidebar.
+         *
+         * @return static
+         */
+        public function set_title(\TEC\Common\Admin\Entities\Heading $heading)
+        {
+        }
+        /**
+         * Render the title for the sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        protected function render_title()
+        {
+        }
+        /**
+         * Render the section content.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public abstract function render();
+    }
+    /**
+     * Class Settings_Section
+     *
+     * @since 6.1.0
+     */
+    class Settings_Section extends \TEC\Common\Admin\Section
+    {
+        /**
+         * Elements for the section.
+         *
+         * @var Element[]
+         */
+        protected array $elements = [];
+        /**
+         * Add an element to the section.
+         *
+         * @since 6.1.0
+         *
+         * @param Element $element The element to add.
+         *
+         * @return static
+         */
+        public function add_element(\TEC\Common\Admin\Entities\Element $element)
+        {
+        }
+        /**
+         * Add multiple elements to the section.
+         *
+         * @since 6.1.0
+         *
+         * @param Element[] $elements The elements to add.
+         *
+         * @return static
+         */
+        public function add_elements(array $elements)
+        {
+        }
+        /**
+         * Render the section content.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+        /**
+         * Render the elements for the section.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        protected function render_elements()
+        {
+        }
+    }
+    /**
+     * Class Settings_Sidebar
+     *
+     * @since 6.1.0
+     */
+    class Settings_Sidebar extends \TEC\Common\Admin\Section
+    {
+        /**
+         * Sections for the sidebar.
+         *
+         * @var Section[]
+         */
+        protected array $sections = [];
+        /**
+         * Header image for the sidebar.
+         *
+         * @var ?Image
+         */
+        protected ?\TEC\Common\Admin\Entities\Image $header_image = null;
+        /**
+         * Render the sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        public function render()
+        {
+        }
+        /**
+         * Set the header image for the sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @param Image $image The image to set.
+         *
+         * @return void
+         */
+        public function set_header_image(\TEC\Common\Admin\Entities\Image $image)
+        {
+        }
+        /**
+         * Add a section to the sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @param Section $section The section to add.
+         *
+         * @return void
+         */
+        public function add_section(\TEC\Common\Admin\Section $section)
+        {
+        }
+        /**
+         * Render the header image for the sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        protected function render_header_image()
+        {
+        }
+    }
+}
 namespace TEC\Common\Configuration {
     /**
      * Interface Configuration_Provider_Interface.
@@ -664,11 +1554,13 @@ namespace TEC\Common\lucatume\DI52 {
          * @param  string[]|null                  $afterBuildMethods  An array of methods that should be called on the
          *                                                            instance after it has been built; the methods should
          *                                                            not require any argument.
+         * @param bool $afterBuildAll                                 Whether to call the after build methods on only the
+         *                                                            base instance or all instances of the decorator chain.
          *
          * @return void This method does not return any value.
          * @throws ContainerException
          */
-        public function singletonDecorators($id, $decorators, array $afterBuildMethods = null)
+        public function singletonDecorators($id, $decorators, array $afterBuildMethods = null, $afterBuildAll = false)
         {
         }
         /**
@@ -681,13 +1573,15 @@ namespace TEC\Common\lucatume\DI52 {
          *                                                            should be bound to.
          * @param  array<string|object|callable>  $decorators         An array of implementations that decorate an object.
          * @param  string[]|null                  $afterBuildMethods  An array of methods that should be called on the
-         *                                                            instance after it has been built; the methods should
-         *                                                            not require any argument.
+         *                                                            base instance after it has been built; the methods
+         *                                                            should not require any argument.
+         * @param bool $afterBuildAll                                 Whether to call the after build methods on only the
+         *                                                            base instance or all instances of the decorator chain.
          *
          * @return void This method does not return any value.
          * @throws ContainerException If there's any issue binding the decorators.
          */
-        public function bindDecorators($id, array $decorators, array $afterBuildMethods = null)
+        public function bindDecorators($id, array $decorators, array $afterBuildMethods = null, $afterBuildAll = false)
         {
         }
         /**
@@ -1157,6 +2051,8532 @@ namespace TEC\Common\Editor\Full_Site {
         }
     }
 }
+namespace TEC\Event_Automator\Admin\Tabs {
+    /**
+     * Class Integrations
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @package TEC\Event_Automator\Admin\Tabs
+     *
+     */
+    class Integrations
+    {
+        /**
+         * Slug for the tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $slug = 'integrations';
+        /**
+         * Register the Tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string Admin page id.
+         */
+        public function register_tab($admin_page)
+        {
+        }
+        /**
+         * Register tab ID for network mode support.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string> $tabs Array of tabs IDs for the Events settings page.
+         *
+         * @return array<string> The filtered list of tab ids.
+         */
+        public function register_tab_id(array $tabs) : array
+        {
+        }
+        /**
+         * Gets the settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,mixed> Key value pair for setting options.
+         */
+        public function get_fields() : array
+        {
+        }
+    }
+    /**
+     * Class Service_Provider
+     *
+     * @package TEC\Event_Automator\Admin\Tabs
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     */
+    class Tabs_Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * Register the provider.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register()
+        {
+        }
+        /**
+         * Add the action hooks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function add_actions()
+        {
+        }
+        /**
+         * Add fhe filter hooks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function add_filters()
+        {
+        }
+        /**
+         * Register the Attendee Registration tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string Admin page id.
+         *
+         * @return void
+         */
+        public function add_tabs($admin_page)
+        {
+        }
+        /**
+         * Register the Integrations tab id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string> $tabs Array of tabs IDs for the Events settings page.
+         *
+         * @return array<string> The filtered list of tab ids.
+         */
+        public function filter_include_integrations_tab_id(array $tabs) : array
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator {
+    /**
+     * Class Hooks.
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator;
+     */
+    class Hooks extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register()
+        {
+        }
+        /**
+         * Run Updates on Plugin Upgrades.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function run_updates()
+        {
+        }
+        /**
+         * Register providers at admin_init, so dependencies are loaded.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function admin_register()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations\Admin {
+    /**
+     * Class Abstract_Dashboard
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Admin
+     */
+    class Abstract_Dashboard
+    {
+        /**
+         * The prefix, in the context of tribe options, of each setting for this extension.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $option_prefix = '';
+        /**
+         * The internal id of the integration.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $api_id = '';
+        /**
+         * An instance of the Integration Endpoints_Manager.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Endpoints_Manager
+         */
+        protected $manager;
+        /**
+         * An instance of the Template_Modifications.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Template_Modifications
+         */
+        protected $template_modifications;
+        /**
+         * The Integration URL handler instance.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Url
+         */
+        protected $url;
+        /**
+         * Get the integration endpoint dashboard fields to display on the Integrations tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, as updated by the settings.
+         */
+        public function add_fields(array $fields = [])
+        {
+        }
+        /**
+         * Provides the introductory text to the integration endpoint dashboard.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The introductory text for the integration endpoint dashboard.
+         */
+        protected function get_intro_text()
+        {
+        }
+        /**
+         * Get the integration endpoints.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,array> An array of the integration endpoints.
+         */
+        public function get_endpoints()
+        {
+        }
+        /**
+         * Get the integration endpoints dashboard template.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string HTML for the dashboard.
+         */
+        public function get_dashboard()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits {
+    /**
+     * Trait With_AJAX
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits;
+     */
+    trait With_AJAX
+    {
+        /**
+         * Checks if the current AJAX request is valid and authorized or not.
+         *
+         * In a normal flow, where the AJAX response is not intercepted by an handler, the method will echo an error data
+         * and `die`.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string      $action The action to check the AJAX referer and the nonce against.
+         * @param string|null $nonce  The nonce to check, the `null` value is allowed and will always fail.
+         *
+         * @return bool Whether the AJAX referer and nonce are valid or not.
+         */
+        protected function check_ajax_nonce($action, $nonce = null)
+        {
+        }
+        /**
+         * Checks the request post ID is set and corresponds to an event.
+         *
+         * While the method will return a boolean value, in the normal flow, where AJAX requests are not intercepted by
+         * handlers, the method will return the failure JSON response and `die`.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int|null $post_id The post ID of the post to check or `null` to use the one from the request variable.
+         *
+         * @return \WP_Post|false Either the event post object, as decorated by the `tribe_get_event` function, or `false`
+         *                        if AJAX responses are handled and the post is not valid.
+         */
+        protected function check_ajax_post($post_id = null)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations\Admin {
+    /**
+     * Class Abstract_Endpoints_Manager
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Admin
+     */
+    abstract class Abstract_Endpoints_Manager
+    {
+        use \TEC\Event_Automator\Traits\With_AJAX;
+        /**
+         * The name of the API
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $api_name;
+        /**
+         * The id of the API
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $api_id;
+        /**
+         * An instance of the Template_Modifications.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Template_Modifications
+         */
+        protected $template_modifications;
+        /**
+         * The Actions name handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Actions
+         */
+        protected $actions;
+        /**
+         * Endpoints.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var array<string|mixed> An array of Endpoints.
+         */
+        protected $endpoints;
+        /**
+         * Get an endpoint by id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id The id of an endpoint.
+         * @param string $type An optional
+         *
+         * @return bool|REST_Endpoint_Interface An endpoint instance or boolean if not found.
+         */
+        public function get_endpoint(string $endpoint_id, string $type = '')
+        {
+        }
+        /**
+         * Clear the provided endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param REST_Endpoint_Interface $endpoint An endpoint instance.
+         *
+         * @return bool Whether the queue is cleared.
+         */
+        protected function clear_endpoint(\TEC\Event_Automator\Integrations\REST\V1\Interfaces\REST_Endpoint_Interface $endpoint) : bool
+        {
+        }
+        /**
+         * Disable the provided endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param REST_Endpoint_Interface $endpoint An endpoint instance.
+         *
+         * @return bool Whether the endpoint is disable.
+         */
+        protected function disable_endpoint(\TEC\Event_Automator\Integrations\REST\V1\Interfaces\REST_Endpoint_Interface $endpoint) : bool
+        {
+        }
+        /**
+         * Enable the provided endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param REST_Endpoint_Interface $endpoint An endpoint instance.
+         *
+         * @return bool Whether the endpoint is enabled.
+         */
+        protected function enable_endpoint(\TEC\Event_Automator\Integrations\REST\V1\Interfaces\REST_Endpoint_Interface $endpoint) : bool
+        {
+        }
+        /**
+         * Handles clearing an endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string|null $nonce The nonce that should accompany the request.
+         *
+         * @return bool|string Whether the request was handled or html for messages and a endpoint row.
+         */
+        public function ajax_clear($nonce = null)
+        {
+        }
+        /**
+         * Handles disabling an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string|null $nonce The nonce that should accompany the request.
+         *
+         * @return bool|string Whether the request was handled or html for messages and a endpoint row.
+         */
+        public function ajax_disable($nonce = null)
+        {
+        }
+        /**
+         * Handles enabling an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string|null $nonce The nonce that should accompany the request.
+         *
+         * @return bool|string Whether the request was handled or html for messages and a endpoint row.
+         */
+        public function ajax_enable($nonce = null)
+        {
+        }
+        /**
+         * Get the confirmation text for clearing an endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The confirmation text.
+         */
+        public static function get_confirmation_to_clear_endpoint_queue() : string
+        {
+        }
+        /**
+         * Get the confirmation text for disabling an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @$type string An optional type of disable message to display. Default is queue.
+         *
+         * @return string The confirmation text.
+         */
+        public static function get_confirmation_to_disable_endpoint(string $type = 'queue') : string
+        {
+        }
+        /**
+         * Get the confirmation text for enabling a endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The confirmation text.
+         */
+        public static function get_confirmation_to_enable_endpoint() : string
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations {
+    /**
+     * Class Settings
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations
+     */
+    class Assets
+    {
+        /**
+         * Registers and Enqueues the admin assets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register_admin_assets()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits {
+    /**
+     * Trait Last_Access
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Traits;
+     */
+    trait Last_Access
+    {
+        /**
+         * Get the last access with provided app name.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $app_name The optional app name used with this API key pair.
+         */
+        public function get_last_access($app_name)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations\Connections {
+    /**
+     * Class Integration_Connections
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Connections
+     */
+    abstract class Integration_Connections
+    {
+        use \TEC\Event_Automator\Traits\With_AJAX;
+        use \TEC\Event_Automator\Traits\Last_Access;
+        /**
+         * The name of the API
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $api_name;
+        /**
+         * The id of the API
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $api_id;
+        /**
+         * The API secret used for JWT tokens.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $api_secret;
+        /**
+         * The API secret key used to store it.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $api_secret_key;
+        /**
+         * Whether an api_key has been loaded for the API to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var boolean
+         */
+        protected $api_key_loaded = false;
+        /**
+         * The name of the loaded api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public $loaded_api_key_name = '';
+        /**
+         * The key to get the option with a list of all API Keys.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $all_api_keys_key;
+        /**
+         * The prefix to save all single API Key with.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $single_api_key_prefix;
+        /**
+         * The hashed consumer id of the api key loaded.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $consumer_id = '';
+        /**
+         * The consumer secret of the api key loaded.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $consumer_secret = '';
+        /**
+         * The permissions the API Key pair has access to.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $permissions = 'read';
+        /**
+         * The last access of the API Key pair.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $last_access = '';
+        /**
+         * The WordPress user id of the loaded api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var integer
+         */
+        protected $user_id = 0;
+        /**
+         * The WP_User object.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var WP_User
+         */
+        protected $user;
+        /**
+         * An instance of the Template_Modifications.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Template_Modifications
+         */
+        protected $template_modifications;
+        /**
+         * The Actions name handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Actions
+         */
+        protected $actions;
+        /**
+         * Checks whether the current API is ready to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool Whether the current API has a loaded api_key.
+         */
+        public function is_ready()
+        {
+        }
+        /**
+         * Get the id of the API .
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The id of the API.
+         */
+        public static function get_api_id()
+        {
+        }
+        /**
+         * Get a random hash.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $prefix A optional prefix to the random hash.
+         * @param int    $length A optional length of the random hash.
+         *
+         * @return string A random hash.
+         */
+        public function get_random_hash($prefix = '', $length = 20)
+        {
+        }
+        /**
+         * Set up the API secret key to use for generating tokens.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function setup_api_secret()
+        {
+        }
+        /**
+         * Get the API secret key for this API class.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The secret key used for JWT tokens or empty string if not set.
+         */
+        protected function get_api_secret_option()
+        {
+        }
+        /**
+         * Set the API secret key for this API class.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The secret key used for JWT tokens.
+         */
+        protected function set_api_secret_option()
+        {
+        }
+        /**
+         * Get the API secret key for this API class.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The secret key used for JWT tokens.
+         */
+        public function get_api_secret()
+        {
+        }
+        /**
+         * Decode the JWT access_token.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $access_token The JWT access_token to decode.
+         *
+         * @return array<string|string>|WP_Error An array of the API Key pair or WP_Error.
+         */
+        public function decode_jwt($access_token)
+        {
+        }
+        /**
+         * Load a specific api_key into the API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key         An api_key with the fields to access the API.
+         * @param string               $consumer_secret An optional consumer secret used to verify a connection.
+         *
+         * @return bool|WP_Error Return true if loaded or WP_Error otherwise.
+         */
+        public function load_api_key(array $api_key, $consumer_secret)
+        {
+        }
+        /**
+         * Load a specific api_key by the id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id     The consumer id to get and load a connection.
+         * @param string $consumer_secret The consumer secret used to verify a connection.
+         *
+         * @return bool|WP_Error Whether the page is loaded or a WP_Error code.
+         */
+        public function load_api_key_by_id($consumer_id, $consumer_secret)
+        {
+        }
+        /**
+         * Check if an api_key has all the information to be valid.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key An api_key with the fields to access the API.
+         * @param string $consumer_secret The consumer secret to verify the connection with.
+         *
+         * @return bool|WP_Error Return true if loaded or WP_Error otherwise.
+         */
+        protected function is_valid_api_key($api_key, $consumer_secret)
+        {
+        }
+        /**
+         * Initialize a connection to use for the API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key An api_key with the fields to access the API.
+         */
+        protected function init_api_key($api_key)
+        {
+        }
+        /**
+         * Get the listing of connections.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param boolean $all_data Whether to return all api_key data, default is only name and status.
+         *
+         * @return array<string|string> $list_of_api_keys An array of all the connections.
+         */
+        public function get_list_of_api_keys($all_data = false)
+        {
+        }
+        /**
+         * Update the list of Connections with provided api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key_data The array of data for an api_key to add to the list.
+         */
+        protected function update_list_of_api_keys($api_key_data)
+        {
+        }
+        /**
+         * Delete from the list of connections the provided api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key to save.
+         */
+        protected function delete_from_list_of_api_keys($consumer_id)
+        {
+        }
+        /**
+         * Get a Single connection by id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key.
+         *
+         * @return array<string|string> $api_key The api_key data or empty array if no api_key.
+         */
+        public function get_api_key_by_id($consumer_id)
+        {
+        }
+        /**
+         * Set a connection with the provided id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key_data A specific api_key data to save.
+         */
+        public function set_api_key_by_id(array $api_key_data)
+        {
+        }
+        /**
+         * Updates the last access valid access of the connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key.
+         * @param string $app_name    The optional app name used with this connection.
+         */
+        public function set_api_key_last_access($consumer_id, $app_name = '')
+        {
+        }
+        /**
+         * Delete an api_key by ID.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key.
+         *
+         * @return bool Whether the api_key has been deleted and the access access_token revoked.
+         */
+        public function delete_api_key_by_id($consumer_id)
+        {
+        }
+        /**
+         * Maybe hash the consumer secret.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_secret The consumer secret to verify the connection with.
+         *
+         * @return string The hashed consumer secret.
+         */
+        protected function hash_the_secret($consumer_secret)
+        {
+        }
+        /**
+         * Check the consumer secret.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_secret The consumer secret to verify the connection with.
+         *
+         * @return boolean Whether the consumer secret matches the saved one.
+         */
+        protected function check_secret($consumer_secret)
+        {
+        }
+        /**
+         * Hash the specified text.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $text Text to be hashed.
+         *
+         * @return string The hashed text.
+         */
+        public static function api_hash($text)
+        {
+        }
+        /**
+         * Get the WP_User object from thelLoaded connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return WP_User|null Returns the WP_User object or null if not loaded.
+         */
+        public function get_user()
+        {
+        }
+        /**
+         * Get the WP_User_Query query results.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string|mixed> An array of user objects.
+         */
+        public function get_users()
+        {
+        }
+        /**
+         * Get a user's information formatted for internal use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $user Information for a user from an API,
+         *
+         * @return array<string|mixed> An array of a user's information formatted for internal use.
+         */
+        protected function get_formatted_user_info($user)
+        {
+        }
+        /**
+         * Get list of users formatted for options dropdown.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,mixed>  An array of WordPress Users to use for connection.
+         */
+        public function get_users_options_list()
+        {
+        }
+        /**
+         * Get users dropdown fields for a tribe dropdown input.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,mixed>  An array of WordPress Users to use in a tribe dropdown input.
+         */
+        public function get_users_dropdown()
+        {
+        }
+    }
+    /**
+     * Class Integration_AJAX
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Connections
+     */
+    abstract class Integration_AJAX extends \TEC\Event_Automator\Integrations\Connections\Integration_Connections
+    {
+        use \TEC\Event_Automator\Traits\With_AJAX;
+        use \TEC\Event_Automator\Traits\Last_Access;
+        /**
+         * Add Connection fields using ajax.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $nonce The add action nonce to check.
+         *
+         * @return string An html message for success or failure and the html of the connection fields.
+         */
+        public function ajax_add_connection($nonce)
+        {
+        }
+        /**
+         * Create Connection Access.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $nonce The add action nonce to check.
+         *
+         * @return string An html message for success or failure of generating connection access.
+         */
+        public function ajax_create_connection_access($nonce)
+        {
+        }
+        /**
+         * Save the Connection for an integration.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The consumer id.
+         * @param string $name        The name of the connection.
+         * @param int    $user_id     The user id of the connection.
+         * @param string $permissions The permissions for the connection.
+         *
+         * @return string An html message for success or failure of generating connection access.
+         */
+        public abstract function save_connection($consumer_id, $name, $user_id, $permissions);
+        /**
+         * Get the confirmation text for deleting an api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The confirmation text.
+         */
+        public static abstract function get_confirmation_to_delete_connection();
+        /**
+         * Handles the request to delete an integration connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string|null $nonce The nonce that should accompany the request.
+         *
+         * @return bool Whether the request was handled or not.
+         */
+        public function ajax_delete_connection($nonce = null)
+        {
+        }
+    }
+    /**
+     * Class Settings
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Connections
+     */
+    abstract class Integration_Settings
+    {
+        /**
+         * The prefix, in the context of tribe options, of each setting for this extension.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static string $option_prefix;
+        /**
+         * The internal id of the integration.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static string $api_id;
+        /**
+         * An instance of the Integration API handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Api
+         */
+        protected $api;
+        /**
+         * An instance of the Integration Template_Modifications.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Template_Modifications
+         */
+        protected $template_modifications;
+        /**
+         * The Integration URL handler instance.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Url
+         */
+        protected $url;
+        /**
+         * Settings constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                    $api                    An instance of the API handler.
+         * @param Template_Modifications $template_modifications An instance of the Template_Modifications handler.
+         * @param Url                    $url                    An instance of the URL handler.
+         */
+        public function __construct(\TEC\Event_Automator\Integrations\Connections\Api $api, \TEC\Event_Automator\Integrations\Connections\Template_Modifications $template_modifications, \TEC\Event_Automator\Integrations\Connections\Url $url)
+        {
+        }
+        /**
+         * Returns the URL of the TEC Settings URL page.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The URL of the TEC Integration settings page.
+         */
+        public static function tec_admin_url()
+        {
+        }
+        /**
+         * Returns the URL of the ET Settings URL page.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The URL of the ET Integration settings page.
+         */
+        public static function et_admin_url()
+        {
+        }
+        /**
+         * Get the integration connection fields to the ones in the Integrations tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,array> The fields, as updated by the settings.
+         */
+        public function get_fields()
+        {
+        }
+        /**
+         * Adds the integration connections to The Events Calendar Integration Tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, as updated by the settings.
+         */
+        public function add_fields_tec(array $fields = [])
+        {
+        }
+        /**
+         * Get the key to place the integration fields.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The key to place the API integration fields.
+         */
+        protected function get_integrations_fields_key()
+        {
+        }
+        /**
+         * Adds the integration connections to Event Tickets Integration Tab.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, as updated by the settings.
+         */
+        public function add_fields_et(array $fields = [])
+        {
+        }
+        /**
+         * Get the key to place the integration fields in Event Tickets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The key to place the API integration fields.
+         */
+        protected function get_et_integrations_fields_key()
+        {
+        }
+        /**
+         * Provides the introductory text to the set up and configuration an integration.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The introductory text to the the set up and configuration of an integration.
+         */
+        protected function get_intro_text()
+        {
+        }
+        /**
+         * Get the all the integration connection fields.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The HTML for all integration connections.
+         */
+        protected function get_all_connection_fields()
+        {
+        }
+    }
+    /**
+     * Class Template_Modifications
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Connections
+     */
+    abstract class Integration_Template_Modifications
+    {
+        /**
+         * The internal id of the API integration.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static string $api_id = '';
+        /**
+         * The prefix, in the context of tribe options, of each setting for an API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static string $option_prefix = '';
+        /**
+         * An instance of the admin template handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Admin_Template
+         */
+        protected $admin_template;
+        /**
+         * An instance of the URl handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Url
+         */
+        protected $url;
+        /**
+         * Get intro text for an API Settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string HTML for the intro text.
+         */
+        public function get_intro_text()
+        {
+        }
+        /**
+         * Gets all the integration connections.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Integration_Connections $api An instance of an API handler.
+         * @param Integration_Url         $url The URLs handler for the integration.
+         *
+         * @return string HTML for all integration connections.
+         */
+        public function get_all_connection_fields(\TEC\Event_Automator\Integrations\Connections\Integration_Connections $api, \TEC\Event_Automator\Integrations\Connections\Integration_Url $url)
+        {
+        }
+        /**
+         * Get the message template.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $message The message to display.
+         * @param string $type    The type of message, either updated or error.
+         * @param boolean $echo    Whether to echo the template.
+         *
+         * @return string The message with html to display
+         */
+        public function get_settings_message_template($message, $type = 'updated', $echo = false)
+        {
+        }
+        /**
+         * Print the message template to display.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string  $message The message to display.
+         * @param string  $type    The type of message, either updated or error.
+         * @param boolean $echo    Whether to echo the template.
+         *
+         * @return string The message with html to display
+         */
+        public function print_settings_message_template($message, $type = 'updated', $echo = true)
+        {
+        }
+        /**
+         * Get fields for a connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Integration_Connections $api         An instance of an API handler.
+         * @param string                  $consumer_id The unique id used to save the API Key data.
+         * @param array<string|mixed>     $connection_data     The API Key data.
+         * @param array<string|mixed>     $users       An array of WordPress users to create an API Key for.
+         * @param string                  $type        A string of the type of fields to load ( new and generated ).
+         *
+         * @return string HTML fields for a connection.
+         */
+        public function get_connection_fields(\TEC\Event_Automator\Integrations\Connections\Integration_Connections $api, $consumer_id, $connection_data, $users, $type = 'new')
+        {
+        }
+        /**
+         * Get intro text for an endpoint dashboard.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string HTML for the intro text.
+         */
+        public function get_dashboard_intro_text()
+        {
+        }
+        /**
+         * Adds the Endpoint Dashboard.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $endpoints An array of the Zapier endpoints.
+         * @param Endpoints_Manager   $manager   The Endpoint Manager instance.
+         * @param Url                 $url       The URLs handler for the integration.
+         *
+         * @return string HTML for the dashboard.
+         */
+        public function get_dashboard(array $endpoints, $manager, $url)
+        {
+        }
+        /**
+         * Get the HTML for an Integration Endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $endpoint An array of details for a Zapier endpoint.
+         * @param Endpoints_Manager   $manager  The Endpoint Manager instance.
+         * @param boolean             $echo     Whether to echo the template.
+         *
+         * @return string HTML for the endpoint row.
+         */
+        public function get_endpoint_row(array $endpoint_details, $manager, $echo = false) : string
+        {
+        }
+        /**
+         * Print the HTML for a Integration Endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $endpoint An array of details for a Zapier endpoint.
+         * @param Endpoints_Manager   $manager  The Endpoint Manager instance.
+         * @param boolean             $echo     Whether to echo the template.
+         *
+         * @return string HTML for the endpoint row.
+         */
+        public function print_endpoint_row(array $endpoint_details, $manager, $echo = true) : string
+        {
+        }
+    }
+    /**
+     * Class Url
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Connections
+     */
+    abstract class Integration_Url
+    {
+        /**
+         * The internal id of the API integration.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static string $api_id;
+        /**
+         * The current Actions handler instance.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Actions
+         */
+        protected $actions;
+        /**
+         * Get the admin ajax url with parameters to enable an API action.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string               $action         The name of the action to add to the url.
+         * @param string               $nonce          The nonce to verify for the action.
+         * @param array<string|string> $additional_arg An array of arugments to add to the query string of the admin ajax url.
+         *
+         * @return string
+         */
+        public function get_admin_ajax_url_with_parameters(string $action, string $nonce, array $additional_arg)
+        {
+        }
+        /**
+         * Returns the URL that should be used to add integration connection fields in the settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The URL to add integration connection fields.
+         */
+        public function to_add_connection_link()
+        {
+        }
+        /**
+         * Returns the URL that should be used to create access token for an integration connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The consumer id to use to create the access token.
+         *
+         * @return string The URL used to create access token for an integration connection.
+         */
+        public function to_create_access_link($consumer_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used to delete an integration connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the connection to delete.
+         *
+         * @return string The URL to delete an integration connection.
+         */
+        public function to_delete_connection_link($consumer_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used clear a Zapier endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id An endpoint id to clear.
+         *
+         * @return string The URL to clear a Zapier endpoint queue.
+         */
+        public function to_clear_endpoint_queue($endpoint_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used disable a Zapier endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id An endpoint id to disable.
+         *
+         * @return string The URL to disable a Zapier endpoint.
+         */
+        public function to_disable_endpoint_queue($endpoint_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used enable a Zapier endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id An endpoint id to enable.
+         *
+         * @return string The URL to enable a Zapier endpoint.
+         */
+        public function to_enable_endpoint_queue($endpoint_id)
+        {
+        }
+    }
+}
+namespace {
+    interface Tribe__REST__Endpoints__READ_Endpoint_Interface
+    {
+        /**
+         * Handles GET requests on the endpoint.
+         *
+         * @param WP_REST_Request $request
+         *
+         * @return WP_Error|WP_REST_Response An array containing the data on success or a WP_Error instance on failure.
+         */
+        public function get(\WP_REST_Request $request);
+        /**
+         * Returns the content of the `args` array that should be used to register the endpoint
+         * with the `register_rest_route` function.
+         *
+         * @return array
+         */
+        public function READ_args();
+    }
+    interface Tribe__Documentation__Swagger__Provider_Interface
+    {
+        /**
+         * Returns an array in the format used by Swagger 2.0.
+         *
+         * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
+         * or that of a document part.
+         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * interface.
+         *
+         * @link http://swagger.io/
+         *
+         * @return array An array description of a Swagger supported component.
+         */
+        public function get_documentation();
+    }
+    interface Tribe__Documentation__Swagger__Builder_Interface
+    {
+        /**
+         * Registers a documentation provider for a path.
+         *
+         * @param                                            $path
+         * @param Tribe__REST__Endpoints__READ_Endpoint_Interface $endpoint
+         */
+        public function register_documentation_provider($path, \Tribe__Documentation__Swagger__Provider_Interface $endpoint);
+        /**
+         * @return Tribe__Documentation__Swagger__Provider_Interface[]
+         */
+        public function get_registered_documentation_providers();
+        /**
+         * Registers a documentation provider for a definition.
+         *
+         * @param                                                  string $type
+         * @param Tribe__Documentation__Swagger__Provider_Interface       $provider
+         */
+        public function register_definition_provider($type, \Tribe__Documentation__Swagger__Provider_Interface $provider);
+        /**
+         * @return Tribe__Documentation__Swagger__Provider_Interface[]
+         */
+        public function get_registered_definition_providers();
+    }
+}
+namespace TEC\Event_Automator\Integrations\REST\V1\Documentation {
+    /**
+     * Class Swagger_Documentation
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\REST\V1\Documentation
+     */
+    abstract class Integration_Swagger_Documentation implements \Tribe__REST__Endpoints__READ_Endpoint_Interface, \Tribe__Documentation__Swagger__Provider_Interface, \Tribe__Documentation__Swagger__Builder_Interface
+    {
+        /**
+         * Open API Version.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $open_api_version = '3.0.0';
+        /**
+         * Integration REST API Version.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $rest_api_version = '1.0.0';
+        /**
+         * REST Documentation Definition Providers.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Documentation__Swagger__Provider_Interface[]
+         */
+        protected $documentation_providers = [];
+        /**
+         * REST Definition Definition Providers.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Documentation__Swagger__Provider_Interface[]
+         */
+        protected $definition_providers = [];
+        /**
+         * Register the actual endpoint on WP Rest API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register()
+        {
+        }
+        /**
+         * Handles GET requests on the endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request
+         *
+         * @return WP_Error|WP_REST_Response An array containing the data on success or a WP_Error instance on failure.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * Returns an array in the format used by Swagger 2.0.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
+         * or that of a document part.
+         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * interface.
+         *
+         * @link http://swagger.io/
+         *
+         * @return array An array description of a Swagger supported component.
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * Get REST API Info
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array
+         */
+        protected abstract function get_api_info();
+        /**
+         * Get REST API Path
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array
+         */
+        protected function get_paths()
+        {
+        }
+        /**
+         * Registers a documentation provider for a path.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param                                            $path
+         * @param Tribe__Documentation__Swagger__Provider_Interface $endpoint
+         */
+        public function register_documentation_provider($path, \Tribe__Documentation__Swagger__Provider_Interface $endpoint)
+        {
+        }
+        /**
+         * Get REST API Documentation
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array
+         */
+        protected function get_own_documentation()
+        {
+        }
+        /**
+         * Get REST API Definitions
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array
+         */
+        protected function get_definitions()
+        {
+        }
+        /**
+         * Get REST API Registered Documentation Providers
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return Tribe__Documentation__Swagger__Provider_Interface[]
+         */
+        public function get_registered_documentation_providers()
+        {
+        }
+        /**
+         * Registers a documentation provider for a definition.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string                                            $type
+         * @param Tribe__Documentation__Swagger__Provider_Interface $provider
+         */
+        public function register_definition_provider($type, \Tribe__Documentation__Swagger__Provider_Interface $provider)
+        {
+        }
+        /**
+         * Get Documentation Provider Interface
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return Tribe__Documentation__Swagger__Provider_Interface[]
+         */
+        public function get_registered_definition_providers()
+        {
+        }
+        /**
+         * Returns the content of the `args` array that should be used to register the endpoint
+         * with the `register_rest_route` function.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array
+         */
+        public function READ_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations\REST\V1\Interfaces {
+    /**
+     * REST_Endpoint_Interface
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integration\REST\V1\Interfaces
+     */
+    interface REST_Endpoint_Interface
+    {
+        /**
+         * Gets the Endpoint path for this route.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_endpoint_path();
+        /**
+         * Get the endpoint type.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The endpoint type.
+         */
+        public function get_endpoint_type();
+        /**
+         * Get the endpoint id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The endpoint details id with prefix and endpoint combined.
+         */
+        public function get_id();
+        /**
+         * Get the endpoint option id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The endpoint details id with prefix and endpoint combined.
+         */
+        public function get_option_id();
+        /**
+         * Adds the endpoint to the endpoint dashboard fitler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function add_to_dashboard();
+        /**
+         * Add the endpoint details to the endpoint array for the dashboard.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $endpoints An array of the integration endpoints to display.
+         *
+         * @return array<string,array> An array of the integration endpoints to display with current endpoint added.
+         */
+        public function add_endpoint_details($endpoints);
+        /**
+         * Get details for the current endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,array> An array of the details for an endpoint.
+         */
+        public function get_endpoint_details();
+        /**
+         * Get the endpoint saved details ( last access and enabled ).
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,array> An array of saved details for an endpoint.
+         */
+        public function get_saved_details();
+        /**
+         * Set the endpoint details ( last access and enabled ).
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|integer> $details An array of saved details for an endpoint ( last access and enabled ).
+         *
+         * @return bool
+         */
+        public function set_endpoint_details(array $details);
+        /**
+         * Updates the last access valid access of an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $app_name The optional app name used with this API key pair.
+         */
+        public function set_endpoint_last_access($app_name = '');
+        /**
+         * Clears last access of an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function clear_endpoint_last_access();
+        /**
+         * Disables or enables the endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param bool $enabled The enabled to change the endpoint too.
+         */
+        public function set_endpoint_enabled(bool $enabled);
+        /**
+         * Add a custom post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param integer            $post_id A WordPress custom post id.
+         * @param array<mixed|mixed> $data    An array of data specific to the trigger and used for validation.
+         */
+        public function add_to_queue($post_id, $data);
+        /**
+         * Get the endpoint dependents.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string> The endpoint dependents array.
+         */
+        public function get_dependents();
+    }
+}
+namespace TEC\Event_Automator\Integrations\REST\V1\Endpoints\Queue {
+    /**
+     * Integration_REST_Endpoint
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integration\REST\V1\Endpoints
+     */
+    abstract class Integration_REST_Endpoint implements \Tribe__REST__Endpoints__READ_Endpoint_Interface, \Tribe__Documentation__Swagger__Provider_Interface, \TEC\Event_Automator\Integrations\REST\V1\Interfaces\REST_Endpoint_Interface
+    {
+        use \TEC\Event_Automator\Traits\Last_Access;
+        /**
+         * The REST API endpoint path.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $path;
+        /**
+         * An instance of the Integration API handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Api
+         */
+        protected $api;
+        /**
+         * An instance of the Swagger_Documentation handler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Swagger_Documentation
+         */
+        protected $documentation;
+        /**
+         * Endpoint details prefix.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $endpoint_details_prefix;
+        /**
+         * Endpoint id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $endpoint_id = '';
+        /**
+         * An array of details for the endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var array<string,array>
+         */
+        protected $details;
+        /**
+         * Whether the Endpoint is enabled or disabled.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var bool
+         */
+        protected bool $enabled;
+        /**
+         * Whether the Endpoint is missing a dependency.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var bool
+         */
+        protected bool $missing_dependency;
+        /**
+         * An array of dependent codes for endpoint [ 'et', 'tec' ].
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var array<string>
+         */
+        protected array $dependents = [];
+        /**
+         * The endpoint type( authorize or queue ).
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $type;
+        /**
+         * The endpoint service id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $service_id;
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Integration_Trigger_Queue
+         */
+        public $trigger;
+        /**
+         * Register the actual endpoint on WP Rest API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public abstract function register();
+        /**
+         * Returns an array in the format used by Swagger 2.0.
+         *
+         * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
+         * or that of a document part.
+         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * interface.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @link http://swagger.io/
+         *
+         * @return array<string|mixed> An array description of a Swagger supported component.
+         */
+        public abstract function get_documentation();
+        /**
+         * Provides the content of the `args` array to register the endpoint support for GET requests.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string|mixed> An array of read 'args'.
+         */
+        public abstract function READ_args();
+        /**
+         * Gets the Endpoint path for this route.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_endpoint_path()
+        {
+        }
+        /**
+         * Whether the current request can access the endpoint.
+         *
+         * @return bool Whether the current request can access the endpoint.
+         */
+        public function can_access($request)
+        {
+        }
+        /**
+         * Sanitize a request argument based on details registered to the route.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param mixed $value Value of the 'filter' argument.
+         *
+         * @return string|array<string|string> A text field sanitized string or array.
+         */
+        public function sanitize_callback($value)
+        {
+        }
+        /**
+         * Converts an array of arguments suitable for the WP REST API to the Swagger format.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $args An array of arguments to swaggerize.
+         * @param array<string|mixed> $defaults A default array of arguments.
+         *
+         * @return array<string|mixed> The converted arguments.
+         */
+        public function swaggerize_args(array $args = [], array $defaults = [])
+        {
+        }
+        /**
+         * Converts REST format type argument to the corresponding Swagger.io definition.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $type A type to convert to Swagger.
+         *
+         * @return string|array<string> The converted type, maintaining structure if it's an array.
+         */
+        protected function convert_type($type)
+        {
+        }
+        /**
+         * Load the API Key Pair using the consumer id and secret.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string               $consumer_id     The consumer id to get and load an API Key pair.
+         * @param string               $consumer_secret The consumer secret used to verify an API Key pair.
+         * @param string|array<string> $token           The decoded access token or an empty string.
+         * @param string               $app_header_id   The app header id sent from the integration.
+         *
+         * @return bool|WP_Error Whether the API Key pair could load or WP_Error.
+         */
+        protected function load_api_key_pair($consumer_id, $consumer_secret, $token = '', $app_header_id = '')
+        {
+        }
+        /**
+         * Verify the access_token for the integration request.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return array<string|string>|WP_Error The decoded access token or WP_Error.
+         */
+        protected function verify_token($request)
+        {
+        }
+        /**
+         * Verify and load the access_token for the request.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return array<string|string>|WP_Error The decoded access token or WP_Error.
+         */
+        protected function verify_and_load_key($request)
+        {
+        }
+        /**
+         * Get the endpoint type.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The endpoint type.
+         */
+        public function get_endpoint_type()
+        {
+        }
+        /**
+         * Get the endpoint id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The endpoint details id with prefix and endpoint combined.
+         */
+        public function get_id()
+        {
+        }
+        /**
+         * Get the endpoint option id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The endpoint details id with prefix and endpoint combined.
+         */
+        public function get_option_id()
+        {
+        }
+        /**
+         * Get the translatable display name for the integration endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The display name for the integration endpoint.
+         */
+        protected abstract function get_display_name() : string;
+        /**
+         * Adds the endpoint to the endpoint dashboard fitler.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function add_to_dashboard()
+        {
+        }
+        /**
+         * Add the endpoint details to the endpoint array for the dashboard.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $endpoints An array of the integration endpoints to display.
+         *
+         * @return array<string,array> An array of the integration endpoints to display with current endpoint added.
+         */
+        public function add_endpoint_details($endpoints)
+        {
+        }
+        /**
+         * Get details for the current endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,array> An array of the details for an endpoint.
+         */
+        public function get_endpoint_details()
+        {
+        }
+        /**
+         * Get the endpoint saved details ( last access and enabled ).
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,array> An array of saved details for an endpoint.
+         */
+        public function get_saved_details()
+        {
+        }
+        /**
+         * Set the endpoint details ( last access and enabled ).
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|integer> $details An array of saved details for an endpoint ( last access and enabled ).
+         *
+         * @return bool
+         */
+        public function set_endpoint_details(array $details)
+        {
+        }
+        /**
+         * Updates the last access valid access of an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $app_name The optional app name used with this API key pair.
+         */
+        public function set_endpoint_last_access($app_name = '')
+        {
+        }
+        /**
+         * Clears last access of an endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function clear_endpoint_last_access()
+        {
+        }
+        /**
+         * Disables or enables the endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param bool $enabled The enabled to change the endpoint too.
+         */
+        public function set_endpoint_enabled(bool $enabled)
+        {
+        }
+        /**
+         * Add a custom post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param integer            $post_id A WordPress custom post id.
+         * @param array<mixed|mixed> $data    An array of data specific to the trigger and used for validation.
+         */
+        public function add_to_queue($post_id, $data)
+        {
+        }
+        /**
+         * Check if it's a REST request.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool True if it's a REST request, false otherwise.
+         */
+        protected function is_rest_request() : bool
+        {
+        }
+        /**
+         * Get the endpoint dependents.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string> The endpoint dependents array.
+         */
+        public function get_dependents()
+        {
+        }
+        /**
+         * Verify token and login user before dispatching the request.
+         * Done on `rest_pre_dispatch` to be able to set current user to pass validation capability checks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param mixed           $result  Response to replace the requested version with. Can be anything
+         *                                 a normal endpoint can return, or null to not hijack the request.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return null With always return null, failure will happen on the can_create permission check.
+         */
+        public function pre_dispatch_verification($result, $server, $request)
+        {
+        }
+        /**
+         * Modifies REST API comma seperated parameters before validation.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Response|WP_Error $response Response to replace the requested version with. Can be anything
+         *                                            a normal endpoint can return, or a WP_Error if replacing the
+         *                                            response with an error.
+         * @param WP_REST_Server            $handler  ResponseHandler instance (usually WP_REST_Server).
+         * @param WP_REST_Request           $request Request used to generate the response.
+         *
+         * @return WP_REST_Response|WP_Error The response.
+         */
+        public function modify_rest_api_params_before_validation($response, $handler, $request)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations\REST\V1\Utilities {
+    /**
+     * Class Actions
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\REST\V1\Utilities
+     */
+    class Action_Endpoints
+    {
+        /**
+         * Filters the endpoint details.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array>    $endpoint     An array of the Zapier endpoint details.
+         * @param Abstract_REST_Endpoint $endpoint_obj An instance of the endpoint.
+         */
+        public function filter_details($endpoint, $endpoint_obj)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Integrations\Trigger_Queue {
+    /**
+     * Class Integration_Trigger_Queue
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Integrations\Trigger_Queue
+     */
+    abstract class Integration_Trigger_Queue
+    {
+        /**
+         * The API ID for the Trigger Queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $api_id;
+        /**
+         * Queue name prefix.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $queue_prefix;
+        /**
+         * Queue name.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $queue_name = '';
+        /**
+         * Meta field name when a custom post is added to a trigger queue to prevent duplicate.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected static $added_to_queue_meta_field = '';
+        /**
+         * Get the queue name for the trigger.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The queue name with prefix added.
+         */
+        public function get_queue_name()
+        {
+        }
+        /**
+         * Get the meta field name saved when an item is added to the queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The meta field name with prefix added.
+         */
+        public function get_meta_field_name()
+        {
+        }
+        /**
+         * Get the array of custom post ids in the queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string> An array of custom post ids.
+         */
+        public function get_queue()
+        {
+        }
+        /**
+         * Set the queue transient.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|integer> $queue An array of
+         *
+         * @return bool
+         */
+        public function set_queue(array $queue)
+        {
+        }
+        /**
+         * Validate the hook to determine if the custom post should be added to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param integer            $post_id A WordPress custom post id.
+         * @param array<mixed|mixed> $data    An array of data specific to the trigger and used for validation.
+         *
+         * @return boolean Whether the hooked action is valid for this trigger.
+         */
+        protected abstract function validate_for_trigger($post_id, $data);
+        /**
+         * Add a custom post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param integer            $post_id A WordPress custom post id.
+         * @param array<mixed|mixed> $data    An array of data specific to the trigger and used for validation.
+         */
+        public function add_to_queue($post_id, $data)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator {
+    /**
+     * Class Plugin
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator
+     */
+    class Plugin extends \tad_DI52_ServiceProvider
+    {
+        /**
+         * Stores the version for the plugin.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public const VERSION = '1.7.0';
+        /**
+         * Stores the base slug for the plugin.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        const SLUG = 'event-automator';
+        /**
+         * The slug that will be used to identify HTTP requests the plugin should handle.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $request_slug = 'event_automator_request';
+        /**
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string Plugin Directory.
+         */
+        public $plugin_dir;
+        /**
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string Plugin path.
+         */
+        public $plugin_path;
+        /**
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string Plugin URL.
+         */
+        public $plugin_url;
+        /**
+         * Allows this class to be used as a singleton.
+         *
+         * Note this specifically doesn't have a typing, just a type hinting via Docblocks, it helps
+         * avoid problems with deprecation since this is loaded so early.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var \Tribe__Container
+         */
+        protected $container;
+        /**
+         * Plugin constructor.
+         *
+         * @since 6.0.0
+         *
+         * @param \tad_DI52_Container $container The container to use.
+         */
+        public function __construct(\tad_DI52_Container $container)
+        {
+        }
+        /**
+         * Sets the container for the class.
+         *
+         * Note this specifically doesn't have a typing for the container, just a type hinting via Docblocks, it helps
+         * avoid problems with deprecation since this is loaded so early.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param ?\Tribe__Container $container The container to use, if any. If not provided, the global container will be used.
+         *
+         */
+        public function set_container($container = null) : void
+        {
+        }
+        /**
+         * Boots the plugin class and registers it as a singleton.
+         *
+         * Note this specifically doesn't have a typing for the container, just a type hinting via Docblocks, it helps
+         * avoid problems with deprecation since this is loaded so early.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param ?\Tribe__Container $container The container to use, if any. If not provided, the global container will be used.
+         */
+        public function boot($container = null) : void
+        {
+        }
+        /**
+         * Setup the Extension's properties.
+         *
+         * This always executes even if the required plugins are not present.
+         */
+        public function register()
+        {
+        }
+        /**
+         * Register the Tribe Autoloader in Events Automator.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function register_autoloader()
+        {
+        }
+        /**
+         * Checks whether the plugin dependency manifest is satisfied or not.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool Whether the plugin dependency manifest is satisfied or not.
+         */
+        protected function check_plugin_dependencies() : bool
+        {
+        }
+        /**
+         * Registers the plugin and dependency manifest among those managed by Event Automator.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function register_plugin_dependencies()
+        {
+        }
+    }
+}
+namespace {
+    /**
+     * Base Plugin register
+     *
+     * Register all plugins to Dependency Class
+     *
+     * @package Tribe
+     * @since 4.9
+     *
+     */
+    abstract class Tribe__Abstract_Plugin_Register
+    {
+        /**
+         * The absolute path to the plugin file, the one that contains the plugin header.
+         *
+         * @var string
+         */
+        protected $base_dir;
+        /**
+         * @var string
+         */
+        protected $main_class;
+        /**
+         * @var string
+         */
+        protected $version;
+        /**
+         * @since 4.9.17
+         *
+         * @var array
+         */
+        protected $classes_req = [];
+        /**
+         * @var array
+         */
+        protected $dependencies = ['parent-dependencies' => [], 'co-dependencies' => [], 'addon-dependencies' => []];
+        /**
+         * Registers a plugin with dependencies
+         */
+        public function register_plugin()
+        {
+        }
+        /**
+         * Returns whether or not the dependencies have been met
+         *
+         * This is basically an aliased function - register_plugins, upon
+         * second calling, returns whether or not a plugin should load.
+         *
+         * @deprecated since 4.9.17 It is unused by any Tribe plugins and returned void.
+         * @todo       remove in 4.11
+         */
+        public function has_valid_dependencies()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator {
+    /**
+     * Class Plugin_Register.
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator
+     *
+     * @see     Tribe__Abstract_Plugin_Register For the plugin dependency manifest registration.
+     */
+    class Plugin_Register extends \Tribe__Abstract_Plugin_Register
+    {
+        /**
+         * The version of the plugin.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public const VERSION = '1.7.0';
+        /**
+         * Configures the base_dir property which is the path to the plugin bootstrap file.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $file Which is the path to the plugin bootstrap file.
+         */
+        public function set_base_dir(string $file) : void
+        {
+        }
+        /**
+         * Gets the previously configured base_dir property.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_base_dir() : string
+        {
+        }
+        /**
+         * Gets the main class of the Plugin, stored on the main_class property.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_plugin_class() : string
+        {
+        }
+        /**
+         * File path to the main class of the plugin.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string The path to the main class of the plugin.
+         */
+        protected $base_dir;
+        /**
+         * Alias to the VERSION constant.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string The version of the plugin.
+         */
+        protected $version = self::VERSION;
+        /**
+         * Fully qualified name of the main class of the plugin.
+         * Do not use the Plugin::class constant here, we need this value without loading the Plugin class.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string The main class of the plugin.
+         */
+        protected $main_class = 'TEC\\Event_Automator\\Plugin';
+        /**
+         * An array of dependencies for the plugin.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var array<string,mixed>
+         */
+        protected $dependencies = [
+            /*
+             * READ THIS: Because Event Automator requires EITHER ET or TEC, we have to handle them
+             *            in a weird way. So, ET and TEC version numbers are defined as separate class properties.
+             */
+            'parent-dependencies' => [],
+        ];
+        /**
+         * Required version of ET.
+         *
+         * This is separated out from $dependencies because Event Automator is an either/or dependency on TEC and ET.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $required_tec_tickets = '5.10.0';
+        /**
+         * Required version of TEC.
+         *
+         * This is separated out from $dependencies because Event Automator is an either/or dependency on TEC and ET.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $required_tec_events = '6.5.0';
+        /**
+         * Constructor method.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function __construct()
+        {
+        }
+        /**
+         * Add ET and/or TEC as loose parent-dependency via filter instead of class property to avoid grammar errors in the notice.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array $dependencies An array of dependencies for the plugins. These can include parent, add-on and other dependencies.
+         *
+         * @return array
+         */
+        public function add_et_and_tec_as_loose_dependency($dependencies)
+        {
+        }
+        /**
+         * Load the deprecated constants.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function load_deprecated()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate {
+    /**
+     * Class Actions
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Actions
+    {
+        /**
+         * The name of the action used to add a Power Automate connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $add_connection = 'tec-automator-power-automate-add-connection';
+        /**
+         * The name of the action used to create a Power Automate access token.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $create_access = 'tec-automator-power-automate-create-access-token';
+        /**
+         * The name of the action used to delete a Power Automate connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $delete_connection = 'tec-automator-power-automate-delete-connection';
+        /**
+         * The name of the action used to clear a Power Automate endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $clear_action = 'tec-automator-power-automate-clear-endpoint-queue';
+        /**
+         * The name of the action used to disable a Power Automate endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $disable_action = 'tec-automator-power-automate-disable-endpoint';
+        /**
+         * The name of the action used to enable a Power Automate endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $enable_action = 'tec-automator-power-automate-enable-endpoint';
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\Admin {
+    /**
+     * Class Dashboard
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Dashboard extends \TEC\Event_Automator\Integrations\Admin\Abstract_Dashboard
+    {
+        /**
+         * @inheritDoc
+         */
+        public static $option_prefix = 'tec_power_automate_endpoints_';
+        /**
+         * @inheritDoc
+         */
+        public static $api_id = 'power-automate';
+        /**
+         * Dashboard constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Endpoints_Manager      $manager                An instance of the Endpoints_Manager handler.
+         * @param Template_Modifications $template_modifications An instance of the Template_Modifications handler.
+         * @param Url                    $url                    An instance of the URL handler.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Admin\Endpoints_Manager $manager, \TEC\Event_Automator\Power_Automate\Template_Modifications $template_modifications, \TEC\Event_Automator\Power_Automate\Url $url)
+        {
+        }
+    }
+    /**
+     * Class Endpoints_Manager
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Endpoints_Manager extends \TEC\Event_Automator\Integrations\Admin\Abstract_Endpoints_Manager
+    {
+        /**
+         * @inheritdoc
+         */
+        public static $api_name = 'Power Automate';
+        /**
+         * @inheritdoc
+         */
+        public static $api_id = 'power-automate';
+        /**
+         * Endpoints_Manager constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Actions                $actions An instance of the Actions name handler.
+         * @param Template_Modifications $actions An instance of the Template_Modifications.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Actions $actions, \TEC\Event_Automator\Power_Automate\Template_Modifications $template_modifications)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate {
+    /**
+     * Class Api
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Api extends \TEC\Event_Automator\Integrations\Connections\Integration_AJAX
+    {
+        /**
+         * @inheritdoc
+         */
+        public static $api_name = 'Power Automate';
+        /**
+         * @inheritdoc
+         */
+        public static $api_id = 'power-automate';
+        /**
+         * @inerhitDoc
+         */
+        protected $all_api_keys_key = 'tec_power_automate_connections';
+        /**
+         * @inheritDoc
+         */
+        protected $single_api_key_prefix = 'tec_power_automate_connection_';
+        /**
+         * @inheritDoc
+         */
+        protected static $api_secret_key = 'tec_automator_power_automate_secret_key';
+        /**
+         * API constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Actions                $actions An instance of the Actions name handler.
+         * @param Template_Modifications $actions An instance of the Template_Modifications.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Actions $actions, \TEC\Event_Automator\Power_Automate\Template_Modifications $template_modifications)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function save_connection($consumer_id, $name, $user_id, $permissions)
+        {
+        }
+        /**
+         * Create the access token.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The consumer id.
+         * @param string $consumer_secret        The consumer secret.
+         * @param string $name        The name of the connection.
+         *
+         * @return string
+         */
+        public function create_access_token($consumer_id, $consumer_secret, $name)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public static function get_confirmation_to_delete_connection()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits {
+    /**
+     * Trait With_Nonce_Routes
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits;
+     */
+    trait With_Nonce_Routes
+    {
+        /**
+         * Routes a request to the admin area only if the user can manage the site options.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,callable>    $routes A map of the routes to handle, from nonce actions to the callables
+         *                                              that should handle each.
+         * @param string                    ...$caps One or more capabilities the current user should possess to proceed
+         *                                              with the routing.
+         *
+         * @return false|callable The callback that will be used to handle the route, or `false` to indicate a no match.
+         */
+        public function route_admin_by_nonce(array $routes, ...$caps)
+        {
+        }
+        /**
+         * Routes a request to the admin area ignoring capabilities.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,callable> $routes A map of the routes to handle, from nonce actions to the callables
+         *                                              that should handle each.
+         *
+         * @return false|callable The callback that will be used to handle the route, or `false` to indicate a no match.
+         */
+        public function public_route_by_nonce(array $routes)
+        {
+        }
+        /**
+         * Routes a request to the admin area ignoring capabilities.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string                    $nonce Nonce to be validated.
+         *
+         * @param array<string,callable>    $routes A map of the routes to handle, from nonce actions to the callables
+         *                                              that should handle each.
+         *
+         * @return false|callable The callback that will be used to handle the route, or `false` to indicate a no match.
+         */
+        private function route_by_nonce(array $routes, string $nonce)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate {
+    /**
+     * Class Power_Automate_Provider
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Power_Automate_Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        use \TEC\Event_Automator\Traits\With_Nonce_Routes;
+        /**
+         * The constant to disable the event status coding.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        const DISABLED = 'TEC_POWER_AUTOMATE_DISABLED';
+        /**
+         * The constant to enable add to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        const ENABLE_ADD_TO_QUEUE = 'TEC_POWER_AUTOMATE_ENABLE_ADD_TO_QUEUE';
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register()
+        {
+        }
+        /**
+         * Returns whether the event status should register, thus activate, or not.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool Whether the event status should register or not.
+         */
+        public static function is_active()
+        {
+        }
+        /**
+         * Provides the routes that should be used to handle Power Automate Integration requests.
+         *
+         * The map returned by this method will be used by the `TEC\Event_Automator\Traits\With_Nonce_Routes` trait.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,callable> A map from the nonce actions to the corresponding handlers.
+         */
+        public function admin_routes()
+        {
+        }
+        /**
+         * Adds the actions required for event status.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function add_actions()
+        {
+        }
+        /**
+         * Adds the actions to add to the queues.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0.1 Split the method in sub-methods for each plugin.
+         */
+        public function setup_add_to_queues()
+        {
+        }
+        /**
+         * Adds the actions required for The Events Calendar.
+         *
+         * @since 6.0.0.1
+         *
+         * @return void
+         */
+        protected function add_tec_setup() : void
+        {
+        }
+        /**
+         * Adds the actions required for Event Tickets.
+         *
+         * @since 6.0.0.1
+         *
+         * @return void
+         */
+        protected function add_et_setup() : void
+        {
+        }
+        /**
+         * Adds the filters required by Power Automate.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function add_filters()
+        {
+        }
+        /**
+         * Register the Admin Assets for Power Automate.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register_admin_assets()
+        {
+        }
+        /**
+         * Registers the REST API endpoints.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.6.3 - Migrated all but Swagger Documentation endpoint to Event Tickets Plus and Events Calendar Pro
+         */
+        public function register_endpoints()
+        {
+        }
+        /**
+         * Adds the endpoint to the endpoint dashboard filter.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.6.2 - Migrated to Event Tickets Plus and Events Calendar Pro
+         */
+        public function add_endpoints_to_dashboard()
+        {
+        }
+        /**
+         * Filters the fields in the Events > Settings > Integrations tab to Power Automate settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.6.2 Migrated to Events Calendar Pro
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, as updated by the settings.
+         */
+        public function filter_tec_integrations_tab_fields($fields)
+        {
+        }
+        /**
+         * Filters the fields in the Tickets > Settings > Integrations tab to Power Automate settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.6.2 Migrated to Event Tickets Plus
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, as updated by the settings.
+         */
+        public function filter_et_integrations_tab_fields($fields)
+        {
+        }
+        /**
+         * Adds the Endpoint dashboard fields after the connection settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, with the added endpoint dashboard fields.
+         */
+        public function add_dashboard_fields($fields)
+        {
+        }
+        /**
+         * Filters the Power Automate endpoint details.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array>    $endpoint     An array of the Power Automate endpoint details.
+         * @param Abstract_REST_Endpoint $endpoint_obj An instance of the endpoint.
+         */
+        public function filter_create_event_details($endpoint, $endpoint_obj)
+        {
+        }
+        /**
+         * Filter to enable adding to the queues for Power Automate.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param boolean $enable_add_to_queue Whether to enable adding to the queues for Power Automate, default to false.
+         *
+         * @return boolean Whether adding to the queues is enabled Power Automate.
+         */
+        public function filter_enable_add_to_queues($enable_add_to_queue)
+        {
+        }
+        /**
+         * Verify token and login user before dispatching the request.
+         * Done on `rest_pre_dispatch` to be able to set current user to pass validation capability checks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.6.2 - Use Tribe\Events\Pro\Integrations\Event_Automator\Power_Automate_Provider->pre_dispatch_verification_for_create_events
+         *
+         * @param mixed           $result  Response to replace the requested version with. Can be anything
+         *                                 a normal endpoint can return, or null to not hijack the request.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return null With always return null, failure will happen on the can_create permission check.
+         */
+        public function pre_dispatch_verification($result, $server, $request)
+        {
+        }
+        /**
+         * Modifies REST API comma seperated  parameters before validation.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.6.2 - Use Tribe\Events\Pro\Integrations\Event_Automator\Power_Automate_Provider->modify_rest_api_params_before_validatio_of_create_events
+         *
+         * @param WP_REST_Response|WP_Error $response Response to replace the requested version with. Can be anything
+         *                                            a normal endpoint can return, or a WP_Error if replacing the
+         *                                            response with an error.
+         * @param WP_REST_Server $handler  ResponseHandler instance (usually WP_REST_Server).
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return WP_REST_Response|WP_Error The response.
+         */
+        public function modify_rest_api_params_before_validation($result, $server, $request)
+        {
+        }
+        /**
+         * Add a custom post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int     $post_id A WordPress custom post id.
+         * @param WP_Post $post    A WordPress custom post object.
+         * @param boolean $update  Whether this is an update to a custom post or new. Unreliable and not used.
+         */
+        public function add_to_queue($post_id, $post, $update)
+        {
+        }
+        /**
+         * Add a custom post id  of an event that has been updated to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int     $post_id A WordPress custom post id.
+         * @param WP_Post $post_after   Post object following the update.
+         * @param WP_Post $post_before  Post object before the update.
+         */
+        public function add_updated_to_queue($post_id, $post_after, $post_before)
+        {
+        }
+        /**
+         * Add RSVP attendee to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param integer $attendee_id       An attendee id.
+         * @param integer $post_id           A WordPress custom post id.
+         * @param integer $product_id        A WordPress custom post object.
+         * @param integer $order_attendee_id Whether this is an update to a custom post or new. Unreliable and not used.
+         */
+        public function add_rsvp_attendee_to_queue($attendee_id, $post_id, $product_id, $order_attendee_id)
+        {
+        }
+        /**
+         * Add Tickets Commerce attendee to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post       $attendee Post object for the attendee.
+         * @param WP_Post       $order    Which order generated this attendee.
+         * @param Ticket_Object $ticket   Which ticket generated this Attendee.
+         * @param array         $args     Set of extra arguments used to populate the data for the attendee.
+         */
+        public function add_tc_attendee_to_queue($attendee, $order, $ticket, $args)
+        {
+        }
+        /**
+         * Add EDD attendee to queue.
+         *
+         * @param int $attendee_id ID of attendee ticket.
+         * @param int $post_id     ID of event.
+         * @param int $order_id    Easy Digital Downloads order ID.
+         * @param int $product_id  Easy Digital Downloads product ID.
+         */
+        public function add_edd_attendee_to_queue($attendee_id, $post_id, $order_id, $product_id)
+        {
+        }
+        /**
+         * Add Woo attendee to queue.
+         *
+         * @param int      $attendee_id ID of attendee ticket.
+         * @param int      $post_id     ID of event.
+         * @param WC_Order $order       WooCommerce order.
+         * @param int      $product_id  WooCommerce product ID.
+         */
+        public function add_woo_attendee_to_queue($attendee_id, $post_id, $order, $product_id)
+        {
+        }
+        /**
+         * Add a custom post id of an attendee that has been updated to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int     $post_id     A WordPress custom post id.
+         * @param WP_Post $post_after  Post object following the update.
+         * @param WP_Post $post_before Post object before the update.
+         */
+        public function add_updated_attendee_to_queue($post_id, $post_after, $post_before)
+        {
+        }
+        /**
+         * Add a canceled event post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int           $post_id ID of the post we're saving.
+         * @param array<string> $data    The meta data we're trying to save.
+         */
+        public function add_canceled_to_queue($post_id, $data)
+        {
+        }
+        /**
+         * Add checkin to the queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int       $attendee_id   ID of attendee ticket.
+         * @param bool|null $is_qr_checkin True if from QR checkin process.
+         */
+        public function add_checkin_to_queue($attendee_id, $is_qr_checkin)
+        {
+        }
+        /**
+         * Add Tickets Commerce order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post       $attendee Post object for the attendee.
+         * @param WP_Post       $order    Which order generated this attendee.
+         * @param Ticket_Object $ticket   Which ticket generated this Attendee.
+         * @param array         $args     Set of extra arguments used to populate the data for the attendee.
+         */
+        public function add_tc_order_to_queue($attendee, $order, $ticket, $args)
+        {
+        }
+        /**
+         * Add EDD order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int $attendee_id       ID of attendee ticket.
+         * @param int $order_id          Easy Digital Downloads order ID.
+         * @param int $product_id        Easy Digital Downloads product ID.
+         * @param int $order_attendee_id Attendee # for order.
+         */
+        public function add_edd_order_to_queue($attendee_id, $order_id, $product_id, $order_attendee_id)
+        {
+        }
+        /**
+         * Add Woo order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int $attendee_id       ID of attendee ticket.
+         * @param int $order_id          WooCommerce order ID.
+         * @param int $product_id        WooCommerce product ID.
+         * @param int $order_attendee_id Attendee # for order.
+         */
+        public function add_woo_order_to_queue($attendee_id, $order_id, $product_id, $order_attendee_id)
+        {
+        }
+        /**
+         * Add Refunded Tickets Commerce order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Status_Interface      $new_status New post status.
+         * @param Status_Interface|null $old_status Old post status.
+         * @param \WP_Post              $order      Order Post object.
+         */
+        public function add_refunded_tc_order_to_queue($new_status, $old_status, $order)
+        {
+        }
+        /**
+         * Add Refunded EDD order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int  $order_id     The ID number of the order.
+         * @param int  $refund_id    The ID number of the refund order.
+         * @param bool $all_refunded The status of the order prior to this change.
+         */
+        public function add_refunded_edd_order_to_queue($order_id, $refund_id, $all_refunded)
+        {
+        }
+        /**
+         * Add Refunded Woo order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int      $order_id   WooCommerce order ID.
+         * @param string   $old_status The status of the order prior to this change.
+         * @param string   $new_status The new order status.
+         * @param WC_Order $order      The instance of the order object.
+         */
+        public function add_refunded_woo_order_to_queue($order_id, $old_status, $new_status, $order)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Traits {
+    /**
+     * Abstract REST Endpoint Power Automate
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Traits
+     */
+    trait REST_Namespace
+    {
+        /**
+         * The REST API endpoint path.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $namespace = 'tribe';
+        /**
+         * Returns the namespace of REST APIs.
+         *
+         * @return string
+         */
+        public function get_namespace()
+        {
+        }
+        /**
+         * Returns the string indicating the REST API version.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_version()
+        {
+        }
+        /**
+         * Returns the events REST API namespace string that should be used to register a route.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_events_route_namespace()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Documentation {
+    /**
+     * Class Swagger_Documentation
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Utilize Integration_Swagger_Documentation to share coding among integrations.
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Documentation
+     */
+    class Swagger_Documentation extends \TEC\Event_Automator\Integrations\REST\V1\Documentation\Integration_Swagger_Documentation
+    {
+        use \TEC\Event_Automator\Power_Automate\REST\V1\Traits\REST_Namespace;
+        /**
+         * @inerhitDoc
+         */
+        protected function get_api_info()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Endpoints {
+    /**
+     * Abstract REST Endpoint Power Automate
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    abstract class Abstract_REST_Endpoint extends \TEC\Event_Automator\Integrations\REST\V1\Endpoints\Queue\Integration_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Power_Automate\REST\V1\Traits\REST_Namespace;
+        /**
+         * @inheritDoc
+         */
+        protected static $endpoint_details_prefix = '_tec_power_automate_endpoint_details_';
+        /**
+         * @inheritDoc
+         */
+        protected static $service_id = 'power-automate';
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api $api An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Actions {
+    /**
+     * Class Create_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Create_Events extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/create-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'create_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'create';
+        /**
+         * @inheritdoc
+         */
+        protected array $dependents = ['tec'];
+        /**
+         * The REST instance endpoint to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Single_Event_Endpoints
+         */
+        protected $rest_endpoint = null;
+        /**
+         * The REST validator to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Events__Validator__Base
+         */
+        protected $validator;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Whether the current user is set and the api is loaded.
+         * The test for creating is done one the rest_pre_dispatch hook, if the api is not ready or no user loaded then it failed.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool Whether the current user and api are loaded.
+         */
+        public function can_create($request)
+        {
+        }
+        /**
+         * Get Events for Creation
+         *
+         * Required method from abstract that only returns an error.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The REST response.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * Create an event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from creating an event.
+         */
+        public function post(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function CREATE_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits\Maps {
+    /**
+     * Trait Event
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits\Maps;
+     */
+    trait Attendees
+    {
+        /**
+         * Get the event details mapped for 3rd party services.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0 Migrated to Common from Event Automator - Add encode arrays.
+         * @since 6.0.0 Migrated to Common from Event Automator - Add add_updated_id, and service_id parameters.
+         *
+         * @param int     $post_id        The post id for an attendee.
+         * @param boolean $add_updated_id Whether to add a updated id, Zapier only updates events per
+         *                                Zap once with the same id, this enables multiple updates.
+         * @param string  $service_id     The service id used to modify the mapped event details.
+         *
+         * @return array<string|mixed> An array of attendee details or false if not a post object.
+         */
+        protected function get_mapped_attendee(int $post_id, bool $add_updated_id = false, string $service_id = '')
+        {
+        }
+        /**
+         * Get Attendee Meta.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $attendee An array of attendee details.
+         *
+         * @return array<string|mixed> $meta_array  Meta attendee array.
+         */
+        public function get_attendee_meta($attendee)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Queue {
+    /**
+     * Class Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Queue
+     */
+    class Attendees extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Attendees;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Attendees
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_Attendees    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Attendees $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get attendees from queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the attendees queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits\Maps {
+    /**
+     * Trait Event
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits\Maps;
+     */
+    trait Event
+    {
+        /**
+         * Get the event details mapped for 3rd party services.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0 Migrated to Common from Event Automator - Service ID.
+         *
+         * @param int     $post_id    The post id for an event.
+         * @param boolean $unique_id  Whether to add a unique id, Zapier only updates events per
+         *                            Zap once with the same id, this enables multiple updates.
+         * @param string  $service_id The service id used to modify the mapped event details.
+         *
+         * @return array<string|mixed> An array of event details or false if not a post object.
+         */
+        protected function get_mapped_event(int $post_id, bool $add_unique_id = false, string $service_id = '')
+        {
+        }
+        /**
+         * Get all the taxonomy terms for an event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string  $taxonomy_name The event taxonomy name.
+         * @param WP_Post $event         An instance of the event WP_Post object.
+         *
+         * @return array<string|mixed> An array of terms for the mapped event.
+         */
+        protected function get_taxonomy_terms(string $taxonomy_name, \WP_Post $event) : array
+        {
+        }
+        /**
+         * Get the term formatted for the event map for 3rd party services.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Term|WP_Error $term A term object or WP_Error instance.
+         *
+         * @return array<string|string> An array of term values for the mapped event.
+         */
+        protected function get_term_formatted_for_map($term) : array
+        {
+        }
+        /**
+         * Get all the organizer details for an event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post $event The instance of WP_Post for an event.
+         *
+         * @return array<string|mixed> An array of organizer details or empty array.
+         */
+        protected function get_organizers(\WP_Post $event) : array
+        {
+        }
+        /**
+         * Get the organizer details mapped for 3rd party services.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post $organizer The post for a organizer.
+         *
+         * @return boolean|array An array of organizer details or false if not a post object.
+         */
+        protected function get_mapped_organizer(\WP_Post $organizer)
+        {
+        }
+        /**
+         * Get all the venue details for an event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post $event The instance of WP_Post for an event.
+         *
+         * @return array<string|mixed> An array of venue details or empty array.
+         */
+        protected function get_venues(\WP_Post $event) : array
+        {
+        }
+        /**
+         * Get the venue details mapped for 3rd party services.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post     $venue   The post for a venue.
+         *
+         * @return boolean|array An array of venue details or false if not a post object.
+         */
+        protected function get_mapped_venue(\WP_Post $venue)
+        {
+        }
+        /**
+         * Get all tickets|rsvps for an Event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post $event The instance of WP_Post for an event.
+         *
+         * @return array<string|mixed> An array of ticket details for the event.
+         */
+        protected function get_tickets(\WP_Post $event) : array
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Queue {
+    /**
+     * Class Canceled_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Canceled_Events extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Event;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/canceled-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'canceled_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Canceled_Events
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_Canceled_Events    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Canceled_Events $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from canceled event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the canceled event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Checkin
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Checkin extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Attendees;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/checkin';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'checkin';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Checkin
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power_Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power_Automate Swagger_Documentation handler.
+         * @param Trigger_Checkin       $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Checkin $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get attendees from new attendee queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new attendee queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class New_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Queue
+     */
+    class New_Events extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Event;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/new-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'new_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_New_Events
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_New_Events    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\New_Events $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from new event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits\Maps\Commerce {
+    /**
+     * Trait With_AJAX
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits\Maps\Commerce;
+     */
+    trait WooCommerce
+    {
+        /**
+         * Get the WooCommerce Order
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0 Migrated to Common from Event Automator - Add encode arrays.
+         *
+         * @param int    $order_id   The Woocommerce order id.
+         * @param string $service_id The service id used to modify the mapped event details.
+         *
+         * @return array<string|mixed> An array of orders details or false if not a post object.
+         */
+        protected function get_woo_order_by_id(int $order_id, string $service_id = '')
+        {
+        }
+        /**
+         * Get WooCommerce Ticket Meta.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WC_Order_Item_Product $item An instance of the WooCommerce order item object.
+         *
+         * @return array<string|mixed> $meta_array  Formatted meta array of ticket meta.
+         */
+        public function get_woo_ticket_meta($item)
+        {
+        }
+        /**
+         * Get WooCommerce Customer Order Notes.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WC_Order $order An instance of the WooCommerce order object.
+         *
+         * @return array<string|mixed> $notes_array An array of customer order notes.
+         */
+        public function get_woo_customer_notes($order)
+        {
+        }
+    }
+    /**
+     * Trait With_AJAX
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits\Maps\Commerce;
+     */
+    trait EDD
+    {
+        /**
+         * Get the EDD Order
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0 Migrated to Common from Event Automator - Add encode arrays.
+         *
+         * @param int    $order_id   The EDD order id.
+         * @param string $service_id The service id used to modify the mapped event details.
+         *
+         * @return array<string|mixed> An array of orders details or false if not a post object.
+         */
+        protected function get_edd_order_by_id(int $order_id, string $service_id = '')
+        {
+        }
+        /**
+         * Get EDD Customer Order Notes.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param EDD\Orders\Order $order An instance of the EDD order object.
+         *
+         * @return array<string|mixed> $notes_array An array of customer order notes.
+         */
+        public function get_edd_customer_notes($order) : array
+        {
+        }
+    }
+    /**
+     * Trait With_AJAX
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits\Maps\Commerce;
+     */
+    trait Tickets_Commerce
+    {
+        /**
+         * Get the Tickets Commerce Order
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0 Migrated to Common from Event Automator - Add encode arrays.
+         *
+         * @param int    $order_id   The Tickets Commerce order id.
+         * @param string $service_id The service id used to modify the mapped event details.
+         *
+         * @return array<string|mixed> An array of orders details or false if not a post object.
+         */
+        protected function get_tc_order_by_id(int $order_id, string $service_id = '')
+        {
+        }
+        /**
+         * Get Tickets Commerce Ticket Meta.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $item An array ot Tickets Commerce order item.
+         *
+         * @return array<string|mixed> $meta_array  Formatted meta array of ticket meta.
+         */
+        public function get_tc_ticket_meta($item)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Queue {
+    /**
+     * Class Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Orders extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Commerce\WooCommerce;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\EDD;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\Tickets_Commerce;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Orders
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_Orders  $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Orders $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from new event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Refunded_Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Refunded_Orders extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Commerce\WooCommerce;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\EDD;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\Tickets_Commerce;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/refunded-orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'refunded_orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                     $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation   $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_Refunded_Orders $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Refunded_Orders $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from refunded orders queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the refunded orders queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Updated_Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Updated_Attendees extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Attendees;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/updated-attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'updated_attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                       $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation     $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_Updated_Attendees $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Updated_Attendees $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get attendees from new attendee queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new attendee queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Updated_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\REST\V1\Endpoints
+     */
+    class Updated_Events extends \TEC\Event_Automator\Power_Automate\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Event;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/updated-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'updated_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Updated_Events
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Power Automate API handler.
+         * @param Swagger_Documentation $documentation An instance of the Power Automate Swagger_Documentation handler.
+         * @param Trigger_Updated_Events    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Power_Automate\Triggers\Updated_Events $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from updated event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the updated event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate {
+    /**
+     * Class Settings
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Settings extends \TEC\Event_Automator\Integrations\Connections\Integration_Settings
+    {
+        /**
+         * @inehritDoc
+         */
+        public static string $option_prefix = 'tec_power_automate_';
+        /**
+         * @inehritDoc
+         */
+        public static string $api_id = 'power-automate';
+        /**
+         * Settings constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                    $api                    An instance of the API handler.
+         * @param Template_Modifications $template_modifications An instance of the Template_Modifications handler.
+         * @param Url                    $url                    An instance of the URL handler.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Api $api, \TEC\Event_Automator\Power_Automate\Template_Modifications $template_modifications, \TEC\Event_Automator\Power_Automate\Url $url)
+        {
+        }
+    }
+    /**
+     * Class Template_Modifications
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Template_Modifications extends \TEC\Event_Automator\Integrations\Connections\Integration_Template_Modifications
+    {
+        /**
+         * @inerhitDoc
+         */
+        public static string $api_id = 'power-automate';
+        /**
+         * Template_Modifications constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Admin_Template $template An instance of the backend template handler.
+         * @param Url            $Url      An instance of the URl handler.
+         */
+        public function __construct(\TEC\Event_Automator\Templates\Admin_Template $admin_template, \TEC\Event_Automator\Power_Automate\Url $url)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\Trigger_Queue {
+    /**
+     * Class Abstract_Trigger_Queue
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Trigger_Queue
+     */
+    abstract class Abstract_Trigger_Queue extends \TEC\Event_Automator\Integrations\Trigger_Queue\Integration_Trigger_Queue
+    {
+        /**
+         * @inheritDoc
+         */
+        protected static $api_id = 'power-automate';
+        /**
+         * @inheritDoc
+         */
+        protected static $queue_prefix = '_tec_power_automate_queue_';
+    }
+}
+namespace TEC\Event_Automator\Power_Automate\Triggers {
+    /**
+     * Class Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Attendees extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $added_to_queue_meta_field = 'attendees_run_once';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Canceled_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Canceled_Events extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'canceled_events';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Checkin
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Checkin extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'checkin';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class New_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class New_Events extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'new_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $added_to_queue_meta_field = 'new_event_run_once';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Orders extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $added_to_queue_meta_field = 'power_automate_order_run_once';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Refunded_Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Refunded_Orders extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'refunded_orders';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+        /**
+         * Checks if an EDD Order has Tickets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int                $order_id The ID number of the order.
+         * @param array<mixed|mixed> $data     An array of data specific to the trigger and used for validation.
+         *
+         * @return boolean Whether the order has tickets.
+         */
+        protected function edd_order_has_tickets(int $order_id, array $data) : bool
+        {
+        }
+        /**
+         * Checks if a Woo Order has Tickets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int                $order_id The ID number of the order.
+         * @param array<mixed|mixed> $data     An array of data specific to the trigger and used for validation.
+         *
+         * @return boolean Whether the order has tickets.
+         */
+        protected function woo_order_has_tickets(int $order_id, array $data) : bool
+        {
+        }
+    }
+    /**
+     * Class Updated_Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Updated_Attendees extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'updated_attendees';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Updated_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate\Triggers
+     */
+    class Updated_Events extends \TEC\Event_Automator\Power_Automate\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'updated_events';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Power_Automate {
+    /**
+     * Class Url
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Power_Automate
+     */
+    class Url extends \TEC\Event_Automator\Integrations\Connections\Integration_Url
+    {
+        /**
+         * @inerhitDoc
+         */
+        public static string $api_id = 'power-automate';
+        /**
+         * Url constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Actions $actions An instance of the Power_Automate Actions handler.
+         */
+        public function __construct(\TEC\Event_Automator\Power_Automate\Actions $actions)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Service_Providers {
+    /**
+     * Class Context_Provider
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Service_Providers
+     */
+    class Context_Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register()
+        {
+        }
+        /**
+         * Filters the context locations to add the ones used by Event Automator.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array $locations The array of context locations.
+         *
+         *@return array<string,mixed> The modified context locations.
+         */
+        public function filter_context_locations(array $locations = [])
+        {
+        }
+    }
+}
+namespace {
+    class Tribe__Template
+    {
+        /**
+         * The folders into which we will look for the template.
+         *
+         * @since  4.6.2
+         *
+         * @var array
+         */
+        protected $folder = [];
+        /**
+         * The origin class for the plugin where the template lives
+         *
+         * @since  4.6.2
+         *
+         * @var object
+         */
+        public $origin;
+        /**
+         * The local context for templates, mutable on every self::template() call
+         *
+         * @since  4.6.2
+         *
+         * @var array
+         */
+        protected $context = [];
+        /**
+         * The global context for this instance of templates
+         *
+         * @since  4.6.2
+         *
+         * @var array
+         */
+        protected $global = [];
+        /**
+         * Used for finding templates for public templates on themes inside of a folder.
+         *
+         * @since  4.10.2
+         *
+         * @var string[]
+         */
+        protected $template_origin_base_folder = ['src', 'views'];
+        /**
+         * Allow changing if class will extract data from the local context
+         *
+         * @since  4.6.2
+         *
+         * @var boolean
+         */
+        protected $template_context_extract = \false;
+        /**
+         * Current template hook name.
+         *
+         * @since 4.12.1
+         *
+         * @var string|null
+         */
+        protected $template_current_hook_name;
+        /**
+         * Base template for where to look for template
+         *
+         * @since  4.6.2
+         *
+         * @var array
+         */
+        protected $template_base_path;
+        /**
+         * Should we use a lookup into the list of folders to try to find the file
+         *
+         * @since  4.7.20
+         *
+         * @var  bool
+         */
+        protected $template_folder_lookup = \false;
+        /**
+         * Create a class variable for the include path, to avoid conflicting with extract.
+         *
+         * @since  4.11.0
+         *
+         * @var  string
+         */
+        protected $template_current_file_path;
+        /**
+         * Whether to look for template files in common or not; defaults to true.
+         *
+         * @since 4.12.10
+         *
+         * @var bool
+         */
+        protected $common_lookup = \true;
+        /**
+         * A map of aliases to add a rewritten version of the paths to the template lists.
+         * The map has format `original => alias`.
+         *
+         * @since 4.12.10
+         *
+         * @var array<string,string>
+         */
+        protected $aliases = [];
+        /**
+         * Configures the class origin plugin path
+         *
+         * @since  4.6.2
+         *
+         * @param  object|string  $origin   The base origin for the templates
+         *
+         * @return self
+         */
+        public function set_template_origin($origin = \null)
+        {
+        }
+        /**
+         * Configures the class with the base folder in relation to the Origin
+         *
+         * @since  4.6.2
+         *
+         * @param  array|string   $folder  Which folder we are going to look for templates
+         *
+         * @return self
+         */
+        public function set_template_folder($folder = \null)
+        {
+        }
+        /**
+         * Returns the array for which folder this template instance is looking into.
+         *
+         * @since 4.11.0
+         *
+         * @return array Current folder we are looking for templates.
+         */
+        public function get_template_folder()
+        {
+        }
+        /**
+         * Configures the class with the base folder in relation to the Origin
+         *
+         * @since  4.7.20
+         *
+         * @param  mixed $value Should we look for template files in the list of folders.
+         *
+         * @return self
+         */
+        public function set_template_folder_lookup($value = \true)
+        {
+        }
+        /**
+         * Gets in this instance of the template engine whether we are looking public folders like themes.
+         *
+         * @since 4.12.1
+         *
+         * @return bool Whether we are looking into theme folders.
+         */
+        public function get_template_folder_lookup()
+        {
+        }
+        /**
+         * Configures the class global context
+         *
+         * @since  4.6.2
+         *
+         * @param  array  $context  Default global Context
+         *
+         * @return self
+         */
+        public function add_template_globals($context = [])
+        {
+        }
+        /**
+         * Configures if the class will extract context for template
+         *
+         * @since  4.6.2
+         *
+         * @param  bool  $value  Should we extract context for templates
+         *
+         * @return self
+         */
+        public function set_template_context_extract($value = \false)
+        {
+        }
+        /**
+         * Set the current hook name for the template include.
+         *
+         * @since  4.12.1
+         *
+         * @param  string  $value  Which value will be saved as the current hook name.
+         *
+         * @return self  Allow daisy-chaining.
+         */
+        public function set_template_current_hook_name($value)
+        {
+        }
+        /**
+         * Gets the hook name for the current template setup.
+         *
+         * @since  4.12.1
+         *
+         * @return string Hook name currently set on the class.
+         */
+        public function get_template_current_hook_name()
+        {
+        }
+        /**
+         * Sets an Index inside of the global or local context.
+         * Final to prevent extending the class when the `get` already exists on the child class.
+         *
+         * @see    Tribe__Utils__Array::set()
+         *
+         * @since  4.6.2
+         *
+         * @param array|string $index    Specify each nested index in order.
+         *                               Example: [ 'lvl1', 'lvl2' ];
+         * @param mixed        $default  Default value if the search finds nothing.
+         * @param boolean      $is_local Use the Local or Global context.
+         *
+         * @return mixed The value of the specified index or the default if not found.
+         */
+        public final function get($index, $default = \null, $is_local = \true)
+        {
+        }
+        /**
+         * Sets a Index inside of the global or local context
+         * Final to prevent extending the class when the `set` already exists on the child class
+         *
+         * @since  4.6.2
+         *
+         * @see    Tribe__Utils__Array::set
+         *
+         * @param  string|array  $index     To set a key nested multiple levels deep pass an array
+         *                                  specifying each key in order as a value.
+         *                                  Example: array( 'lvl1', 'lvl2', 'lvl3' );
+         * @param  mixed         $value     The value.
+         * @param  boolean       $is_local  Use the Local or Global context
+         *
+         * @return array Full array with the key set to the specified value.
+         */
+        public final function set($index, $value = \null, $is_local = \true)
+        {
+        }
+        /**
+         * Merges local and global context, and saves it locally.
+         *
+         * @since  4.6.2
+         *
+         * @param  array  $context   Local Context array of data.
+         * @param  string $file      Complete path to include the PHP File.
+         * @param  array  $name      Template name.
+         *
+         * @return array
+         */
+        public function merge_context($context = [], $file = \null, $name = \null)
+        {
+        }
+        /**
+         * Fetches the path for locating files in the Plugin Folder
+         *
+         * @since  4.7.20
+         *
+         * @return string
+         */
+        protected function get_template_plugin_path()
+        {
+        }
+        /**
+         * Fetches the Namespace for the public paths, normally folders to look for
+         * in the theme's directory.
+         *
+         * @since  4.7.20
+         * @since  4.11.0  Added param $plugin_namespace.
+         *
+         * @param string $plugin_namespace Overwrite the origin namespace with a given one.
+         *
+         * @return array Namespace where we to look for templates.
+         */
+        protected function get_template_public_namespace($plugin_namespace)
+        {
+        }
+        /**
+         * Fetches which base folder we look for templates in the origin plugin.
+         *
+         * @since  4.10.2
+         *
+         * @return array The base folders we look for templates in the origin plugin.
+         */
+        public function get_template_origin_base_folder()
+        {
+        }
+        /**
+         * Fetches the path for locating files given a base folder normally theme related.
+         *
+         * @since  4.7.20
+         * @since  4.11.0 Added the param $namespace.
+         *
+         * @param  mixed  $base      Base path to look into.
+         * @param  string $namespace Adds the plugin namespace to the path returned.
+         *
+         * @return string  The public path for a given base.˙˙
+         */
+        protected function get_template_public_path($base, $namespace)
+        {
+        }
+        /**
+         * Fetches the folders in which we will look for a given file
+         *
+         * @since 4.7.20
+         * @since 4.12.10 Add support for common lookup.
+         *
+         * @return array<string,array> A list of possible locations for the template file.
+         */
+        protected function get_template_path_list()
+        {
+        }
+        /**
+         * Get the list of theme related folders we will look up for the template.
+         *
+         * @since 4.11.0
+         *
+         * @param string $namespace Which plugin namespace we are looking for.
+         *
+         * @return array
+         */
+        protected function get_template_theme_path_list($namespace)
+        {
+        }
+        /**
+         * Tries to locate the correct file we want to load based on the Template class
+         * configuration and it's list of folders
+         *
+         * @since  4.7.20
+         *
+         * @param  mixed  $name  File name we are looking for.
+         *
+         * @return string
+         */
+        public function get_template_file($name)
+        {
+        }
+        /**
+         * Runs the entry point hooks and filters.
+         *
+         * @param string  $entry_point_name The name of the entry point.
+         * @param boolean $echo             If we should also print the entry point content.
+         *
+         * @return null|string `null` if an entry point is disabled or the entry point HTML.
+         */
+        public function do_entry_point($entry_point_name, $echo = \true)
+        {
+        }
+        /**
+         * A very simple method to include a Template, allowing filtering and additions using hooks.
+         *
+         * @since  4.6.2
+         *
+         * @param string|array $name    Which file we are talking about including.
+         *                              If an array, each item will add a directory separator to get to the single template.
+         * @param array        $context Any context data you need to expose to this file
+         * @param boolean      $echo    If we should also print the Template
+         *
+         * @return string|false Either the final content HTML or `false` if no template could be found.
+         */
+        public function template($name, $context = [], $echo = \true)
+        {
+        }
+        /**
+         * Based on a path it determines what is the namespace that should be used.
+         *
+         * @since 4.11.0
+         *
+         * @param string $path Which file we are going to load.
+         *
+         * @return string|false The found namespace for that path or false.
+         */
+        public function template_get_origin_namespace($path)
+        {
+        }
+        /**
+         * Includes a give PHP inside of a safe context.
+         *
+         * This method is required to prevent template files messing with local variables used inside of the
+         * `self::template` method. Also shelters the template loading from any possible variables that could
+         * be overwritten by the context.
+         *
+         * @since 4.11.0
+         *
+         * @param string $file Which file will be included with safe context.
+         *
+         * @return string Contents of the included file.
+         */
+        public function template_safe_include($file)
+        {
+        }
+        /**
+         * Sets a number of values at the same time.
+         *
+         * @since 4.9.11
+         *
+         * @param array $values   An associative key/value array of the values to set.
+         * @param bool  $is_local Whether to set the values as global or local; defaults to local as the `set` method does.
+         *
+         * @see   Tribe__Template::set()
+         */
+        public function set_values(array $values = [], $is_local = \true)
+        {
+        }
+        /**
+         * Returns the Template global context.
+         *
+         * @since 4.9.11
+         *
+         * @return array An associative key/value array of the Template global context.
+         */
+        public function get_global_values()
+        {
+        }
+        /**
+         * Returns the Template local context.
+         *
+         * @since 4.9.11
+         *
+         * @return array An associative key/value array of the Template local context.
+         */
+        public function get_local_values()
+        {
+        }
+        /**
+         * Returns the Template global and local context values.
+         *
+         * Local values will override the template global context values.
+         *
+         * @since 4.9.11
+         *
+         * @return array An associative key/value array of the Template global and local context.
+         */
+        public function get_values()
+        {
+        }
+        /**
+         * Fetches the path for locating files in the Common folder part of the plugin that is currently providing it.
+         *
+         * Note: the Common path will be dependent on the version that is loaded from the plugin that is bundling it.
+         * E.g. if both TEC and ET are active (both will bundle Common) and the ET version of Common has been loaded as
+         * most recent and the ET version of Common does not have a template file, then the template file will not be found.
+         * This will allow versioning the existence and nature of the template files part of common.
+         *
+         * @since 4.12.10
+         *
+         * @return string The absolute path, with no guarantee of its existence, to the Common version of the template file.
+         */
+        protected function get_template_common_path()
+        {
+        }
+        /**
+         * Sets the aliases the template should use.
+         *
+         * @since 4.12.10
+         *
+         * @param array<string,string> $aliases A map of aliases that should be used to add lookup locations, in the format
+         *                                      `[ original => alias ]`;
+         *
+         * @return static This instance, for method chaining.
+         */
+        public function set_aliases(array $aliases = [])
+        {
+        }
+        /**
+         * Applies the template path aliases, if any, to a list of folders.
+         *
+         * @since 4.12.10
+         *
+         * @param array<string,array> $folders The list of folder to apply the aliases to, if any.
+         *
+         * @return array<string,array> The list of new folder entries to add to the folders, in the same input format of the
+         *                             folders.
+         */
+        protected function apply_aliases(array $folders)
+        {
+        }
+        /**
+         * Filters the full HTML for the template.
+         *
+         * @since 4.13.0
+         *
+         * @param string $html      The final HTML.
+         * @param string $file      Complete path to include the PHP File.
+         * @param array  $name      Template name.
+         * @param string $hook_name The hook used to create the filter by name.
+         *
+         * @return string HTML after filtering.
+         */
+        protected function filter_template_html($html, $file, $name, $hook_name)
+        {
+        }
+        /**
+         * Filters the HTML for the Before include actions.
+         *
+         * @since 4.13.0
+         *
+         * @param string $html      The final HTML.
+         * @param string $file      Complete path to include the PHP File.
+         * @param array  $name      Template name.
+         * @param string $hook_name The hook used to create the filter by name.
+         *
+         * @return string HTML after filtering.
+         */
+        protected function filter_template_before_include_html($html, $file, $name, $hook_name)
+        {
+        }
+        /**
+         * Filters the HTML for the PHP safe include.
+         *
+         * @since 4.13.0
+         *
+         * @param string $html      The final HTML.
+         * @param string $file      Complete path to include the PHP File.
+         * @param array  $name      Template name.
+         * @param string $hook_name The hook used to create the filter by name.
+         *
+         * @return string HTML after filtering.
+         */
+        protected function filter_template_include_html($html, $file, $name, $hook_name)
+        {
+        }
+        /**
+         * Filters the HTML for the after include actions.
+         *
+         * @since 4.13.0
+         *
+         * @param string $html      The final HTML.
+         * @param string $file      Complete path to include the PHP File.
+         * @param array  $name      Template name.
+         * @param string $hook_name The hook used to create the filter by name.
+         *
+         * @return string HTML after filtering.
+         */
+        protected function filter_template_after_include_html($html, $file, $name, $hook_name)
+        {
+        }
+        /**
+         * Fires of actions before including the template.
+         *
+         * @since 4.13.0
+         *
+         * @param string $file      Complete path to include the PHP File.
+         * @param array  $name      Template name.
+         * @param string $hook_name The hook used to create the filter by name.
+         *
+         * @return string HTML printed by the before actions.
+         */
+        protected function actions_before_template($file, $name, $hook_name)
+        {
+        }
+        /**
+         * Fires of actions after including the template.
+         *
+         * @since 4.13.0
+         *
+         * @param string $file      Complete path to include the PHP File.
+         * @param array  $name      Template name.
+         * @param string $hook_name The hook used to create the filter by name.
+         *
+         * @return string HTML printed by the after actions.
+         */
+        protected function actions_after_template($file, $name, $hook_name)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Templates {
+    /**
+     * Class Admin_Template
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Templates
+     */
+    class Admin_Template extends \Tribe__Template
+    {
+        /**
+         * Template constructor.
+         *
+         * Sets the correct paths for templates for event status.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function __construct()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Traits\Maps {
+    /**
+     * Trait Event
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Traits\Maps;
+     */
+    trait Ticket
+    {
+        use \TEC\Event_Automator\Traits\Maps\Attendees;
+        /**
+         * Get the ticket details mapped for 3rd party services.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int    $post_id    The post id for an ticket.
+         * @param string $service_id The service id used to modify the mapped event details.
+         *
+         * @return array<string|mixed> An array of ticket details or false if not a post object.
+         */
+        protected function get_mapped_ticket(int $post_id, string $service_id = '')
+        {
+        }
+        /**
+         * Get Ticket Information Fields.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $ticket An array of ticket details.
+         *
+         * @return array<string|mixed> $meta_array  Meta attendee array.
+         */
+        public function get_mapped_attendees($ticket)
+        {
+        }
+        /**
+         * Get Ticket Information Fields.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $ticket An array of ticket details.
+         *
+         * @return array<string|mixed> $meta_array  Meta attendee array.
+         */
+        public function get_ticket_information_fields($ticket)
+        {
+        }
+    }
+}
+namespace {
+    /**
+     * Run schema updates on plugin activation or updates
+     */
+    class Tribe__Events__Updater
+    {
+        protected $version_option = 'schema-version';
+        protected $reset_version = '5.16.0';
+        // when a reset() is called, go to this version
+        protected $current_version = 0;
+        public $capabilities;
+        public function __construct($current_version)
+        {
+        }
+        /**
+         * We've had problems with the notoptions and
+         * alloptions caches getting out of sync with the DB,
+         * forcing an eternal update cycle
+         *
+         */
+        protected function clear_option_caches()
+        {
+        }
+        public function do_updates()
+        {
+        }
+        public function update_version_option($new_version)
+        {
+        }
+        /**
+         * Returns an array of callbacks with version strings as keys.
+         * Any key higher than the version recorded in the DB
+         * and lower than $this->current_version will have its
+         * callback called.
+         *
+         * This method has been deprecated in favor of a more testable public function
+         *
+         * @return array
+         * @deprecated 4.0
+         */
+        protected function get_updates()
+        {
+        }
+        /**
+         * Getter for the private reset version.
+         * Mainly for tests.
+         *
+         * @since 6.0.1
+         *
+         * @return string The reset version number.
+         */
+        public function get_reset_version() : string
+        {
+        }
+        /**
+         * Returns an array of callbacks with version strings as keys.
+         * Any key higher than the version recorded in the DB
+         * and lower than $this->current_version will have its
+         * callback called.
+         *
+         * @return array
+         */
+        public function get_update_callbacks()
+        {
+        }
+        /**
+         * Returns an array of callbacks that should be called
+         * every time the version is updated
+         *
+         * @return array
+         */
+        public function get_constant_update_callbacks()
+        {
+        }
+        public function get_version_from_db()
+        {
+        }
+        /**
+         * Returns true if the version in the DB is less than the provided version
+         *
+         * @return boolean
+         */
+        public function is_version_in_db_less_than($version)
+        {
+        }
+        /**
+         * Returns true if this is a new install
+         *
+         * @return boolean
+         */
+        public function is_new_install()
+        {
+        }
+        /**
+         * Returns true if an update is required
+         *
+         * @return boolean
+         */
+        public function update_required()
+        {
+        }
+        public function migrate_from_sp_events()
+        {
+        }
+        public function migrate_from_sp_options()
+        {
+        }
+        public function flush_rewrites()
+        {
+        }
+        /**
+         * Set the Capabilities for Events and Related Post Types.
+         *
+         * @since 5.1.1 - change method of calling set_capabilities.
+         */
+        public function set_capabilities()
+        {
+        }
+        /**
+         * Reset the $current_user global after capabilities have been changed
+         *
+         */
+        public function reload_current_user()
+        {
+        }
+        /**
+         * Reset update flags. All updates past $this->reset_version will
+         * run again on the next page load
+         *
+         */
+        public function reset()
+        {
+        }
+        /**
+         * Make sure the tribeEnableViews option is always set
+         *
+         */
+        public function set_enabled_views()
+        {
+        }
+        /**
+         * Bump the :30 min EOD cutoff option to the next full hour
+         *
+         */
+        public function remove_30_min_eod_cutoffs()
+        {
+        }
+        /**
+         * Migrate the previous import mapping to the new naming and cleanup
+         * the old.
+         */
+        public function migrate_import_option()
+        {
+        }
+        /**
+         * Update WordPress Custom Field Setting moved from Pro
+         * only update setting if show|hide
+         *
+         * @since 4.6.23
+         */
+        public function migrate_wordpress_custom_field_option()
+        {
+        }
+        /**
+         * Update Event Status reason field from extension to a central field for both.
+         *
+         * @since 5.11.0
+         */
+        public function migrate_event_status_reason_field()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator {
+    /**
+     * Class Updater.
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator
+     */
+    class Updater extends \Tribe__Events__Updater
+    {
+        /**
+         * Event Automator reset version.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $reset_version = '1.0';
+        /**
+         * Event Automator Schema Key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $version_option = 'event-automator-schema-version';
+        /**
+         * Force upgrade script to run even without an existing version number
+         * The version was not previously stored for Event Automator.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool
+         */
+        public function is_new_install()
+        {
+        }
+        /**
+         * Run Updates on Plugin Upgrades.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function run_updates()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\Traits {
+    /**
+     * Trait Last_Access
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Traits;
+     */
+    trait Last_Access
+    {
+        /**
+         * Get the last access with provided app name.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $app_name The optional app name used with this API key pair.
+         */
+        public function get_last_access($app_name)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier {
+    /**
+     * Class Abstract_API_Key_Api
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    abstract class Abstract_API_Key_Api
+    {
+        use \TEC\Event_Automator\Traits\With_AJAX;
+        use \TEC\Event_Automator\Zapier\Traits\Last_Access;
+        /**
+         * Whether an api_key has been loaded for the API to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var boolean
+         */
+        protected $api_key_loaded = false;
+        /**
+         * The name of the loaded api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public $loaded_api_key_name = '';
+        /**
+         * The key to get the option with a list of all API Keys.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $all_api_keys_key = 'tec_zapier_api_keys';
+        /**
+         * The prefix to save all single API Key with.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $single_api_key_prefix = 'tec_zapier_api_key_';
+        /**
+         * The hashed consumer id of the api key loaded.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $consumer_id = '';
+        /**
+         * The consumer secret of the api key loaded.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $consumer_secret = '';
+        /**
+         * The permissions the API Key pair has access to.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $permissions = 'read';
+        /**
+         * The last access of the API Key pair.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $last_access = '';
+        /**
+         * The WordPress user id of the loaded api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var integer
+         */
+        protected $user_id = 0;
+        /**
+         * The WP_User object.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var WP_User
+         */
+        protected $user;
+        /**
+         * Checks whether the current API is ready to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool Whether the current API has a loaded api_key.
+         */
+        public function is_ready()
+        {
+        }
+        /**
+         * Load a specific api_key into the API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key         An api_key with the fields to access the API.
+         * @param string               $consumer_secret An optional consumer secret used to verify an API Key pair.
+         *
+         * @return bool|WP_Error Return true if loaded or WP_Error otherwise.
+         */
+        public function load_api_key(array $api_key, $consumer_secret)
+        {
+        }
+        /**
+         * Load a specific api_key by the id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id     The consumer id to get and load an API Key pair.
+         * @param string $consumer_secret The consumer secret used to verify an API Key pair.
+         *
+         * @return bool|WP_Error Whether the page is loaded or a WP_Error code.
+         */
+        public function load_api_key_by_id($consumer_id, $consumer_secret)
+        {
+        }
+        /**
+         * Check if an api_key has all the information to be valid.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key An api_key with the fields to access the API.
+         * @param string $consumer_secret The consumer secret to verify the API Key with.
+         *
+         * @return bool|WP_Error Return true if loaded or WP_Error otherwise.
+         */
+        protected function is_valid_api_key($api_key, $consumer_secret)
+        {
+        }
+        /**
+         * Initialize an API Key to use for the API.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key An api_key with the fields to access the API.
+         */
+        protected function init_api_key($api_key)
+        {
+        }
+        /**
+         * Get the listing of API Keys.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param boolean $all_data Whether to return all api_key data, default is only name and status.
+         *
+         * @return array<string|string> $list_of_api_keys An array of all the API Keys.
+         */
+        public function get_list_of_api_keys($all_data = false)
+        {
+        }
+        /**
+         * Update the list of API Keys with provided api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key_data The array of data for an api_key to add to the list.
+         */
+        protected function update_list_of_api_keys($api_key_data)
+        {
+        }
+        /**
+         * Delete from the list of API Keys the provided api_key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key to save.
+         */
+        protected function delete_from_list_of_api_keys($consumer_id)
+        {
+        }
+        /**
+         * Get a Single API Key by id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key.
+         *
+         * @return array<string|string> $api_key The api_key data or empty array if no api_key.
+         */
+        public function get_api_key_by_id($consumer_id)
+        {
+        }
+        /**
+         * Set an API Key with the provided id.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|string> $api_key_data A specific api_key data to save.
+         */
+        public function set_api_key_by_id(array $api_key_data)
+        {
+        }
+        /**
+         * Updates the last access valid access of the API Key pair.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key.
+         * @param string $app_name    The optional app name used with this API key pair.
+         */
+        public function set_api_key_last_access($consumer_id, $app_name = '')
+        {
+        }
+        /**
+         * Delete an api_key by ID.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The id of the single api_key.
+         *
+         * @return bool Whether the api_key has been deleted and the access access_token revoked.
+         */
+        public function delete_api_key_by_id($consumer_id)
+        {
+        }
+        /**
+         * Maybe hash the consumer secret.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_secret The consumer secret to verify the API Key with.
+         *
+         * @return string The hashed consumer secret.
+         */
+        protected function hash_the_secret($consumer_secret)
+        {
+        }
+        /**
+         * Check the consumer secret.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_secret The consumer secret to verify the API Key with.
+         *
+         * @return boolean Whether the consumer secret matches the saved one.
+         */
+        protected function check_secret($consumer_secret)
+        {
+        }
+        /**
+         * Hash the specified text.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $text Text to be hashed.
+         *
+         * @return string The hashed text.
+         */
+        public static function api_hash($text)
+        {
+        }
+        /**
+         * Get the WP_User object from the Loaded API Key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return WP_User|null Returns the WP_User object or null if not loaded.
+         */
+        public function get_user()
+        {
+        }
+    }
+    /**
+     * Class Actions
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Actions
+    {
+        /**
+         * The name of the action used to add a Zapier API Key.
+         * @deprecated 1.4.0 - Use $add_connection instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $add_aki_key_action = 'tec-automator-zapier-add-api-key';
+        /**
+         * The name of the action used to add a Zapier Connection.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $add_connection = 'tec-automator-zapier-add-connection';
+        /**
+         * The name of the action used to generate a Zapier API Key.
+         * @deprecated 1.4.0 - Use $create_access instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $generate_action = 'tec-automator-zapier-generate-api-key';
+        /**
+         * The name of the action used to create access information for a Zapier.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $create_access = 'tec-automator-zapier-create-access';
+        /**
+         * The name of the action used to revoke a Zapier API Key.
+         * @deprecated 1.4.0 - Use $delete_connection instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $revoke_action = 'tec-automator-zapier-revoke-api-key';
+        /**
+         * The name of the action used to delete a Zapier API Key.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $delete_connection = 'tec-automator-zapier-delete-connection';
+        /**
+         * The name of the action used to clear a Zapier endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $clear_action = 'tec-automator-zapier-clear-endpoint-queue';
+        /**
+         * The name of the action used to disable a Zapier endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $disable_action = 'tec-automator-zapier-disable-endpoint';
+        /**
+         * The name of the action used to enable a Zapier endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        public static $enable_action = 'tec-automator-zapier-enable-endpoint';
+    }
+}
+namespace TEC\Event_Automator\Zapier\Admin {
+    /**
+     * Class Dashboard
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Refactored to use Abstract_Dashboard.
+     *
+     * @package TEC\Event_Automator\Zapier\Admin
+     */
+    class Dashboard extends \TEC\Event_Automator\Integrations\Admin\Abstract_Dashboard
+    {
+        /**
+         * @inerhitDoc
+         */
+        public static $option_prefix = 'tec_zapier_endpoints_';
+        /**
+         * @inerhitDoc
+         */
+        public static $api_id = 'zapier';
+        /**
+         * Dashboard constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Endpoints_Manager      $manager                An instance of the Endpoints_Manager handler.
+         * @param Template_Modifications $template_modifications An instance of the Template_Modifications handler.
+         * @param Url                    $url                    An instance of the URL handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Admin\Endpoints_Manager $manager, \TEC\Event_Automator\Zapier\Template_Modifications $template_modifications, \TEC\Event_Automator\Zapier\Url $url)
+        {
+        }
+    }
+    /**
+     * Class Endpoints_Manager
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Admin
+     */
+    class Endpoints_Manager extends \TEC\Event_Automator\Integrations\Admin\Abstract_Endpoints_Manager
+    {
+        /**
+         * @inheritdoc
+         */
+        public static $api_name = 'Zapier';
+        /**
+         * @inheritdoc
+         */
+        public static $api_id = 'zapier';
+        /**
+         * Endpoints_Manager constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Actions                $actions An instance of the Actions name handler.
+         * @param Template_Modifications $actions An instance of the Template_Modifications.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Actions $actions, \TEC\Event_Automator\Zapier\Template_Modifications $template_modifications)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier {
+    /**
+     * Class Api
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Utilize Integration_AJAX and Integration_Connections to share coding among integrations.
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Api extends \TEC\Event_Automator\Integrations\Connections\Integration_AJAX
+    {
+        /**
+         * @inheritdoc
+         */
+        public static $api_name = 'Zapier';
+        /**
+         * @inheritdoc
+         */
+        public static $api_id = 'zapier';
+        /**
+         * @inerhitDoc
+         */
+        protected $all_api_keys_key = 'tec_zapier_api_keys';
+        /**
+         * @inheritDoc
+         */
+        protected $single_api_key_prefix = 'tec_zapier_api_key_';
+        /**
+         * @inheritDoc
+         */
+        protected static $api_secret_key = 'tec_automator_zapier_secret_key';
+        /**
+         * API constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Actions                $actions An instance of the Actions name handler.
+         * @param Template_Modifications $actions An instance of the Template_Modifications.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Actions $actions, \TEC\Event_Automator\Zapier\Template_Modifications $template_modifications)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function save_connection($consumer_id, $name, $user_id, $permissions)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public static function get_confirmation_to_delete_connection()
+        {
+        }
+        /**
+         * Generate a Zapier API Key pair.
+         * @deprecated 1.4.0 - use ajax_generate_connection_access();
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $nonce The add action nonce to check.
+         *
+         * @return string An html message for success or failure and the html of the API Key fields.
+         */
+        public function ajax_generate_api_key_pair($nonce)
+        {
+        }
+        /**
+         * Get the confirmation text for revoking an api_key.
+         * @deprecated 1.4.0 - Use get_confirmation_to_delete_connection() instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The confirmation text.
+         */
+        public static function get_confirmation_to_revoke_api_key()
+        {
+        }
+        /**
+         * Handles the request to revoke a Zapier API Key pair.
+         * @deprecated 1.4.0 - Use ajax_revoke() instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string|null $nonce The nonce that should accompany the request.
+         *
+         * @return bool Whether the request was handled or not.
+         */
+        public function ajax_revoke($nonce = null)
+        {
+        }
+    }
+    /**
+     * Class Settings
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Assets
+    {
+        /**
+         * Registers and Enqueues the admin assets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register_admin_assets()
+        {
+        }
+    }
+    /**
+     * Class Privacy_Notice
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @deprecated 1.2.0
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Privacy_Notice
+    {
+        /**
+         * Renders the GDPR/CCPA privacy notice.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 1.2.0
+         */
+        public function render()
+        {
+        }
+        /**
+         * This function determines whether to display the privacy notice.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 1.2.0
+         *
+         * @return boolean Whether the notice should display.
+         */
+        public function should_display()
+        {
+        }
+        /**
+         * HTML for privacy notice.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 1.2.0
+         *
+         * @return string The notice text.
+         */
+        public function display_notice()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\REST\V1\Traits {
+    /**
+     * Abstract REST Endpoint Zapier
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Traits
+     */
+    trait REST_Namespace
+    {
+        /**
+         * The REST API endpoint path.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var string
+         */
+        protected $namespace = 'tribe';
+        /**
+         * Returns the namespace of REST APIs.
+         *
+         * @return string
+         */
+        public function get_namespace()
+        {
+        }
+        /**
+         * Returns the string indicating the REST API version.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_version()
+        {
+        }
+        /**
+         * Returns the events REST API namespace string that should be used to register a route.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string
+         */
+        public function get_events_route_namespace()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\REST\V1\Documentation {
+    /**
+     * Class Swagger_Documentation
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Utilize Integration_Swagger_Documentation to share coding among integrations.
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Documentation
+     */
+    class Swagger_Documentation extends \TEC\Event_Automator\Integrations\REST\V1\Documentation\Integration_Swagger_Documentation
+    {
+        use \TEC\Event_Automator\Zapier\REST\V1\Traits\REST_Namespace;
+        /**
+         * @inerhitDoc
+         */
+        protected function get_api_info()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\REST\V1\Endpoints {
+    /**
+     * Abstract REST Endpoint Zapier
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Utilize Integration_Trigger_Queue to share coding among integrations.
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    abstract class Abstract_REST_Endpoint extends \TEC\Event_Automator\Integrations\REST\V1\Endpoints\Queue\Integration_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Attendees;
+        use \TEC\Event_Automator\Traits\Maps\Event;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\EDD;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\Tickets_Commerce;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\WooCommerce;
+        use \TEC\Event_Automator\Zapier\REST\V1\Traits\REST_Namespace;
+        /**
+         * @inheritDoc
+         */
+        protected static $endpoint_details_prefix = '_tec_zapier_endpoint_details_';
+        /**
+         * @inheritDoc
+         */
+        protected static $service_id = 'zapier';
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api $api An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * Retrieves a list of mapped attendees from the specified queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $current_queue  The queue of attendee IDs to be processed.
+         * @param bool                $add_updated_id Whether to add updated IDs to the attendees array.
+         * @param string              $empty_code     The code to return if the current queue is empty.
+         * @param string              $no_valid_code  The code to return if no valid attendees are found.
+         *
+         * @return array<string|mixed> An array of mapped attendees or an array with a specific 'id' code.
+         */
+        public function get_mapped_attendees_from_queue($current_queue, bool $add_updated_id, string $empty_code, string $no_valid_code)
+        {
+        }
+        /**
+         * Retrieves a list of mapped events from the specified queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $current_queue  The queue of event IDs to be processed.
+         * @param bool                $add_updated_id Whether to add updated IDs to the events array.
+         * @param string              $empty_code     The code to return if the current queue is empty.
+         * @param string              $no_valid_code  The code to return if no valid events are found.
+         *
+         * @return array<string|mixed> An array of mapped attendees or an array with a specific 'id' code.
+         */
+        public function get_mapped_events_from_queue($current_queue, bool $add_updated_id, string $empty_code, string $no_valid_code)
+        {
+        }
+        /**
+         * Retrieves a list of mapped orders from the specified queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $current_queue The queue of order IDs to be processed.
+         * @param string              $empty_code    The code to return if the current queue is empty.
+         * @param string              $no_valid_code The code to return if no valid orders are found.
+         *
+         * @return array<string|mixed> An array of mapped attendees or an array with a specific 'id' code.
+         */
+        public function get_mapped_orders_from_queue($current_queue, string $empty_code, string $no_valid_code)
+        {
+        }
+        /**
+         * Modifies a request argument marking it as not required.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string|mixed> $arg An array of arguements.
+         */
+        protected function unrequire_arg(array &$arg)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\REST\V1\Endpoints\Actions {
+    /**
+     * Class Find_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Create_Events extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/create-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'create_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'create';
+        /**
+         * @inheritdoc
+         */
+        protected array $dependents = ['tec'];
+        /**
+         * The REST instance endpoint to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Single_Event_Endpoints
+         */
+        protected $rest_endpoint = null;
+        /**
+         * The REST validator to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Events__Validator__Base
+         */
+        protected $validator;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Whether the current user is set and the api is loaded.
+         * The test for creating is done one the rest_pre_dispatch hook, if the api is not ready or no user loaded then it failed.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0 Migrated to Common from Event Automator - Modify to have pre_dispatch_verification do the verification and this method checks it was loaded.
+         *
+         * @return bool Whether the current user and api are loaded.
+         */
+        public function can_create($request)
+        {
+        }
+        /**
+         * Get Events for Creation
+         *
+         * Required method from abstract that only returns an error.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The REST response.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * Create an event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from creating an event.
+         */
+        public function post(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function CREATE_args()
+        {
+        }
+    }
+    /**
+     * Class Find_Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Find_Attendees extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Event;
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected $path = '/find-attendees';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $endpoint_id = 'find_attendees';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $type = 'search';
+        /**
+         * The REST instance endpoint to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Tickets__REST__V1__Endpoints__Attendee_Archive
+         */
+        protected $rest_endpoint = null;
+        /**
+         * @inheritDoc
+         *
+         * @var array<string>
+         */
+        protected array $dependents = ['tec'];
+        /**
+         * The REST validator to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Tickets__Validator__Base
+         */
+        protected $validator;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Whether the current user is set and the api is loaded.
+         * The test for creating is done one the rest_pre_dispatch hook, if the api is not ready or no user loaded then it failed.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return bool Whether the current user and api are loaded.
+         */
+        public function can_view($request)
+        {
+        }
+        /**
+         * Get attendees from archive endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return array[<string|mixed>]|\WP_REST_Response The response for find attendees request.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Find_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Find_Events extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Event;
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected $path = '/find-events';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $endpoint_id = 'find_events';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $type = 'search';
+        /**
+         * The REST instance endpoint to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Events__REST__V1__Endpoints__Archive_Event
+         */
+        protected $rest_endpoint = null;
+        /**
+         * @inheritDoc
+         *
+         * @var array<string>
+         */
+        protected array $dependents = ['tec'];
+        /**
+         * The REST validator to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Events__Validator__Base
+         */
+        protected $validator;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from event archive.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return array[<string|mixed>]|WP_REST_Response The response for find events request.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Find_Tickets
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Find_Tickets extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Ticket;
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected $path = '/find-tickets';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $endpoint_id = 'find_tickets';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $type = 'search';
+        /**
+         * The REST instance endpoint to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Tickets__REST__V1__Endpoints__ticket_Archive
+         */
+        protected $rest_endpoint = null;
+        /**
+         * @inheritDoc
+         *
+         * @var array<string>
+         */
+        protected array $dependents = ['tec'];
+        /**
+         * The REST validator to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Tickets__Validator__Base
+         */
+        protected $validator;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Whether the current user is set and the api is loaded.
+         * The test for creating is done one the rest_pre_dispatch hook, if the api is not ready or no user loaded then it failed.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return bool Whether the current user and api are loaded.
+         */
+        public function can_view($request)
+        {
+        }
+        /**
+         * Get tickets from archive endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return array[<string|mixed>]|WP_REST_Response The response for find tickets request.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Find_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Update_Events extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected $path = '/update-events';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $endpoint_id = 'update_events';
+        /**
+         * @inheritDoc
+         *
+         * @var string
+         */
+        protected static $type = 'update';
+        /**
+         * @inheritDoc
+         *
+         * @var array<string>
+         */
+        protected array $dependents = ['tec'];
+        /**
+         * The REST instance endpoint to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Single_Event_Endpoints
+         */
+        protected $rest_endpoint = null;
+        /**
+         * The REST validator to use.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Tribe__Events__Validator__Base
+         */
+        protected $validator;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Whether the current user is set and the api is loaded.
+         * The test for creating is done on the rest_pre_dispatch hook, if the api is not ready or no user was loaded then it failed.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return bool Whether the current user and api are loaded.
+         */
+        public function can_edit($request)
+        {
+        }
+        /**
+         * Get Events for Creation
+         *
+         * Required method from abstract that only returns an error.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The REST response.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * Update an event.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from creating an event.
+         */
+        public function post(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function EDIT_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\REST\V1\Endpoints {
+    /**
+     * Class Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Attendees extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Attendees
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Attendees     $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Attendees $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get attendees from new attendee queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new attendee queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Authorize
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Authorize extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/authorize';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'authorize';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'authorize';
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Authorize Access to the Zapier EndPoints.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response to authorizing Zapier access for an API Key pair.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Canceled_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Canceled_Events extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/canceled-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'canceled_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Canceled_Events
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Canceled_Events    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Canceled_Events $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from canceled event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the canceled event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Checkin
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Checkin extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/checkin';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'checkin';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Checkin
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Checkin     $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Checkin $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get attendees from new attendee queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new attendee queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class New_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class New_Events extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/new-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'new_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_New_Events
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_New_Events    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\New_Events $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from new event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Orders extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Orders
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Orders  $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Orders $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from new event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Refunded_Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Refunded_Orders extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        use \TEC\Event_Automator\Traits\Maps\Commerce\WooCommerce;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\EDD;
+        use \TEC\Event_Automator\Traits\Maps\Commerce\Tickets_Commerce;
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/refunded-orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'refunded_orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                     $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation   $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Refunded_Orders $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Refunded_Orders $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from refunded orders queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the refunded orders queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Updated_Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Updated_Attendees extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/updated-attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'updated_attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                       $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation     $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Updated_Attendees $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Updated_Attendees $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get attendees from new attendee queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the new attendee queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+    /**
+     * Class Updated_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Endpoints
+     */
+    class Updated_Events extends \TEC\Event_Automator\Zapier\REST\V1\Endpoints\Abstract_REST_Endpoint
+    {
+        /**
+         * @inheritDoc
+         */
+        protected $path = '/updated-events';
+        /**
+         * @inheritdoc
+         */
+        protected static $endpoint_id = 'updated_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $type = 'queue';
+        /**
+         * The trigger accessed with this endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @var Trigger_Updated_Events
+         */
+        public $trigger;
+        /**
+         * Abstract_REST_Endpoint constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                   $api           An instance of the Zapier API handler.
+         * @param Swagger_Documentation $documentation An instance of the Zapier Swagger_Documentation handler.
+         * @param Trigger_Updated_Events    $trigger       The trigger accessed with this endpoint.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\REST\V1\Documentation\Swagger_Documentation $documentation, \TEC\Event_Automator\Zapier\Triggers\Updated_Events $trigger)
+        {
+        }
+        /**
+         * @inheritdoc
+         */
+        protected function get_display_name() : string
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function register()
+        {
+        }
+        /**
+         * Get events from updated event queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_REST_Request $request The request object.
+         *
+         * @return WP_REST_Response The response from the updated event queue.
+         */
+        public function get(\WP_REST_Request $request)
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_documentation()
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function READ_args()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\REST\V1\Utilities {
+    /**
+     * Class Actions
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\REST\V1\Utilities
+     */
+    class Action_Endpoints
+    {
+        /**
+         * Filters the Zapier endpoint details.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array>    $endpoint     An array of the Zapier endpoint details.
+         * @param Abstract_REST_Endpoint $endpoint_obj An instance of the endpoint.
+         */
+        public function filter_details($endpoint, $endpoint_obj)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier {
+    /**
+     * Class Settings
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator -  Utilize Integration_Settings to share coding among integrations.
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Settings extends \TEC\Event_Automator\Integrations\Connections\Integration_Settings
+    {
+        /**
+         * @inheritdoc
+         */
+        public static string $option_prefix = 'tec_zapier_';
+        /**
+         * @inheritdoc
+         */
+        public static string $api_id = 'zapier';
+        /**
+         * Settings constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                    $api                    An instance of the Zapier API handler.
+         * @param Template_Modifications $template_modifications An instance of the Template_Modifications handler.
+         * @param Url                    $url                    An instance of the URL handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\Template_Modifications $template_modifications, \TEC\Event_Automator\Zapier\Url $url)
+        {
+        }
+        /**
+         * Get the Zapier API authorization fields.
+         * @deprecated 1.4.0 - use get_all_connection_fields();
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The HTML fields.
+         */
+        protected function get_authorize_fields()
+        {
+        }
+    }
+    /**
+     * Class Template_Modifications
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Template_Modifications extends \TEC\Event_Automator\Integrations\Connections\Integration_Template_Modifications
+    {
+        /**
+         * @inerhitDoc
+         */
+        public static string $api_id = 'zapier';
+        /**
+         * Template_Modifications constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Admin_Template $template An instance of the backend template handler.
+         * @param Url            $Url      An instance of the URl handler.
+         */
+        public function __construct(\TEC\Event_Automator\Templates\Admin_Template $admin_template, \TEC\Event_Automator\Zapier\Url $url)
+        {
+        }
+        /**
+         * Adds an API authorize fields to events->settings->api.
+         * @deprecated 1.4.0 - Use get_all_connection_fields().
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api $api An instance of an API handler.
+         * @param Url $url The URLs handler for the integration.
+         *
+         * @return string HTML for the authorize fields.
+         */
+        public function get_api_authorize_fields(\TEC\Event_Automator\Zapier\Api $api, \TEC\Event_Automator\Zapier\Url $url)
+        {
+        }
+        /**
+         * Get the API Key fields.
+         * @deprecated 1.4.0 - Use get_connection_fields().
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Api                 $api         An instance of an API handler.
+         * @param string              $consumer_id The unique id used to save the API Key data.
+         * @param array<string|mixed> $api_key     The API Key data.
+         * @param array<string|mixed> $users       An array of WordPress users to create an API Key for.
+         * @param string              $type        A string of the type of fields to load ( new and generated ).
+         *
+         * @return string The Zapier API Keys admin fields html.
+         */
+        public function get_api_key_fields(\TEC\Event_Automator\Zapier\Api $api, $consumer_id, $api_key, $users, $type = 'new')
+        {
+        }
+        /**
+         * Get intro text for an endpoint dashboard.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string HTML for the intro text.
+         */
+        public function get_dashboard_intro_text()
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier\Trigger_Queue {
+    /**
+     * Class Abstract_Trigger_Queue
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Utilize Integration_Trigger_Queue to share coding among integrations.
+     *
+     * @package TEC\Event_Automator\Zapier\Trigger_Queue
+     */
+    abstract class Abstract_Trigger_Queue extends \TEC\Event_Automator\Integrations\Trigger_Queue\Integration_Trigger_Queue
+    {
+        /**
+         * @inheritDoc
+         */
+        protected static $api_id = 'zapier';
+        /**
+         * @inheritDoc
+         */
+        protected static $queue_prefix = '_tec_zapier_queue_';
+    }
+}
+namespace TEC\Event_Automator\Zapier\Triggers {
+    /**
+     * Class New_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Attendees extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'attendees';
+        /**
+         * @inheritdoc
+         */
+        protected static $added_to_queue_meta_field = 'attendee_run_once';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Canceled_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Canceled_Events extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'canceled_events';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Checkin
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Checkin extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'checkin';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class New_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class New_Events extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'new_events';
+        /**
+         * @inheritdoc
+         */
+        protected static $added_to_queue_meta_field = 'new_event_run_once';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Orders extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'orders';
+        /**
+         * @inheritdoc
+         */
+        protected static $added_to_queue_meta_field = 'zapier_order_run_once';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Refunded_Orders
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Refunded_Orders extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'refunded_orders';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+        /**
+         * Checks if an EDD Order has Tickets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int                $order_id The ID number of the order.
+         * @param array<mixed|mixed> $data     An array of data specific to the trigger and used for validation.
+         *
+         * @return boolean Whether the order has tickets.
+         */
+        protected function edd_order_has_tickets(int $order_id, array $data) : bool
+        {
+        }
+        /**
+         * Checks if a Woo Order has Tickets.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int                $order_id The ID number of the order.
+         * @param array<mixed|mixed> $data     An array of data specific to the trigger and used for validation.
+         *
+         * @return boolean Whether the order has tickets.
+         */
+        protected function woo_order_has_tickets(int $order_id, array $data) : bool
+        {
+        }
+    }
+    /**
+     * Class Updated_Attendees
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Updated_Attendees extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'updated_attendees';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+    /**
+     * Class Updated_Events
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier\Triggers
+     */
+    class Updated_Events extends \TEC\Event_Automator\Zapier\Trigger_Queue\Abstract_Trigger_Queue
+    {
+        /**
+         * @inheritdoc
+         */
+        protected static $queue_name = 'updated_events';
+        /**
+         * @inheritdoc
+         */
+        protected function validate_for_trigger($post_id, $data)
+        {
+        }
+    }
+}
+namespace TEC\Event_Automator\Zapier {
+    /**
+     * Class Url
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     * @since 6.0.0 Migrated to Common from Event Automator - Utilizes common class.
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Url extends \TEC\Event_Automator\Integrations\Connections\Integration_Url
+    {
+        /**
+         * @inheritdoc
+         */
+        public static string $api_id = 'zapier';
+        /**
+         * Url constructor.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Actions $actions An instance of the Zapier Actions handler.
+         */
+        public function __construct(\TEC\Event_Automator\Zapier\Actions $actions)
+        {
+        }
+        /**
+         * Returns the URL that should be used to delete an API Key pair in the settings.
+         * @deprecated 1.4.0 - use to_add_connection_link() instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return string The URL to add an API Key.
+         */
+        public function to_add_api_key_link()
+        {
+        }
+        /**
+         * Returns the URL that should be used to generate a Zapier API Key pair.
+         * @deprecated 1.4.0 - use to_create_access_link() instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id The consumer id for the key pair.
+         *
+         * @return string The URL used to generate a Zapier API Key pair.
+         */
+        public function to_generate_api_key_pair($consumer_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used to revoke a Zapier API Key.
+         * @deprecated 1.4.0 - use to_delete_connection_link() instead.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $consumer_id An API Key to revoke.
+         *
+         * @return string The URL to revoke an API Key.
+         */
+        public function to_revoke_api_key_link($consumer_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used clear a Zapier endpoint queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id An endpoint id to clear.
+         *
+         * @return string The URL to clear a Zapier endpoint queue.
+         */
+        public function to_clear_endpoint_queue($endpoint_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used disable a Zapier endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id An endpoint id to disable.
+         *
+         * @return string The URL to disable a Zapier endpoint.
+         */
+        public function to_disable_endpoint_queue($endpoint_id)
+        {
+        }
+        /**
+         * Returns the URL that should be used enable a Zapier endpoint.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param string $endpoint_id An endpoint id to enable.
+         *
+         * @return string The URL to enable a Zapier endpoint.
+         */
+        public function to_enable_endpoint_queue($endpoint_id)
+        {
+        }
+    }
+    /**
+     * Class Zapier_Provider
+     *
+     * @since 6.0.0 Migrated to Common from Event Automator
+     *
+     * @package TEC\Event_Automator\Zapier
+     */
+    class Zapier_Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        use \TEC\Event_Automator\Traits\With_Nonce_Routes;
+        /**
+         * The constant to disable the event status coding.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        const DISABLED = 'TEC_ZAPIER_DISABLED';
+        /**
+         * The constant to enable add to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        const ENABLE_ADD_TO_QUEUE = 'TEC_ZAPIER_ENABLE_ADD_TO_QUEUE';
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register()
+        {
+        }
+        /**
+         * Returns whether the event status should register, thus activate, or not.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return bool Whether the event status should register or not.
+         */
+        public static function is_active()
+        {
+        }
+        /**
+         * Adds the actions required for event status.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function add_actions()
+        {
+        }
+        /**
+         * Adds the actions to add to the queues.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @since 6.0.0.1 Split the method in sub-methods for each plugin.
+         */
+        public function setup_add_to_queues()
+        {
+        }
+        /**
+         * Adds the actions required for The Events Calendar.
+         *
+         * @since 6.0.0.1
+         *
+         * @return void
+         */
+        protected function add_tec_setup() : void
+        {
+        }
+        /**
+         * Adds the actions required for Event Tickets.
+         *
+         * @since 6.0.0.1
+         *
+         * @return void
+         */
+        protected function add_et_setup() : void
+        {
+        }
+        /**
+         * Adds the filters required by Zapier.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        protected function add_filters()
+        {
+        }
+        /**
+         * Register the Admin Assets for Zapier.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register_admin_assets()
+        {
+        }
+        /**
+         * Registers the REST API endpoints for Zapier
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function register_endpoints()
+        {
+        }
+        /**
+         * Adds the endpoint to the Zapier endpoint dashboard filter.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         */
+        public function add_endpoints_to_dashboard()
+        {
+        }
+        /**
+         * Adds the Zapier Endpoint dashboard fields after the Zapier API key settings.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array> $fields The current fields.
+         *
+         * @return array<string,array> The fields, with the added endpoint dashboard fields.
+         */
+        public function add_dashboard_fields($fields)
+        {
+        }
+        /**
+         * Filters the Zapier endpoint details.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param array<string,array>    $endpoint An array of the Zapier endpoint details.
+         * @param Abstract_REST_Endpoint $this     An instance of the endpoint.
+         */
+        public function filter_create_event_details($endpoint, $endpoint_obj)
+        {
+        }
+        /**
+         * Filter to enable adding to the queues for Zapier.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param boolean $enable_add_to_queue Whether to enable adding to the queues for Zapier, default to false.
+         *
+         * @return boolean Whether adding to the queues is enabled Zapier.
+         */
+        public function filter_enable_add_to_queues($enable_add_to_queue)
+        {
+        }
+        /**
+         * Verify token and login user before dispatching the request.
+         * Done on `rest_pre_dispatch` to be able to set current user to pass validation capability checks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.0.1 - Use Tribe\Events\Pro\Integrations\Event_Automator\Zapier_Provider->pre_dispatch_verification_for_create_events
+         *
+         * @param mixed           $result  Response to replace the requested version with. Can be anything
+         *                                 a normal endpoint can return, or null to not hijack the request.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return null With always return null, failure will happen on the can_create permission check.
+         */
+        public function pre_dispatch_verification($result, $server, $request)
+        {
+        }
+        /**
+         * Verify token and login user before dispatching the request.
+         * Done on `rest_pre_dispatch` to be able to set current user to pass validation capability checks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.0.1 - Use Tribe\Events\Pro\Integrations\Event_Automator\Zapier_Provider->pre_dispatch_verification_for_update_events
+         *
+         * @param mixed           $result  Response to replace the requested version with. Can be anything
+         *                                 a normal endpoint can return, or null to not hijack the request.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return null With always return null, failure will happen on the can_create permission check.
+         */
+        public function pre_dispatch_verification_for_update_events($result, $server, $request)
+        {
+        }
+        /**
+         * Verify token and login user before dispatching the request.
+         * Done on `rest_pre_dispatch` to be able to set current user to pass validation capability checks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.0.1 - Use Tribe\Tickets\Plus\Integrations\Event_Automator\Zapier_Provider->pre_dispatch_verification_for_find_attendees
+         *
+         * @param mixed           $result  Response to replace the requested version with. Can be anything
+         *                                 a normal endpoint can return, or null to not hijack the request.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return null With always return null, failure will happen on the can_create permission check.
+         */
+        public function pre_dispatch_verification_for_find_attendees($result, $server, $request)
+        {
+        }
+        /**
+         * Verify token and login user before dispatching the request.
+         * Done on `rest_pre_dispatch` to be able to set current user to pass validation capability checks.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.0.1 - Use Tribe\Tickets\Plus\Integrations\Event_Automator\Zapier_Provider->pre_dispatch_verification_for_find_tickets
+         *
+         * @param mixed           $result  Response to replace the requested version with. Can be anything
+         *                                 a normal endpoint can return, or null to not hijack the request.
+         * @param WP_REST_Server  $server  Server instance.
+         * @param WP_REST_Request $request Request used to generate the response.
+         *
+         * @return null With always return null, failure will happen on the can_create permission check.
+         */
+        public function pre_dispatch_verification_for_find_tickets($result, $server, $request)
+        {
+        }
+        /**
+         * Modifies REST API comma seperated  parameters before validation.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.0.1 - Use Tribe\Events\Pro\Integrations\Event_Automator\Zapier_Provider->modify_rest_api_params_before_validation
+         *
+         * @param WP_REST_Response|WP_Error $response Response to replace the requested version with. Can be anything
+         *                                            a normal endpoint can return, or a WP_Error if replacing the
+         *                                            response with an error.
+         * @param WP_REST_Server            $server   ResponseHandler instance (usually WP_REST_Server).
+         * @param WP_REST_Request           $request  Request used to generate the response.
+         *
+         * @return WP_REST_Response|WP_Error The response.
+         */
+        public function modify_rest_api_params_before_validation($response, $server, $request)
+        {
+        }
+        /**
+         * Modifies REST API comma seperated  parameters before validation.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         * @deprecated 6.0.1 - Use Tribe\Events\Pro\Integrations\Event_Automator\Zapier_Provider->modify_rest_api_params_before_validation_for_update_events
+         *
+         * @param WP_REST_Response|WP_Error $response Response to replace the requested version with. Can be anything
+         *                                            a normal endpoint can return, or a WP_Error if replacing the
+         *                                            response with an error.
+         * @param WP_REST_Server            $server   ResponseHandler instance (usually WP_REST_Server).
+         * @param WP_REST_Request           $request  Request used to generate the response.
+         *
+         * @return WP_REST_Response|WP_Error The response.
+         */
+        public function modify_rest_api_params_before_validation_for_update_events($response, $server, $request)
+        {
+        }
+        /**
+         * Provides the routes that should be used to handle Zapier Integration requests.
+         *
+         * The map returned by this method will be used by the `TEC\Event_Automator\Traits\With_Nonce_Routes` trait.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @return array<string,callable> A map from the nonce actions to the corresponding handlers.
+         */
+        public function admin_routes()
+        {
+        }
+        /**
+         * Add a canceled event post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int           $post_id ID of the post we're saving.
+         * @param array<string> $data    The meta data we're trying to save.
+         */
+        public function add_canceled_to_queue($post_id, $data)
+        {
+        }
+        /**
+         * Add a custom post id to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int     $post_id A WordPress custom post id.
+         * @param WP_Post $post    A WordPress custom post object.
+         * @param boolean $update  Whether this is an update to a custom post or new. Unreliable and not used.
+         */
+        public function add_to_queue($post_id, $post, $update)
+        {
+        }
+        /**
+         * Add a custom post id  of an event that has been updated to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int     $post_id A WordPress custom post id.
+         * @param WP_Post $post_after   Post object following the update.
+         * @param WP_Post $post_before  Post object before the update.
+         */
+        public function add_updated_to_queue($post_id, $post_after, $post_before)
+        {
+        }
+        /**
+         * Add RSVP attendee to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param integer $attendee_id       An attendee id.
+         * @param integer $post_id           A WordPress custom post id.
+         * @param integer $product_id        A WordPress custom post object.
+         * @param integer $order_attendee_id Whether this is an update to a custom post or new. Unreliable and not used.
+         */
+        public function add_rsvp_attendee_to_queue($attendee_id, $post_id, $product_id, $order_attendee_id)
+        {
+        }
+        /**
+         * Add Tickets Commerce attendee to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post       $attendee Post object for the attendee.
+         * @param WP_Post       $order    Which order generated this attendee.
+         * @param Ticket_Object $ticket   Which ticket generated this Attendee.
+         * @param array         $args     Set of extra arguments used to populate the data for the attendee.
+         */
+        public function add_tc_attendee_to_queue($attendee, $order, $ticket, $args)
+        {
+        }
+        /**
+         * Add EDD attendee to queue.
+         *
+         * @param int $attendee_id ID of attendee ticket.
+         * @param int $post_id     ID of event.
+         * @param int $order_id    Easy Digital Downloads order ID.
+         * @param int $product_id  Easy Digital Downloads product ID.
+         */
+        public function add_edd_attendee_to_queue($attendee_id, $post_id, $order_id, $product_id)
+        {
+        }
+        /**
+         * Add Woo attendee to queue.
+         *
+         * @param int      $attendee_id ID of attendee ticket.
+         * @param int      $post_id     ID of event.
+         * @param WC_Order $order       WooCommerce order.
+         * @param int      $product_id  WooCommerce product ID.
+         */
+        public function add_woo_attendee_to_queue($attendee_id, $post_id, $order, $product_id)
+        {
+        }
+        /**
+         * Add Tickets Commerce order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param WP_Post       $attendee Post object for the attendee.
+         * @param WP_Post       $order    Which order generated this attendee.
+         * @param Ticket_Object $ticket   Which ticket generated this Attendee.
+         * @param array         $args     Set of extra arguments used to populate the data for the attendee.
+         */
+        public function add_tc_order_to_queue($attendee, $order, $ticket, $args)
+        {
+        }
+        /**
+         * Add EDD order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int $attendee_id       ID of attendee ticket.
+         * @param int $order_id          Easy Digital Downloads order ID.
+         * @param int $product_id        Easy Digital Downloads product ID.
+         * @param int $order_attendee_id Attendee # for order.
+         */
+        public function add_edd_order_to_queue($attendee_id, $order_id, $product_id, $order_attendee_id)
+        {
+        }
+        /**
+         * Add Woo order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int $attendee_id       ID of attendee ticket.
+         * @param int $order_id          WooCommerce order ID.
+         * @param int $product_id        WooCommerce product ID.
+         * @param int $order_attendee_id Attendee # for order.
+         */
+        public function add_woo_order_to_queue($attendee_id, $order_id, $product_id, $order_attendee_id)
+        {
+        }
+        /**
+         * Add checkin to the queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int       $attendee_id ID of attendee ticket.
+         * @param bool|null $qr          true if from QR checkin process
+         */
+        public function add_checkin_to_queue($attendee_id, $qr)
+        {
+        }
+        /**
+         * Add a custom post id of an attendee that has been updated to a trigger queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int     $post_id     A WordPress custom post id.
+         * @param WP_Post $post_after  Post object following the update.
+         * @param WP_Post $post_before Post object before the update.
+         */
+        public function add_updated_attendee_to_queue($post_id, $post_after, $post_before)
+        {
+        }
+        /**
+         * Add Refunded Tickets Commerce order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param Status_Interface      $new_status New post status.
+         * @param Status_Interface|null $old_status Old post status.
+         * @param \WP_Post              $order      Order Post object.
+         */
+        public function add_refunded_tc_order_to_queue($new_status, $old_status, $order)
+        {
+        }
+        /**
+         * Add Refunded EDD order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int  $order_id     The ID number of the order.
+         * @param int  $refund_id    The ID number of the refund order.
+         * @param bool $all_refunded The status of the order prior to this change.
+         */
+        public function add_refunded_edd_order_to_queue($order_id, $refund_id, $all_refunded)
+        {
+        }
+        /**
+         * Add Refunded Woo order to queue.
+         *
+         * @since 6.0.0 Migrated to Common from Event Automator
+         *
+         * @param int      $order_id   WooCommerce order ID.
+         * @param string   $old_status The status of the order prior to this change.
+         * @param string   $new_status The new order status.
+         * @param WC_Order $order      The instance of the order object.
+         */
+        public function add_refunded_woo_order_to_queue($order_id, $old_status, $new_status, $order)
+        {
+        }
+    }
+}
 namespace TEC\Common\Exceptions {
     /**
      * Class Container_Exception.
@@ -1263,6 +10683,268 @@ namespace TEC\Common\Integrations {
          * @return string
          */
         public static abstract function get_type() : string;
+    }
+    /**
+     * Class Plugin_Merge_Provider_Abstract
+     *
+     * @since 6.0.0
+     *
+     * @package TEC\Common\Integrations
+     */
+    abstract class Plugin_Merge_Provider_Abstract extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * If the plugin was updated from a version that is less than the merged plugin version.
+         *
+         * @var bool
+         */
+        protected bool $updated_to_merge_version = false;
+        /**
+         * The list of parent plugins initialized.
+         *
+         * @since 6.0.0
+         *
+         * @var array<string, string>
+         */
+        protected static array $plugin_updated_names = [];
+        /**
+         * Get the plugins version where the merge was applied.
+         *
+         * @since 6.0.0
+         *
+         * @return string
+         */
+        public abstract function get_merged_version() : string;
+        /**
+         * Get version key for the last version option.
+         *
+         * @since 6.0.0
+         *
+         * @return string
+         */
+        public abstract function get_last_version_option_key() : string;
+        /**
+         * Get the key of the plugin file, e.g. path/file.php.
+         *
+         * @since 6.0.0
+         *
+         * @return string
+         */
+        public abstract function get_plugin_file_key() : string;
+        /**
+         * Retrieve the relative path to the child plugin.
+         *
+         * @since 6.0.0
+         *
+         * @return string
+         */
+        public function get_plugin_real_path() : string
+        {
+        }
+        /**
+         * Get the slug of the notice to display with various notices.
+         *
+         * @return string
+         */
+        public abstract function get_merge_notice_slug() : string;
+        /**
+         * Get the message to display when the parent plugin is being updated to the merge.
+         *
+         * @return string
+         */
+        public abstract function get_updated_merge_notice_message() : string;
+        /**
+         * Get the message to display when the child plugin is being activated.
+         *
+         * @return string
+         */
+        public abstract function get_activating_merge_notice_message() : string;
+        /**
+         * Retrieves the name of the plugin.
+         *
+         * @since 6.0.0
+         *
+         * @return string The name of the parent plugin.
+         */
+        public abstract function get_plugin_updated_name() : string;
+        /**
+         * Run initialization of container and plugin version comparison.
+         *
+         * @since 6.0.0
+         *
+         * @param Container $container The container instance for DI.
+         */
+        public function __construct(\TEC\Common\lucatume\DI52\Container $container)
+        {
+        }
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.0.0
+         */
+        public function register() : void
+        {
+        }
+        /**
+         * Check if the plugin was updated from a version that is less than the merged plugin version.
+         *
+         * @since 6.0.0
+         *
+         * @return bool
+         */
+        protected function did_update_to_merge_version() : bool
+        {
+        }
+        /**
+         * Is the child plugin active?
+         *
+         * @since 6.0.0
+         */
+        protected function is_child_plugin_active() : bool
+        {
+        }
+        /**
+         * This fires if we are initializing the merge and stores the parent plugin information.
+         *
+         * @since 6.0.0
+         *
+         * @return void
+         */
+        public function register_update() : void
+        {
+        }
+        /**
+         * Initializes the merged compatibility checks.
+         *
+         * @since 6.0.0
+         */
+        public function init() : void
+        {
+        }
+        /**
+         * If any initialization is necessary for the merged plugin to work after child plugin deactivation is resolved.
+         *
+         * @since 6.0.0
+         */
+        public function init_merged_plugin() : void
+        {
+        }
+        /**
+         * Deactivates the merged plugin.
+         *
+         * @since 6.0.0
+         */
+        public function deactivate_plugin() : void
+        {
+        }
+        /**
+         * Fetch the plugin text domain used for locating and checking a specific plugin.
+         *
+         * @since 6.0.0
+         *
+         * @return string
+         */
+        public abstract function get_child_plugin_text_domain() : string;
+        /**
+         * Adds the hook to remove the "Plugin activated" notice from the redirect.
+         *
+         * @since 6.0.0
+         *
+         * @param string $plugin The plugin file path.
+         */
+        public function remove_activated_from_redirect($plugin) : void
+        {
+        }
+        /**
+         * Filter the redirect location to remove the "activate" query arg.
+         *
+         * @since 6.0.0
+         *
+         * @param string $location The redirect location.
+         *
+         * @return string The redirect location without the "activate" query arg.
+         */
+        public function filter_remove_activated_from_redirect($location) : string
+        {
+        }
+        /**
+         * Send admin notice about the updates in the merged version.
+         *
+         * @since 6.0.0
+         */
+        public function send_updated_notice() : void
+        {
+        }
+        /**
+         * Registers the notice transient with the rendered message.
+         *
+         * @since 6.0.0
+         *
+         * @return void
+         */
+        public function register_updated_notice() : void
+        {
+        }
+        /**
+         * Compiles the updated plugin message.
+         *
+         * @since 6.0.0
+         *
+         * @return string
+         */
+        public function render_updated_notice() : string
+        {
+        }
+        /**
+         * Send admin notice about the merge of the child plugin into the parent plugin.
+         *
+         * @since 6.0.0
+         */
+        public function send_updated_merge_notice() : void
+        {
+        }
+        /**
+         * Send admin notice about the merge of the Event Tickets Wallet Plus plugin into Tickets Plus.
+         * This notice is for after activating the deprecated Wallet Plus plugin.
+         *
+         * @since 6.0.0
+         */
+        public function send_activating_merge_notice() : void
+        {
+        }
+        /**
+         * Check if the merge notice should be shown.
+         *
+         * @since 6.0.0
+         *
+         * @return bool
+         */
+        public static function should_show_merge_notice() : bool
+        {
+        }
+        /**
+         * Implements Runner's private method cmd_starts_with.
+         *
+         * @since 6.0.0
+         *
+         * @param array $looking_for The array of strings to look for.
+         * @param mixed $args        The arguments to search in.
+         *
+         * @return bool
+         */
+        protected function cli_args_start_with(array $looking_for, $args) : bool
+        {
+        }
+        /**
+         * Checks if the current request is activating the VE plugin.
+         *
+         * @since 6.0.0
+         *
+         * @return bool
+         */
+        protected function is_activating_plugin() : bool
+        {
+        }
     }
     /**
      * Class Provider.
@@ -2881,60 +12563,6 @@ namespace {
         }
     }
     /**
-     * Base Plugin register
-     *
-     * Register all plugins to Dependency Class
-     *
-     * @package Tribe
-     * @since 4.9
-     *
-     */
-    abstract class Tribe__Abstract_Plugin_Register
-    {
-        /**
-         * The absolute path to the plugin file, the one that contains the plugin header.
-         *
-         * @var string
-         */
-        protected $base_dir;
-        /**
-         * @var string
-         */
-        protected $main_class;
-        /**
-         * @var string
-         */
-        protected $version;
-        /**
-         * @since 4.9.17
-         *
-         * @var array
-         */
-        protected $classes_req = [];
-        /**
-         * @var array
-         */
-        protected $dependencies = ['parent-dependencies' => [], 'co-dependencies' => [], 'addon-dependencies' => []];
-        /**
-         * Registers a plugin with dependencies
-         */
-        public function register_plugin()
-        {
-        }
-        /**
-         * Returns whether or not the dependencies have been met
-         *
-         * This is basically an aliased function - register_plugins, upon
-         * second calling, returns whether or not a plugin should load.
-         *
-         * @deprecated since 4.9.17 It is unused by any Tribe plugins and returned void.
-         * @todo       remove in 4.11
-         */
-        public function has_valid_dependencies()
-        {
-        }
-    }
-    /**
      * Shows a welcome or update message after the plugin is installed/updated.
      */
     class Tribe__Admin__Activation_Page
@@ -3344,10 +12972,10 @@ namespace {
      * Class with a few helpers for the Administration Pages
      *
      * @since  4.0
-     *
      */
     class Tribe__Admin__Help_Page
     {
+        //phpcs:ignore - legacy class naming.
         /**
          * Static Singleton Factory Method
          *
@@ -3422,8 +13050,9 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  string  $plugin_name    Should get only one plugin?
-         * @param  boolean $is_active Only get active plugins?
+         * @param  string  $plugin_name    If we should get only one plugin.
+         * @param  boolean $is_active If we only get active plugins.
+         *
          * @return array
          */
         public function get_plugins($plugin_name = \null, $is_active = \true)
@@ -3434,7 +13063,7 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  boolean $is_active Filter only active plugins
+         * @param  boolean $is_active Filter only active plugins.
          * @return array
          */
         public function get_plugin_forum_links($is_active = \true)
@@ -3445,7 +13074,7 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  boolean $is_active Filter only active plugins
+         * @param  boolean $is_active Filter only active plugins.
          * @return string
          */
         public function get_plugins_text($is_active = \true)
@@ -3456,14 +13085,23 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  string $plugin Plugin Name to filter
-         * @param  string $is_active Filter if it's active
-         * @param  string $is_important filter if the plugin is important
+         * @param  string $plugin Plugin Name to filter.
+         * @param  string $is_active Filter if it's active.
+         * @param  string $is_important filter if the plugin is important.
          * @return array
          */
         public function get_addons($plugin = \null, $is_active = \null, $is_important = \null)
         {
         }
+        /**
+         * Check if a Plugin is active
+         *
+         * @since  4.0
+         *
+         * @param  string|array $should_be_active The Plugin Name or an array of Plugin Names.
+         *
+         * @return boolean
+         */
         public function is_active($should_be_active)
         {
         }
@@ -3472,9 +13110,9 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  string  $link     An absolute or a Relative link
-         * @param  boolean $relative Is the Link absolute or relative?
-         * @return string            Link with the GA arguments
+         * @param  string  $link     An absolute or a Relative link.
+         * @param  boolean $relative Is the Link absolute or relative.
+         * @return string            Link with the GA arguments.
          */
         public function get_ga_link($link = \null, $relative = \true)
         {
@@ -3484,7 +13122,7 @@ namespace {
          *
          * @since  4.0
          *
-         * @return array Feed Title and Link
+         * @return array Feed Title and Link.
          */
         public function get_feed_items()
         {
@@ -3534,10 +13172,10 @@ namespace {
          *
          * @since  4.0
          *
-         * @param string  $id       HTML like ID
-         * @param string  $title    The Title of the section, doesn't allow HTML
-         * @param integer $priority A Numeric ordering for the Section
-         * @param string  $type     by default only 'default' or 'box'
+         * @param string  $id       HTML like ID.
+         * @param string  $title    The Title of the section, doesn't allow HTML.
+         * @param integer $priority A Numeric ordering for the Section.
+         * @param string  $type     by default only 'default' or 'box'.
          *
          * @return object The section added
          */
@@ -3549,12 +13187,12 @@ namespace {
          *
          * @since  4.0
          *
-         * @param string  $section_id Which section this content should be assigned to
-         * @param string|array  $content    Item text or array of items, will be passed to `$this->get_content_html`
-         * @param integer $priority   A Numeric priority
-         * @param array   $arguments  If you need arguments for item, they can be passed here
+         * @param string       $section_id Which section this content should be assigned to.
+         * @param string|array $content    Item text or array of items, will be passed to `$this->get_content_html`.
+         * @param integer      $priority   A Numeric priority.
+         * @param array        $arguments  If you need arguments for item, they can be passed here.
          *
-         * @return object The content item added
+         * @return object The content item added.
          */
         public function add_section_content($section_id, $content, $priority = 10, $arguments = [])
         {
@@ -3564,8 +13202,8 @@ namespace {
          * This method will remove any sections that are indexed at that ID on the sections array
          * And the sections that have a propriety of `id` equals to the given $section_id argument
          *
-         * @param  string|int $section_id You can use Numeric or String indexes to search
-         * @return bool|int               Returns `false` when no sections were removed and an `int` with the number of sections removed
+         * @param  string|int $section_id You can use Numeric or String indexes to search.
+         * @return bool|int               Returns `false` when no sections were removed and an `int` with the number of sections removed.
          */
         public function remove_section($section_id)
         {
@@ -3575,7 +13213,7 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  boolean $print    Return or Print the HTML after
+         * @param  boolean $print    Return or Print the HTML after.
          * @return void|string
          */
         public function get_sections($print = \true)
@@ -3586,7 +13224,7 @@ namespace {
          *
          * @since  4.0
          *
-         * @param  string $plugin Plugin Name key
+         * @param  string $plugin Plugin Name key.
          * @return void
          */
         public function print_plugin_box($plugin)
@@ -4175,11 +13813,11 @@ namespace Tribe\Admin\Notice\Marketing {
         /**
          * {@inheritDoc}
          */
-        public $slug = 'stellar-sale';
+        public $slug = 'stellar-sale-2024';
         /**
          * {@inheritDoc}
          */
-        public $start_date = 'July 24th, 2023';
+        public $start_date = 'July 23rd, 2024';
         /**
          * {@inheritDoc}
          *
@@ -4189,23 +13827,13 @@ namespace Tribe\Admin\Notice\Marketing {
         /**
          * {@inheritDoc}
          */
-        public $end_date = 'July 31st, 2023';
+        public $end_date = 'July 30th, 2024';
         /**
          * {@inheritDoc}
          *
          * 7am UTC is midnight PDT (-7) and 3am EDT (-4)
          */
         public $end_time = 19;
-        /**
-         * {@inheritDoc}
-         */
-        public $extension_date = 'August 2nd, 2023';
-        /**
-         * {@inheritDoc}
-         *
-         * 7am UTC is midnight PDT (-7) and 3am EDT (-4)
-         */
-        public $extension_time = 19;
         /**
          * {@inheritDoc}
          */
@@ -4686,20 +14314,6 @@ namespace {
         {
         }
         /**
-         * Checks if a given user has dismissed a given notice.
-         *
-         * @since      4.3
-         * @deprecated 4.13.0 Deprecated in favor of correcting the typo.
-         *
-         * @param string   $slug    The Name of the Notice
-         * @param int|null $user_id The user ID
-         *
-         * @return boolean
-         */
-        public function has_user_dimissed($slug, $user_id = \null)
-        {
-        }
-        /**
          * Gets the last Dismissal for a given notice slug and user.
          *
          * @since 4.13.0
@@ -4956,6 +14570,8 @@ namespace Tribe\Admin {
          * Adds a page to `tec-admin`.
          *
          * @since 4.15.0
+         *
+         * @since 5.2.7 Added the `position` parameter for submenu pages.
          *
          * @param array $options {
          *   Array describing the page.
@@ -5659,12 +15275,6 @@ namespace {
     class Tribe__Assets
     {
         /**
-         * Stores all the Assets and it's configurations.
-         *
-         * @var array
-         */
-        protected $assets = [];
-        /**
          * Static Singleton Factory Method.
          *
          * @since 4.3
@@ -5678,8 +15288,32 @@ namespace {
          * Register the Methods in the correct places.
          *
          * @since 4.3
+         * @since 5.3.0 Emptied of all hooks in favor of the stellarwp/assets library.
          */
         public function __construct()
+        {
+        }
+        /**
+         * Hooks the filters used to register the assets.
+         *
+         * @since 5.3.0
+         *
+         * @return void
+         */
+        public function hook() : void
+        {
+        }
+        /**
+         * Proxies the generic stellarwp/assets/enqueue filter to apply the TEC ones.
+         *
+         * @since 5.3.0
+         *
+         * @param bool  $enqueue If we should enqueue or not a given asset.
+         * @param Asset $asset Which asset we are dealing with.
+         *
+         * @return mixed|null
+         */
+        public function proxy_enqueue_filter($enqueue, $asset)
         {
         }
         /**
@@ -5692,6 +15326,8 @@ namespace {
          * @param string $handle Which is the ID/Handle of the tag we are about to print.
          *
          * @return string Script tag with the before and after strings attached to it.
+         *
+         * @deprecated 5.3.0
          */
         public function filter_print_before_after_script($tag, $handle) : string
         {
@@ -5706,6 +15342,8 @@ namespace {
          * @param string $handle Which is the ID/Handle of the tag we are about to print.
          *
          * @return string Script tag with the localization variable HTML attached to it.
+         *
+         * @deprecated 5.3.0
          */
         public function filter_add_localization_data($tag, $handle)
         {
@@ -5719,6 +15357,8 @@ namespace {
          * @param string $handle Which is the ID/Handle of the tag we are about to print.
          *
          * @return string Script tag with the defer and/or async attached.
+         *
+         * @deprecated 5.3.0
          */
         public function filter_tag_async_defer($tag, $handle)
         {
@@ -5732,6 +15372,8 @@ namespace {
          * @param string $handle Which is the ID/Handle of the tag we are about to print.
          *
          * @return string Script tag with the type=module
+         *
+         * @deprecated 5.3.0
          */
         public function filter_modify_to_module($tag, $handle)
         {
@@ -5743,6 +15385,8 @@ namespace {
          * @param array|object|null $assets Array of asset objects, single asset object, or null.
          *
          * @return void
+         *
+         * @deprecated 5.3.0
          */
         public function register_in_wp($assets = \null)
         {
@@ -5751,12 +15395,14 @@ namespace {
          * Enqueues registered assets based on their groups.
          *
          * @since 4.7
+         * @since 5.3.0 Refactored to use the stellarwp/assets library.
          *
-         * @uses  Tribe__Assets::enqueue()
+         * @uses  TEC\Common\StellarWP\Assets\Assets::enqueue_group()
          *
-         * @param string|array $groups Which groups will be enqueued.
+         * @param string|array $groups           Which groups will be enqueued.
+         * @param bool         $forcibly_enqueue Whether to ignore conditional requirements when enqueuing.
          */
-        public function enqueue_group($groups)
+        public function enqueue_group($groups, $forcibly_enqueue = \true)
         {
         }
         /**
@@ -5769,10 +15415,14 @@ namespace {
          * registered.
          *
          * @since 4.3
+         * @since 5.3.0 Refactored to use the stellarwp/assets library.
          *
-         * @param string|array $forcibly_enqueue
+         * @uses  TEC\Common\StellarWP\Assets\Assets::enqueue()
+         *
+         * @param string|array $assets           Which assets to enqueue.
+         * @param bool         $forcibly_enqueue Whether to ignore conditional requirements when enqueuing.
          */
-        public function enqueue($forcibly_enqueue = \null)
+        public function enqueue($assets = [], $forcibly_enqueue = \true)
         {
         }
         /**
@@ -5833,6 +15483,8 @@ namespace {
          * @param  stdClass $asset Argument that set that asset.
          *
          * @return stdClass
+         *
+         * @deprecated 5.3.0
          */
         public function parse_argument_localize(\stdClass $asset)
         {
@@ -5841,6 +15493,7 @@ namespace {
          * Removes an Asset from been registered and enqueue.
          *
          * @since 4.3
+         * @since 5.3.0 Refactored to use the stellarwp/assets library.
          *
          * @param  string $slug Slug of the Asset.
          *
@@ -5854,6 +15507,7 @@ namespace {
          *
          * @since 4.3
          * @since 4.11.0  Added $sort param.
+         * @since 5.3.0 Refactored to use the stellarwp/assets library.
          *
          * @param string|array $slug Slug of the Asset.
          * @param boolean      $sort  If we should do any sorting before returning.
@@ -5869,6 +15523,8 @@ namespace {
          *
          * @param  string|array $slug Slug of the Asset.
          *
+         * @since 5.3.0 Refactored to use the stellarwp/assets library.
+         *
          * @return bool
          */
         public function exists($slug)
@@ -5880,6 +15536,7 @@ namespace {
          * The method will force the scripts and styles to print overriding their registration and conditional.
          *
          * @since 4.12.6
+         * @since 5.3.0 Refactored to use the stellarwp/assets library.
          *
          * @param string|array $group Which group(s) should be enqueued.
          * @param bool         $echo  Whether to print the group(s) tag(s) to the page or not; default to `true` to
@@ -9103,43 +18760,15 @@ namespace Tribe {
 namespace {
     /**
      * Class Tribe__Data
-     *
-     * A value object implementing the ArrayAccess interface.
-     *
-     * Example usage:
-     *      $my_data = array( 'lorem' => 'dolor' );
-     *
-     *      // by default return 'nope' when a value is not set in the data
-     *      $data = new Tribe__Data( $my_data, 'nope' );
-     *
-     *      // set some values in the data
-     *      $data['foo'] = 'bar';
-     *      $data['bar'] = 23;
-     *
-     *      // fetch some values
-     *      $var_1 = $data['foo']; // "bar"
-     *      $var_2 = $data['bar']; // 23
-     *      $var_3 = $data['lorem']; // "dolor"
-     *      $var_4 = $data['woo']; // "nope"
-     *
-     *      $data->set_default( 'not found' );
-     *
-     *      $var_4 = $data['woo']; // "not found"
-     */
-    /**
-     * Class Tribe__Data
      */
     class Tribe__Data implements \ArrayAccess, \Iterator
     {
         // phpcs:ignore TEC.Classes.ValidClassName.NotSnakeCase,WordPress.NamingConventions.ValidClassName.InvalidClassName,PEAR.NamingConventions.ValidClassName.Invalid,Generic.Classes.OpeningBraceSameLine.ContentAfterBrace
+        use \Tribe\Traits\Array_Access;
         /**
          * @var int
          */
         protected $index = 0;
-        /**
-         * @var array The data managed by this object.
-         */
-        protected $data;
         /**
          * @var mixed The default value that will be returned when trying to get the value
          *            of a non set key.
@@ -9155,24 +18784,11 @@ namespace {
         {
         }
         /**
-         * Whether a offset exists
-         *
-         * @link  http://php.net/manual/en/arrayaccess.offsetexists.php
-         *
-         * @param mixed $offset An offset to check for.
-         *
-         * @return boolean true on success or false on failure. The return value will be cast to boolean if non-boolean was returned.
-         * @since 4.11.0
-         */
-        public function offsetExists($offset) : bool
-        {
-        }
-        /**
          * Offset to retrieve
          *
          * @link  http://php.net/manual/en/arrayaccess.offsetget.php
          *
-         * @param mixed $offset The offset to retrieve.
+         * @param mixed $offset The offset to retrieve. Will return the default if the offset isn't set.
          *
          * @return mixed Can return all value types.
          *
@@ -9180,33 +18796,6 @@ namespace {
          */
         #[\ReturnTypeWillChange]
         public function offsetGet($offset)
-        {
-        }
-        /**
-         * Offset to set
-         *
-         * @link  http://php.net/manual/en/arrayaccess.offsetset.php
-         *
-         * @param mixed $offset The offset to assign the value to.
-         * @param mixed $value  The value to set.
-         *
-         * @return void
-         * @since 4.11.0
-         */
-        public function offsetSet($offset, $value) : void
-        {
-        }
-        /**
-         * Offset to unset
-         *
-         * @link  http://php.net/manual/en/arrayaccess.offsetunset.php
-         *
-         * @param mixed $offset The offset to unset.
-         *
-         * @return void
-         * @since 4.11.0
-         */
-        public function offsetUnset($offset) : void
         {
         }
         /**
@@ -9368,13 +18957,13 @@ namespace {
         /**
          * Returns the date only.
          *
-         * @param int|string $date        The date (timestamp or string).
-         * @param bool       $isTimestamp Is $date in timestamp format?
-         * @param string|null $format The format used
+         * @param int|string  $date         The date (timestamp or string). If an empty or null date is provided it will default to 'now'.
+         * @param bool        $is_timestamp Whether or not $date is in timestamp format.
+         * @param string|null $format       The format used.
          *
          * @return string The date only in DB format.
          */
-        public static function date_only($date, $isTimestamp = \false, $format = \null)
+        public static function date_only($date, $is_timestamp = \false, $format = \null)
         {
         }
         /**
@@ -9951,7 +19540,7 @@ namespace {
          * @param bool                     $with_fallback Whether to return a DateTime object even when the date data is
          *                                                invalid or not; defaults to `true`.
          *
-         * @return DateTime|false A DateTime object built using the specified date, time and timezone; if `$with_fallback`
+         * @return DateTime|Date_i18n|false A DateTime|Date_i18n object built using the specified date, time and timezone; if `$with_fallback`
          *                        is set to `false` then `false` will be returned if a DateTime object could not be built.
          */
         public static function build_date_object($datetime = 'now', $timezone = \null, $with_fallback = \true)
@@ -10558,571 +20147,6 @@ namespace {
         {
         }
     }
-    class Tribe__Template
-    {
-        /**
-         * The folders into which we will look for the template.
-         *
-         * @since  4.6.2
-         *
-         * @var array
-         */
-        protected $folder = [];
-        /**
-         * The origin class for the plugin where the template lives
-         *
-         * @since  4.6.2
-         *
-         * @var object
-         */
-        public $origin;
-        /**
-         * The local context for templates, mutable on every self::template() call
-         *
-         * @since  4.6.2
-         *
-         * @var array
-         */
-        protected $context = [];
-        /**
-         * The global context for this instance of templates
-         *
-         * @since  4.6.2
-         *
-         * @var array
-         */
-        protected $global = [];
-        /**
-         * Used for finding templates for public templates on themes inside of a folder.
-         *
-         * @since  4.10.2
-         *
-         * @var string[]
-         */
-        protected $template_origin_base_folder = ['src', 'views'];
-        /**
-         * Allow changing if class will extract data from the local context
-         *
-         * @since  4.6.2
-         *
-         * @var boolean
-         */
-        protected $template_context_extract = \false;
-        /**
-         * Current template hook name.
-         *
-         * @since 4.12.1
-         *
-         * @var string|null
-         */
-        protected $template_current_hook_name;
-        /**
-         * Base template for where to look for template
-         *
-         * @since  4.6.2
-         *
-         * @var array
-         */
-        protected $template_base_path;
-        /**
-         * Should we use a lookup into the list of folders to try to find the file
-         *
-         * @since  4.7.20
-         *
-         * @var  bool
-         */
-        protected $template_folder_lookup = \false;
-        /**
-         * Create a class variable for the include path, to avoid conflicting with extract.
-         *
-         * @since  4.11.0
-         *
-         * @var  string
-         */
-        protected $template_current_file_path;
-        /**
-         * Whether to look for template files in common or not; defaults to true.
-         *
-         * @since 4.12.10
-         *
-         * @var bool
-         */
-        protected $common_lookup = \true;
-        /**
-         * A map of aliases to add a rewritten version of the paths to the template lists.
-         * The map has format `original => alias`.
-         *
-         * @since 4.12.10
-         *
-         * @var array<string,string>
-         */
-        protected $aliases = [];
-        /**
-         * Configures the class origin plugin path
-         *
-         * @since  4.6.2
-         *
-         * @param  object|string  $origin   The base origin for the templates
-         *
-         * @return self
-         */
-        public function set_template_origin($origin = \null)
-        {
-        }
-        /**
-         * Configures the class with the base folder in relation to the Origin
-         *
-         * @since  4.6.2
-         *
-         * @param  array|string   $folder  Which folder we are going to look for templates
-         *
-         * @return self
-         */
-        public function set_template_folder($folder = \null)
-        {
-        }
-        /**
-         * Returns the array for which folder this template instance is looking into.
-         *
-         * @since 4.11.0
-         *
-         * @return array Current folder we are looking for templates.
-         */
-        public function get_template_folder()
-        {
-        }
-        /**
-         * Configures the class with the base folder in relation to the Origin
-         *
-         * @since  4.7.20
-         *
-         * @param  mixed $value Should we look for template files in the list of folders.
-         *
-         * @return self
-         */
-        public function set_template_folder_lookup($value = \true)
-        {
-        }
-        /**
-         * Gets in this instance of the template engine whether we are looking public folders like themes.
-         *
-         * @since 4.12.1
-         *
-         * @return bool Whether we are looking into theme folders.
-         */
-        public function get_template_folder_lookup()
-        {
-        }
-        /**
-         * Configures the class global context
-         *
-         * @since  4.6.2
-         *
-         * @param  array  $context  Default global Context
-         *
-         * @return self
-         */
-        public function add_template_globals($context = [])
-        {
-        }
-        /**
-         * Configures if the class will extract context for template
-         *
-         * @since  4.6.2
-         *
-         * @param  bool  $value  Should we extract context for templates
-         *
-         * @return self
-         */
-        public function set_template_context_extract($value = \false)
-        {
-        }
-        /**
-         * Set the current hook name for the template include.
-         *
-         * @since  4.12.1
-         *
-         * @param  string  $value  Which value will be saved as the current hook name.
-         *
-         * @return self  Allow daisy-chaining.
-         */
-        public function set_template_current_hook_name($value)
-        {
-        }
-        /**
-         * Gets the hook name for the current template setup.
-         *
-         * @since  4.12.1
-         *
-         * @return string Hook name currently set on the class.
-         */
-        public function get_template_current_hook_name()
-        {
-        }
-        /**
-         * Sets an Index inside of the global or local context.
-         * Final to prevent extending the class when the `get` already exists on the child class.
-         *
-         * @see    Tribe__Utils__Array::set()
-         *
-         * @since  4.6.2
-         *
-         * @param array|string $index    Specify each nested index in order.
-         *                               Example: [ 'lvl1', 'lvl2' ];
-         * @param mixed        $default  Default value if the search finds nothing.
-         * @param boolean      $is_local Use the Local or Global context.
-         *
-         * @return mixed The value of the specified index or the default if not found.
-         */
-        public final function get($index, $default = \null, $is_local = \true)
-        {
-        }
-        /**
-         * Sets a Index inside of the global or local context
-         * Final to prevent extending the class when the `set` already exists on the child class
-         *
-         * @since  4.6.2
-         *
-         * @see    Tribe__Utils__Array::set
-         *
-         * @param  string|array  $index     To set a key nested multiple levels deep pass an array
-         *                                  specifying each key in order as a value.
-         *                                  Example: array( 'lvl1', 'lvl2', 'lvl3' );
-         * @param  mixed         $value     The value.
-         * @param  boolean       $is_local  Use the Local or Global context
-         *
-         * @return array Full array with the key set to the specified value.
-         */
-        public final function set($index, $value = \null, $is_local = \true)
-        {
-        }
-        /**
-         * Merges local and global context, and saves it locally.
-         *
-         * @since  4.6.2
-         *
-         * @param  array  $context   Local Context array of data.
-         * @param  string $file      Complete path to include the PHP File.
-         * @param  array  $name      Template name.
-         *
-         * @return array
-         */
-        public function merge_context($context = [], $file = \null, $name = \null)
-        {
-        }
-        /**
-         * Fetches the path for locating files in the Plugin Folder
-         *
-         * @since  4.7.20
-         *
-         * @return string
-         */
-        protected function get_template_plugin_path()
-        {
-        }
-        /**
-         * Fetches the Namespace for the public paths, normally folders to look for
-         * in the theme's directory.
-         *
-         * @since  4.7.20
-         * @since  4.11.0  Added param $plugin_namespace.
-         *
-         * @param string $plugin_namespace Overwrite the origin namespace with a given one.
-         *
-         * @return array Namespace where we to look for templates.
-         */
-        protected function get_template_public_namespace($plugin_namespace)
-        {
-        }
-        /**
-         * Fetches which base folder we look for templates in the origin plugin.
-         *
-         * @since  4.10.2
-         *
-         * @return array The base folders we look for templates in the origin plugin.
-         */
-        public function get_template_origin_base_folder()
-        {
-        }
-        /**
-         * Fetches the path for locating files given a base folder normally theme related.
-         *
-         * @since  4.7.20
-         * @since  4.11.0 Added the param $namespace.
-         *
-         * @param  mixed  $base      Base path to look into.
-         * @param  string $namespace Adds the plugin namespace to the path returned.
-         *
-         * @return string  The public path for a given base.˙˙
-         */
-        protected function get_template_public_path($base, $namespace)
-        {
-        }
-        /**
-         * Fetches the folders in which we will look for a given file
-         *
-         * @since 4.7.20
-         * @since 4.12.10 Add support for common lookup.
-         *
-         * @return array<string,array> A list of possible locations for the template file.
-         */
-        protected function get_template_path_list()
-        {
-        }
-        /**
-         * Get the list of theme related folders we will look up for the template.
-         *
-         * @since 4.11.0
-         *
-         * @param string $namespace Which plugin namespace we are looking for.
-         *
-         * @return array
-         */
-        protected function get_template_theme_path_list($namespace)
-        {
-        }
-        /**
-         * Tries to locate the correct file we want to load based on the Template class
-         * configuration and it's list of folders
-         *
-         * @since  4.7.20
-         *
-         * @param  mixed  $name  File name we are looking for.
-         *
-         * @return string
-         */
-        public function get_template_file($name)
-        {
-        }
-        /**
-         * Runs the entry point hooks and filters.
-         *
-         * @param string  $entry_point_name The name of the entry point.
-         * @param boolean $echo             If we should also print the entry point content.
-         *
-         * @return null|string `null` if an entry point is disabled or the entry point HTML.
-         */
-        public function do_entry_point($entry_point_name, $echo = \true)
-        {
-        }
-        /**
-         * A very simple method to include a Template, allowing filtering and additions using hooks.
-         *
-         * @since  4.6.2
-         *
-         * @param string|array $name    Which file we are talking about including.
-         *                              If an array, each item will add a directory separator to get to the single template.
-         * @param array        $context Any context data you need to expose to this file
-         * @param boolean      $echo    If we should also print the Template
-         *
-         * @return string|false Either the final content HTML or `false` if no template could be found.
-         */
-        public function template($name, $context = [], $echo = \true)
-        {
-        }
-        /**
-         * Based on a path it determines what is the namespace that should be used.
-         *
-         * @since 4.11.0
-         *
-         * @param string $path Which file we are going to load.
-         *
-         * @return string|false The found namespace for that path or false.
-         */
-        public function template_get_origin_namespace($path)
-        {
-        }
-        /**
-         * Includes a give PHP inside of a safe context.
-         *
-         * This method is required to prevent template files messing with local variables used inside of the
-         * `self::template` method. Also shelters the template loading from any possible variables that could
-         * be overwritten by the context.
-         *
-         * @since 4.11.0
-         *
-         * @param string $file Which file will be included with safe context.
-         *
-         * @return string Contents of the included file.
-         */
-        public function template_safe_include($file)
-        {
-        }
-        /**
-         * Sets a number of values at the same time.
-         *
-         * @since 4.9.11
-         *
-         * @param array $values   An associative key/value array of the values to set.
-         * @param bool  $is_local Whether to set the values as global or local; defaults to local as the `set` method does.
-         *
-         * @see   Tribe__Template::set()
-         */
-        public function set_values(array $values = [], $is_local = \true)
-        {
-        }
-        /**
-         * Returns the Template global context.
-         *
-         * @since 4.9.11
-         *
-         * @return array An associative key/value array of the Template global context.
-         */
-        public function get_global_values()
-        {
-        }
-        /**
-         * Returns the Template local context.
-         *
-         * @since 4.9.11
-         *
-         * @return array An associative key/value array of the Template local context.
-         */
-        public function get_local_values()
-        {
-        }
-        /**
-         * Returns the Template global and local context values.
-         *
-         * Local values will override the template global context values.
-         *
-         * @since 4.9.11
-         *
-         * @return array An associative key/value array of the Template global and local context.
-         */
-        public function get_values()
-        {
-        }
-        /**
-         * Fetches the path for locating files in the Common folder part of the plugin that is currently providing it.
-         *
-         * Note: the Common path will be dependent on the version that is loaded from the plugin that is bundling it.
-         * E.g. if both TEC and ET are active (both will bundle Common) and the ET version of Common has been loaded as
-         * most recent and the ET version of Common does not have a template file, then the template file will not be found.
-         * This will allow versioning the existence and nature of the template files part of common.
-         *
-         * @since 4.12.10
-         *
-         * @return string The absolute path, with no guarantee of its existence, to the Common version of the template file.
-         */
-        protected function get_template_common_path()
-        {
-        }
-        /**
-         * Sets the aliases the template should use.
-         *
-         * @since 4.12.10
-         *
-         * @param array<string,string> $aliases A map of aliases that should be used to add lookup locations, in the format
-         *                                      `[ original => alias ]`;
-         *
-         * @return static This instance, for method chaining.
-         */
-        public function set_aliases(array $aliases = [])
-        {
-        }
-        /**
-         * Applies the template path aliases, if any, to a list of folders.
-         *
-         * @since 4.12.10
-         *
-         * @param array<string,array> $folders The list of folder to apply the aliases to, if any.
-         *
-         * @return array<string,array> The list of new folder entries to add to the folders, in the same input format of the
-         *                             folders.
-         */
-        protected function apply_aliases(array $folders)
-        {
-        }
-        /**
-         * Filters the full HTML for the template.
-         *
-         * @since 4.13.0
-         *
-         * @param string $html      The final HTML.
-         * @param string $file      Complete path to include the PHP File.
-         * @param array  $name      Template name.
-         * @param string $hook_name The hook used to create the filter by name.
-         *
-         * @return string HTML after filtering.
-         */
-        protected function filter_template_html($html, $file, $name, $hook_name)
-        {
-        }
-        /**
-         * Filters the HTML for the Before include actions.
-         *
-         * @since 4.13.0
-         *
-         * @param string $html      The final HTML.
-         * @param string $file      Complete path to include the PHP File.
-         * @param array  $name      Template name.
-         * @param string $hook_name The hook used to create the filter by name.
-         *
-         * @return string HTML after filtering.
-         */
-        protected function filter_template_before_include_html($html, $file, $name, $hook_name)
-        {
-        }
-        /**
-         * Filters the HTML for the PHP safe include.
-         *
-         * @since 4.13.0
-         *
-         * @param string $html      The final HTML.
-         * @param string $file      Complete path to include the PHP File.
-         * @param array  $name      Template name.
-         * @param string $hook_name The hook used to create the filter by name.
-         *
-         * @return string HTML after filtering.
-         */
-        protected function filter_template_include_html($html, $file, $name, $hook_name)
-        {
-        }
-        /**
-         * Filters the HTML for the after include actions.
-         *
-         * @since 4.13.0
-         *
-         * @param string $html      The final HTML.
-         * @param string $file      Complete path to include the PHP File.
-         * @param array  $name      Template name.
-         * @param string $hook_name The hook used to create the filter by name.
-         *
-         * @return string HTML after filtering.
-         */
-        protected function filter_template_after_include_html($html, $file, $name, $hook_name)
-        {
-        }
-        /**
-         * Fires of actions before including the template.
-         *
-         * @since 4.13.0
-         *
-         * @param string $file      Complete path to include the PHP File.
-         * @param array  $name      Template name.
-         * @param string $hook_name The hook used to create the filter by name.
-         *
-         * @return string HTML printed by the before actions.
-         */
-        protected function actions_before_template($file, $name, $hook_name)
-        {
-        }
-        /**
-         * Fires of actions after including the template.
-         *
-         * @since 4.13.0
-         *
-         * @param string $file      Complete path to include the PHP File.
-         * @param array  $name      Template name.
-         * @param string $hook_name The hook used to create the filter by name.
-         *
-         * @return string HTML printed by the after actions.
-         */
-        protected function actions_after_template($file, $name, $hook_name)
-        {
-        }
-    }
 }
 namespace Tribe\Dialog {
     /**
@@ -11418,47 +20442,6 @@ namespace Tribe\Dialog {
     }
 }
 namespace {
-    interface Tribe__Documentation__Swagger__Builder_Interface
-    {
-        /**
-         * Registers a documentation provider for a path.
-         *
-         * @param                                            $path
-         * @param Tribe__REST__Endpoints__READ_Endpoint_Interface $endpoint
-         */
-        public function register_documentation_provider($path, \Tribe__Documentation__Swagger__Provider_Interface $endpoint);
-        /**
-         * @return Tribe__Documentation__Swagger__Provider_Interface[]
-         */
-        public function get_registered_documentation_providers();
-        /**
-         * Registers a documentation provider for a definition.
-         *
-         * @param                                                  string $type
-         * @param Tribe__Documentation__Swagger__Provider_Interface       $provider
-         */
-        public function register_definition_provider($type, \Tribe__Documentation__Swagger__Provider_Interface $provider);
-        /**
-         * @return Tribe__Documentation__Swagger__Provider_Interface[]
-         */
-        public function get_registered_definition_providers();
-    }
-    interface Tribe__Documentation__Swagger__Provider_Interface
-    {
-        /**
-         * Returns an array in the format used by Swagger 2.0.
-         *
-         * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
-         * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
-         * interface.
-         *
-         * @link http://swagger.io/
-         *
-         * @return array An array description of a Swagger supported component.
-         */
-        public function get_documentation();
-    }
     class Tribe__Documentation__Swagger__Cost_Details_Definition_Provider implements \Tribe__Documentation__Swagger__Provider_Interface
     {
         /**
@@ -13569,6 +22552,17 @@ namespace {
      * helper class that creates fields for use in Settings, MetaBoxes, Users, anywhere.
      * Instantiate it whenever you need a field
      *
+     * @method doField()
+     * @method doFieldStart()
+     * @method doFieldEnd()
+     * @method doFieldLabel()
+     * @method doFieldDivStart()
+     * @method doFieldDivEnd()
+     * @method doToolTip()
+     * @method doFieldValue()
+     * @method doFieldName()
+     * @method doFieldAttributes()
+     * @method doScreenReaderLabel()
      */
     class Tribe__Field
     {
@@ -13652,7 +22646,7 @@ namespace {
          */
         public $options;
         /**
-         * @var string
+         * @var mixed
          */
         public $value;
         /**
@@ -13688,11 +22682,21 @@ namespace {
          */
         public $allow_clear;
         /**
+         * @var string
+         */
+        public $append;
+        /**
+         * The raw field data.
+         *
+         * @var array
+         */
+        protected $raw_field_data;
+        /**
          * Class constructor
          *
-         * @param string     $id    the field id
-         * @param array      $field the field settings
-         * @param null|mixed $value the field's current value
+         * @param string     $id    The field id.
+         * @param array      $field The field settings.
+         * @param null|mixed $value The value passed when saving the field.
          *
          * @return void
          */
@@ -13700,9 +22704,20 @@ namespace {
         {
         }
         /**
-         * Determines how to handle this field's creation
-         * either calls a callback function or runs this class' course of action
-         * logs an error if it fails
+         * Set up the valid field types.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        protected function setup_field_types()
+        {
+        }
+        /**
+         * Determines how to handle this field's creation.
+         *
+         * Either calls a callback function or runs this class' course of action.
+         * Logs an error if it fails.
          *
          * @return void
          */
@@ -13718,9 +22733,19 @@ namespace {
         {
         }
         /**
-         * returns the field's end
+         * Returns the html appended to the fieldset's end
          *
-         * @return string the field end
+         * @since 6.1.0
+         *
+         * @return string the field append.
+         */
+        public function do_field_append() : string
+        {
+        }
+        /**
+         * Returns the field's end.
+         *
+         * @return string the field end.
          */
         public function do_field_end()
         {
@@ -13951,38 +22976,30 @@ namespace {
         public function toggle()
         {
         }
-        /* deprecated camelCase methods */
-        public function doField()
+        /**
+         * Set up the field value based on submitted value or the stored value.
+         *
+         * @param mixed $sent_value The value submitted by the user.
+         *
+         * @return mixed The field value.
+         */
+        protected function setup_field_value($sent_value = \null)
         {
         }
-        public function doFieldStart()
+        /**
+         * Get the field value.
+         *
+         * @return mixed The field value.
+         */
+        protected function get_field_value()
         {
         }
-        public function doFieldEnd()
-        {
-        }
-        public function doFieldLabel()
-        {
-        }
-        public function doFieldDivStart()
-        {
-        }
-        public function doFieldDivEnd()
-        {
-        }
-        public function doToolTip()
-        {
-        }
-        public function doFieldValue()
-        {
-        }
-        public function doFieldName($multi = \false)
-        {
-        }
-        public function doFieldAttributes()
-        {
-        }
-        public function doScreenReaderLabel()
+        /**
+         * Whether the current field has a value.
+         *
+         * @return bool
+         */
+        public function has_field_value()
         {
         }
         /**
@@ -14035,6 +23052,34 @@ namespace {
          * @return string A space-separated list of classes.
          */
         protected function sanitize_class_attribute($class)
+        {
+        }
+        /**
+         * Get the allowed protocols for the field.
+         *
+         * This is static because it will be the same for every instance of the class, and
+         * we only need to calculate it once.
+         *
+         * @since 6.1.0
+         *
+         * @return array The allowed protocols.
+         */
+        protected static function get_kses_protocols() : array
+        {
+        }
+        /**
+         * Handle calls to methods that don't exist.
+         *
+         * This is how we handle deprecated methods.
+         *
+         * @param string $name The method name.
+         * @param array  $arguments Arguments passed to the method.
+         *
+         * @return mixed The result of the method call.
+         * @throws BadMethodCallException If the method does not exist.
+         */
+        #[\ReturnTypeWillChange]
+        public function __call(string $name, array $arguments)
         {
         }
     }
@@ -16235,7 +25280,7 @@ namespace {
         const OPTIONNAME = 'tribe_events_calendar_options';
         const OPTIONNAMENETWORK = 'tribe_events_calendar_network_options';
         const FEED_URL = 'https://theeventscalendar.com/feed/';
-        const VERSION = '5.2.3';
+        const VERSION = '6.1.0';
         protected $plugin_context;
         protected $plugin_context_class;
         /**
@@ -20470,24 +29515,6 @@ namespace {
          */
         public function can_delete();
     }
-    interface Tribe__REST__Endpoints__READ_Endpoint_Interface
-    {
-        /**
-         * Handles GET requests on the endpoint.
-         *
-         * @param WP_REST_Request $request
-         *
-         * @return WP_Error|WP_REST_Response An array containing the data on success or a WP_Error instance on failure.
-         */
-        public function get(\WP_REST_Request $request);
-        /**
-         * Returns the content of the `args` array that should be used to register the endpoint
-         * with the `register_rest_route` function.
-         *
-         * @return array
-         */
-        public function READ_args();
-    }
     interface Tribe__REST__Endpoints__UPDATE_Endpoint_Interface
     {
         /**
@@ -21594,7 +30621,9 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param Tribe__Repository__Formatter_Interface $formatter
+         * @param Tribe__Repository__Formatter_Interface $formatter The formatter to use.
+         *
+         * @return $this This repository instance to allow chain calls.
          */
         public function set_formatter(\Tribe__Repository__Formatter_Interface $formatter);
         /**
@@ -21612,7 +30641,9 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param string $join
+         * @param string $join The JOIN clause to add to the query.
+         *
+         * @return $this This repository instance to allow chain calls.
          */
         public function join_clause($join);
         /**
@@ -21620,7 +30651,9 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param string $where
+         * @param string $where The WHERE clause to add to the query.
+         *
+         * @return $this This repository instance to allow chain calls.
          */
         public function where_clause($where);
         /**
@@ -21628,7 +30661,7 @@ namespace {
          *
          * @since 4.7.19
          *
-         * @param mixed $query_builder
+         * @param mixed $query_builder The query builder to use.
          *
          * @return mixed
          */
@@ -21644,7 +30677,7 @@ namespace {
          *                                this repository. The callbacks have the shape
          *                                [ <method>, <...args>]
          *
-         * @return $this
+         * @return $this This repository instance to allow chain calls.
          * @throws Tribe__Repository__Usage_Error If one of the callback methods does
          *                                        not add any WHERE clause.
          *
@@ -21668,7 +30701,7 @@ namespace {
          * @param string|array $values       One or more value the meta_key specified with `$keys` should
          *                                   match.
          *
-         * @return $this
+         * @return $this This repository instance to allow chain calls.
          */
         public function by_related_to_min($by_meta_keys, $min, $keys = \null, $values = \null);
         /**
@@ -21688,7 +30721,7 @@ namespace {
          * @param string|array $values       One or more value the meta_key specified with `$keys` should
          *                                   match.
          *
-         * @return $this
+         * @return $this This repository instance to allow chain calls.
          */
         public function by_related_to_max($by_meta_keys, $max, $keys = \null, $values = \null);
         /**
@@ -21710,7 +30743,7 @@ namespace {
          * @param string|array $values       One or more value the meta_key specified with `$keys` should
          *                                   match.
          *
-         * @return $this
+         * @return $this This repository instance to allow chain calls.
          */
         public function by_related_to_between($by_meta_keys, $min, $max, $keys = \null, $values = \null);
         /**
@@ -21727,7 +30760,7 @@ namespace {
          * @param string|array $values       One or more value the meta_key specified with `$keys` should
          *                                   match.
          *
-         * @return $this
+         * @return $this This repository instance to allow chain calls.
          */
         public function by_not_related_to($by_meta_keys, $keys = \null, $values = \null);
         /**
@@ -21972,7 +31005,7 @@ namespace {
         /**
          * @var array A list of the default filters supported and implemented by the repository.
          */
-        protected static $default_modifiers = ['p', 'author', 'author_name', 'author__in', 'author__not_in', 'has_password', 'post_password', 'cat', 'category__and', 'category__in', 'category__not_in', 'category_name', 'comment_count', 'comment_status', 'title', 'title_like', 'name', 'post_name__in', 'ping_status', 'post__in', 'post__not_in', 'post_parent', 'post_parent__in', 'post_parent__not_in', 'post_mime_type', 's', 'search', 'tag', 'tag__and', 'tag__in', 'tag__not_in', 'tag_id', 'tag_slug__and', 'tag_slug__in', 'ID', 'id', 'date', 'after_date', 'before_date', 'date_gmt', 'after_date_gmt', 'before_date_gmt', 'post_title', 'post_content', 'post_excerpt', 'post_status', 'to_ping', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'guid', 'perm', 'menu_order', 'meta', 'meta_equals', 'meta_not_equals', 'meta_gt', 'meta_greater_than', 'meta_gte', 'meta_greater_than_or_equal', 'meta_like', 'meta_not_like', 'meta_lt', 'meta_less_than', 'meta_lte', 'meta_less_than_or_equal', 'meta_in', 'meta_not_in', 'meta_between', 'meta_not_between', 'meta_exists', 'meta_not_exists', 'meta_regexp', 'meta_equals_regexp', 'meta_not_regexp', 'meta_not_equals_regexp', 'meta_regexp_or_like', 'meta_equals_regexp_or_like', 'meta_not_regexp_or_like', 'meta_not_equals_regexp_or_like', 'taxonomy_exists', 'taxonomy_not_exists', 'term_id_in', 'term_id_not_in', 'term_id_and', 'term_name_in', 'term_name_not_in', 'term_name_and', 'term_slug_in', 'term_slug_not_in', 'term_slug_and', 'term_in', 'term_not_in', 'term_and'];
+        protected static $default_modifiers = ['p', 'author', 'author_name', 'author__in', 'author__not_in', 'has_password', 'post_password', 'cat', 'category__and', 'category__in', 'category__not_in', 'category_name', 'comment_count', 'comment_status', 'title', 'title_like', 'name', 'post_name__in', 'ping_status', 'post__in', 'post__not_in', 'post_parent', 'post_parent__in', 'post_parent__not_in', 'post_mime_type', 's', 'search', 'tag', 'tag__and', 'tag__in', 'tag__not_in', 'tag_id', 'tag_slug__and', 'tag_slug__in', 'ID', 'id', 'date', 'after_date', 'before_date', 'date_gmt', 'after_date_gmt', 'before_date_gmt', 'post_title', 'post_content', 'post_excerpt', 'post_status', 'to_ping', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'guid', 'perm', 'menu_order', 'meta', 'meta_equals', 'meta_not_equals', 'meta_gt', 'meta_greater_than', 'meta_gte', 'meta_greater_than_or_equal', 'meta_like', 'meta_not_like', 'meta_lt', 'meta_less_than', 'meta_lte', 'meta_less_than_or_equal', 'meta_in', 'meta_not_in', 'meta_between', 'meta_not_between', 'meta_exists', 'meta_not_exists', 'meta_regexp', 'meta_equals_regexp', 'meta_not_regexp', 'meta_not_equals_regexp', 'meta_regexp_or_like', 'meta_equals_regexp_or_like', 'meta_not_regexp_or_like', 'meta_not_equals_regexp_or_like', 'order', 'taxonomy_exists', 'taxonomy_not_exists', 'term_id_in', 'term_id_not_in', 'term_id_and', 'term_name_in', 'term_name_not_in', 'term_name_and', 'term_slug_in', 'term_slug_not_in', 'term_slug_and', 'term_in', 'term_not_in', 'term_and'];
         /**
          * @var array An array of default arguments that will be applied to all queries.
          */
@@ -25799,11 +34832,9 @@ namespace Tribe\Service_Providers {
     }
 }
 namespace {
+    // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase,StellarWP.Classes.ValidClassName.NotSnakeCase,PEAR.NamingConventions.ValidClassName.Invalid
     /**
-     * helper class that allows registration of settings
-     * this is a static class & uses the singleton design method
-     * instantiation takes place in Tribe__Main
-     *
+     * Helper class that allows registration of settings.
      */
     class Tribe__Settings
     {
@@ -25824,18 +34855,20 @@ namespace {
          */
         public $live_date_preview;
         /**
-         * The tabs that will appear in the settings page
-         * filtered on class construct.
+         * The tabs that will appear in the settings page.
+         * Filtered on class construct.
          *
-         * @var array
+         * @var array<string, Tribe__Settings_Tab>
          */
-        public $tabs;
+        public $tabs = [];
         /**
          * All the tabs registered, not just the ones that will appear.
          *
-         * @var array
+         * @since 6.1.0
+         *
+         * @var array<string, Tribe__Settings_Tab>
          */
-        public $allTabs;
+        public $all_tabs = [];
         /**
          * Multidimensional array of the fields that will be generated
          * for the entire settings panel, tabs are represented in the array keys.
@@ -25844,30 +34877,35 @@ namespace {
          */
         public $fields;
         /**
-         * The default tab for the settings panel
-         * this should be a tab ID.
+         * The default tab for the settings panel.
+         * This should be a tab ID.
+         *
+         * @since 6.1.0
          *
          * @var string
          */
-        public $defaultTab;
+        public $default_tab = '';
         /**
          * The current tab being displayed.
+         * This should be a tab ID.
+         *
+         * @since 6.1.0
          *
          * @var string
          */
-        public $currentTab;
+        public $current_tab = '';
         /**
          * Tabs that shouldn't show the save button.
          *
-         * @var array
+         * @var array<string> $no_save_tabs
          */
-        public $noSaveTabs;
+        public $no_save_tabs = [];
         /**
          * The slug used in the admin to generate the settings page.
          *
          * @var string
          */
-        public $adminSlug;
+        public $admin_slug;
         /**
          * The slug used in the admin to generate the help page.
          *
@@ -25879,13 +34917,13 @@ namespace {
          *
          * @var string
          */
-        public $menuName;
+        public $menu_name;
         /**
          * The required capability for the settings page.
          *
          * @var string
          */
-        public $requiredCap;
+        public $required_cap;
         /**
          * Errors that occur after a save operation.
          *
@@ -25940,18 +34978,67 @@ namespace {
          * @var array
          */
         protected $current_fields = [];
+        // phpcs:disable WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
         /**
-         * Static Singleton Factory Method.
+         * All the tabs registered, not just the ones that will appear.
          *
-         * @return Tribe__Settings
+         * @deprecated 6.1.0 use $all_tabs.
+         *
+         * @var array
          */
-        public static function instance()
-        {
-        }
+        public $allTabs;
+        /**
+         * The default tab for the settings panel.
+         * This should be a tab ID.
+         *
+         * @deprecated 6.1.0 Use $default_tab.
+         *
+         * @var string
+         */
+        public $defaultTab;
+        /**
+         * The current tab being displayed.
+         *
+         * @deprecated 6.1.0 Use $current_tab.
+         *
+         * @var string
+         */
+        public $currentTab;
+        /**
+         * Tabs that shouldn't show the save button.
+         *
+         * @deprecated 6.1.0 Use $no_save_tabs.
+         *
+         * @var array
+         */
+        public $noSaveTabs;
+        /**
+         * The slug used in the admin to generate the settings page.
+         *
+         * @deprecated 6.1.0 Use $admin_slug.
+         *
+         * @var string
+         */
+        public $adminSlug;
+        /**
+         * The menu name used for the settings page.
+         *
+         * @deprecated 6.1.0 Use $menu_name.
+         *
+         * @var string
+         */
+        public $menuName;
+        /**
+         * The required capability for the settings page.
+         *
+         * @deprecated 6.1.0 Use $required_cap.
+         *
+         * @var string
+         */
+        public $requiredCap;
+        // phpcs:enable WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
         /**
          * Class constructor.
-         *
-         * @return void
          */
         public function __construct()
         {
@@ -25965,33 +35052,54 @@ namespace {
         /**
          * Determines whether or not the full admin pages should be initialized.
          *
-         * @return boolean
-         */
-        public function should_setup_pages()
-        {
-        }
-        /**
-         * create the main option page
+         * @since 6.1.0
          *
-         * @return void
+         * @return bool
          */
-        public function addPage()
-        {
-        }
-        /**
-         * create the network options page
-         *
-         * @return void
-         */
-        public function addNetworkPage()
+        public function should_setup_pages() : bool
         {
         }
         /**
          * Init all the tabs.
          *
-         * @return void
+         * @since 6.1.0
          */
-        public function initTabs()
+        public function init_tabs()
+        {
+        }
+        /**
+         * Determine if we are on an event settings page.
+         *
+         * @since 6.1.0
+         *
+         * @param string|null $admin_page The admin page ID.
+         *
+         * @return bool
+         */
+        public function is_event_settings($admin_page = \null)
+        {
+        }
+        /**
+         * Get a specific tab by slug.
+         * If the slug is not found in the parent tabs, it will then search child tabs for it.
+         *
+         * @since 6.1.0
+         *
+         * @param string $id The tab ID.
+         *
+         * @return Tribe__Settings_Tab|null
+         */
+        public function get_tab($id) : ?\Tribe__Settings_Tab
+        {
+        }
+        /**
+         * Gets the current tab ID.
+         *
+         * @since 6.1.0
+         *
+         * @return ?string
+         */
+        public function get_current_tab() : ?string
         {
         }
         /**
@@ -25999,9 +35107,21 @@ namespace {
          *
          * @since 4.15.0
          *
+         * @param array $args An array of arguments to add to the URL.
+         *
          * @return string The current settings page URL.
          */
         public function get_settings_page_url(array $args = [])
+        {
+        }
+        /**
+         * Outputs the header content for the tabs page and the nav modal.
+         *
+         * @since 6.1.0
+         *
+         * @param string $admin_page The admin page ID.
+         */
+        public function do_page_header($admin_page) : void
         {
         }
         /**
@@ -26016,22 +35136,161 @@ namespace {
         {
         }
         /**
-         * Generate the main option page.
-         * includes the view file.
+         * Get the settings page logo.
          *
-         * @since 4.15.0 Add the current page as parameter for the actions.
+         * @since 6.1.0
          *
-         * @return void
+         * @param string $admin_page The admin page ID.
+         * @return string The settings page logo.
          */
-        public function generatePage()
+        public function get_page_logo($admin_page)
         {
         }
         /**
-         * Generate the tabs in the settings screen.
+         * Handles the attributes for the form.
+         *
+         * @since 6.1.0
+         *
+         * @param array<string,mixed> $attributes The attributes to add to the form.
+         *
+         * @return string The attributes string.
+         */
+        public function do_form_attributes($attributes) : string
+        {
+        }
+        /**
+         * Generate the main option page.
+         * Includes the view file.
+         *
+         * @since 6.1.0
+         */
+        public function generate_page() : void
+        {
+        }
+        /**
+         * Displays the page footer content, with or without the save button.
+         *
+         * @since 6.1.0
+         *
+         * @param bool $saving Whether the footer should force include saving fields/buttons.
+         */
+        public function do_footer($saving = \false) : void
+        {
+        }
+        /**
+         * Generate the tab navigation in the settings screen.
+         *
+         * Each level of the tab nav is a unordered list inside a nav element.
+         * This function generates the structure and the generate_tab
+         * function creates the individual list items.
+         *
+         * @since 6.1.0
+         *
+         * @param bool $modal Whether the tabs are being generated for a modal.
+         */
+        public function generate_tabs($modal = \false) : void
+        {
+        }
+        /**
+         * Output the modal navigation for the settings page.
+         *
+         * @since 6.1.0
+         *
+         * @param string $admin_page The admin page ID.
+         */
+        protected function generate_modal_nav($admin_page) : void
+        {
+        }
+        /**
+         * Outputs the sidebar wrapped in a modal dialog.
+         *
+         * @since 6.1.0
+         */
+        protected function generate_modal_sidebar() : void
+        {
+        }
+        /**
+         * Generate the markup for a modal close button.
+         *
+         * @since 6.1.0
+         */
+        public function generate_sidebar_modal_close() : void
+        {
+        }
+        /**
+         * Output the notice wrap.
+         *
+         * @since 6.1.0
          *
          * @return void
          */
-        public function generateTabs()
+        protected function output_notice_wrap()
+        {
+        }
+        /**
+         * Generate the content for a single specified tab.
+         *
+         * @since 6.1.0
+         *
+         * @param Tribe__Settings_Tab $tab The tab object.
+         */
+        public function generate_tab(\Tribe__Settings_Tab $tab)
+        {
+        }
+        /**
+         * Add the current tab's children to the nav as a subnav.
+         *
+         * @since 6.1.0
+         *
+         * @param Tribe__Settings_Tab $tab The parent tab object.
+         * @return void
+         */
+        public function add_child_tabs_to_nav(\Tribe__Settings_Tab $tab)
+        {
+        }
+        /**
+         * Wraps the section content in a "content-section" div
+         *
+         * @since 6.1.0
+         *
+         * @param string $id      A unique section ID.
+         * @param array  $content The content to wrap.
+         *
+         * @return array The wrapped content.
+         */
+        public function wrap_section_content(string $id, array $content) : array
+        {
+        }
+        /**
+         * Output the modal controls
+         *
+         * @since 6.1.0
+         */
+        protected function get_modal_controls() : void
+        {
+        }
+        /**
+         * A little something for Jack.
+         * Shows a duck on the far right end of a subnav on hover.
+         *
+         * @since 6.1.0
+         *
+         * @return void
+         */
+        protected function get_duck_tab() : void
+        {
+        }
+        /**
+         * A method to sort tabs by priority in ascending order.
+         *
+         * @since 6.1.0
+         *
+         * @param  object $a First tab to compare.
+         * @param  object $b Second tab to compare.
+         *
+         * @return int
+         */
+        protected function sort_by_priority($a, $b) : int
         {
         }
         /**
@@ -26047,19 +35306,28 @@ namespace {
         {
         }
         /**
-         * validate the settings
+         * Validate the settings.
+         */
+        public function validate()
+        {
+        }
+        /**
+         * Validate the value of a field to save.
+         *
+         * @since 6.1.0
+         *
+         * @param string $field_id The field ID.
+         * @param array  $field    The field data.
          *
          * @return void
          */
-        public function validate()
+        protected function validate_field($field_id, $field)
         {
         }
         /**
          * Save the settings.
          *
          * @since 4.15.0 Add the current page as parameter for the actions.
-         *
-         * @return void
          */
         public function save()
         {
@@ -26067,47 +35335,53 @@ namespace {
         /**
          * Display errors, if any, after saving.
          *
-         * @return void
+         * @since 6.1.0
          */
-        public function displayErrors()
+        public function display_errors() : void
         {
         }
         /**
          * Display success message after saving.
          *
-         * @return void
+         * @since 6.1.0
          */
-        public function displaySuccess()
+        public function display_success() : void
         {
         }
         /**
          * Delete temporary options.
          *
-         * @return void
+         * @since 6.1.0
          */
-        public function deleteOptions()
+        public function delete_options() : void
         {
         }
         /**
          * Returns the main admin settings URL.
          *
-         * @return string
-         */
-        public function get_url(array $args = [])
-        {
-        }
-        /**
-         * The "slug" used for adding submenu pages
+         * @since 4.15.0
+         *
+         * @param array $args An array of arguments to add to the URL.
          *
          * @return string
          */
-        public function get_parent_slug()
+        public function get_url(array $args = []) : string
         {
         }
         /**
+         * The "slug" used for adding submenu pages.
+         *
          * @return string
          */
-        public function get_help_slug()
+        public function get_parent_slug() : string
+        {
+        }
+        /**
+         * Gets the slug for the help page.
+         *
+         * @return string
+         */
+        public function get_help_slug() : string
         {
         }
         /**
@@ -26119,9 +35393,9 @@ namespace {
          * Beyond this at least one of the two "root" plugins (The Events Calendar and Event Tickets)
          * should be network activated to add the page.
          *
-         * @return boolean
+         * @return bool
          */
-        public function should_setup_network_pages()
+        public function should_setup_network_pages() : bool
         {
         }
         /**
@@ -26129,7 +35403,7 @@ namespace {
          *
          * @param array $root_plugins An array of plugins in the `<folder>/<file.php>` format.
          */
-        public function set_root_plugins(array $root_plugins)
+        public function set_root_plugins(array $root_plugins) : void
         {
         }
         /**
@@ -26143,9 +35417,89 @@ namespace {
          * @return bool `true` if the field dependency condition is valid, `false` if the field
          *              dependency condition is not valid.
          */
-        protected function dependency_checks($field_id)
+        protected function dependency_checks($field_id) : bool
         {
         }
+        /* Deprecated Methods */
+        // phpcs:disable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+        /**
+         * Static Singleton Factory Method.
+         *
+         * @deprecated 6.1.0 Use tribe( 'settings' )
+         *
+         * @return Tribe__Settings
+         */
+        public static function instance()
+        {
+        }
+        /**
+         * Init all the tabs.
+         *
+         * @deprecated 6.1.0 Use init_tabs
+         */
+        public function initTabs()
+        {
+        }
+        /**
+         * Create the main option page.
+         *
+         * @deprecated 4.15.0
+         */
+        public function addPage()
+        {
+        }
+        /**
+         * Create the network options page.
+         *
+         * @deprecated 4.15.0
+         */
+        public function addNetworkPage()
+        {
+        }
+        /**
+         * Generate the tabs in the settings screen.
+         *
+         * @deprecated 6.1.0
+         */
+        public function generateTabs()
+        {
+        }
+        /**
+         * Display errors, if any, after saving.
+         *
+         * @deprecated 6.1.0
+         */
+        public function displayErrors()
+        {
+        }
+        /**
+         * Display success message after saving.
+         *
+         * @deprecated 6.1.0
+         */
+        public function displaySuccess()
+        {
+        }
+        /**
+         * Delete temporary options.
+         *
+         * @deprecated 6.1.0
+         */
+        public function deleteOptions()
+        {
+        }
+        /**
+         * Generate the main option page.
+         * includes the view file.
+         *
+         * @deprecated 6.1.0
+         *
+         * @since 4.15.0 Add the current page as parameter for the actions.
+         */
+        public function generatePage()
+        {
+        }
+        // phpcs:enable WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
     }
     class Tribe__Settings_Manager
     {
@@ -26338,106 +35692,218 @@ namespace {
         {
         }
     }
+    // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase,StellarWP.Classes.ValidClassName.NotSnakeCase,PEAR.NamingConventions.ValidClassName.Invalid
     /**
-     * helper class that creates a settings tab
+     * Helper class that creates a settings tab
      * this is a public API, use it to create tabs
-     * simply by instantiating this class
-     *
+     * simply by instantiating this class.
      */
     class Tribe__Settings_Tab
     {
         /**
-         * Tab ID, used in query string and elsewhere
+         * Tab ID, used in query string and elsewhere.
+         *
          * @var string
          */
         public $id;
         /**
-         * Tab's name
+         * Tab's name.
+         *
          * @var string
          */
         public $name;
         /**
-         * Tab's arguments
+         * Tab's arguments.
+         *
          * @var array
          */
         public $args;
         /**
-         * Defaults for tabs
+         * Defaults for tabs.
+         *
          * @var array
          */
         public $defaults;
         /**
+         * Fields for the tab.
+         *
          * @var array
          */
         public $fields;
         /**
+         * Whether to show the save button.
+         *
          * @var boolean
          */
         public $show_save;
         /**
+         * Display callback function.
+         *
          * @var closure
          */
         public $display_callback;
         /**
+         * Whether this tab is for network admin.
+         *
          * @var boolean
          */
         public $network_admin;
         /**
+         * Priority for the tab.
+         * Used to order tabs.
+         *
          * @var int
          */
         public $priority;
         /**
-         * class constructor
+         * Parent tab ID, if any.
          *
-         * @param string $id   the tab's id (no spaces or special characters)
-         * @param string $name the tab's visible name
-         * @param array  $args additional arguments for the tab
+         * @since 6.1.0
+         *
+         * @var ?Tribe__Settings_Tab $parent
+         */
+        protected ?\Tribe__Settings_Tab $parent = \null;
+        /**
+         * Array of child tabs, if any.
+         *
+         * @since 6.1.0
+         *
+         * @var array<string, Tribe__Settings_Tab> $children
+         */
+        public $children = [];
+        /**
+         * Settings sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @var ?Settings_Sidebar
+         */
+        protected $sidebar = \null;
+        /**
+         * Default sidebar for tabs.
+         *
+         * This sidebar object is common across ALL instances of the class.
+         *
+         * @since 6.1.0
+         *
+         * @var ?Settings_Sidebar
+         */
+        protected static $default_sidebar = \null;
+        /**
+         * Class constructor.
+         *
+         * @param string $id   The tab's id (no spaces or special characters).
+         * @param string $name The tab's visible name.
+         * @param array  $args {
+         *     Array of arguments for the tab.
+         *
+         *     @type array    $fields           Array of fields for the tab.
+         *     @type int      $priority         Priority for the tab.
+         *     @type bool     $show_save        Whether to show the save button.
+         *     @type callable $display_callback Display callback function.
+         *     @type bool     $network_admin    Whether this tab is for network admin.
+         *     @type array    $children         Array of child tabs, if any.
+         * }
          */
         public function __construct($id, $name, $args = [])
         {
         }
         /**
-         * filters the tabs array from Tribe__Settings
-         * and adds the current tab to it
-         * does not add a tab if it's empty
+         * Adds actions for the tab.
          *
-         * @param array $tabs the $tabs from Tribe__Settings
-         *
-         * @return array $tabs the filtered tabs
+         * @since 6.1.0
          */
-        public function addTab($tabs)
+        public function add_actions() : void
+        {
+        }
+        /**
+         * Adds filters for the tab.
+         *
+         * @since 6.1.0
+         */
+        public function add_filters()
+        {
+        }
+        /**
+         * Gets the tab's parent ID.
+         *
+         * @return string The tab's parent ID.
+         */
+        public function get_parent_id() : string
+        {
+        }
+        /**
+         * Gets the tab's parent.
+         *
+         * @return ?Tribe__Settings_Tab The tab's parent.
+         */
+        public function get_parent() : ?\Tribe__Settings_Tab
+        {
+        }
+        /**
+         * Checks if the tab has a parent.
+         *
+         * @return bool
+         */
+        public function has_parent() : bool
+        {
+        }
+        /**
+         * Sets the parent tab.
+         *
+         * @since 6.1.0
+         *
+         * @param Tribe__Settings_Tab $tab The parent tab.
+         *
+         * @return void
+         */
+        public function set_parent(\Tribe__Settings_Tab $tab)
+        {
+        }
+        /**
+         * Filters the tabs array from Tribe__Settings
+         * and adds the current tab to it
+         * does not add a tab if it's empty.
+         *
+         * @param Tribe__Settings_Tab[] $tabs the $tabs from Tribe__Settings.
+         *
+         * @return Tribe__Settings_Tab[] $tabs the filtered tabs.
+         */
+        public function add_tab($tabs) : array
         {
         }
         /**
          * Adds this tab to the list of total tabs, even if it is not displayed.
          *
-         * @param array $allTabs All the tabs from Tribe__Settings.
+         * @param array $all_tabs All the tabs from Tribe__Settings.
          *
-         * @return array $allTabs All the tabs.
+         * @return array $all_tabs All the tabs.
          */
-        public function addAllTabs($allTabs)
+        public function add_all_tabs($all_tabs) : array
         {
         }
         /**
-         * filters the fields array from Tribe__Settings
+         * Filters the fields array from Tribe__Settings
          * and adds the current tab's fields to it
          *
-         * @param array $field the $fields from Tribe__Settings
+         * @since 6.1.0
          *
-         * @return array $fields the filtered fields
+         * @param array $fields the $fields from Tribe__Settings.
+         *
+         * @return array $fields the filtered fields.
          */
-        public function addFields($fields)
+        public function add_fields($fields) : array
         {
         }
         /**
-         * sets whether the current tab should show the save
-         * button or not
+         * Sets whether the current tab should show the save
+         * button or not.
          *
-         * @param array $noSaveTabs the $noSaveTabs from Tribe__Settings
+         * @param array $no_save_tabs the $no_save_tabs from Tribe__Settings.
          *
-         * @return array $noSaveTabs the filtered non saving tabs
+         * @return array $no_save_tabs the filtered non saving tabs.
          */
-        public function showSaveTab($noSaveTabs)
+        public function show_save_tab($no_save_tabs) : array
         {
         }
         /**
@@ -26445,7 +35911,146 @@ namespace {
          *
          * @return void
          */
-        public function doContent()
+        public function do_content() : void
+        {
+        }
+        /**
+         * Renders the sidebar for the tab.
+         *
+         * @since 6.1.0
+         */
+        public function render_sidebar() : void
+        {
+        }
+        /**
+         * Adds a child tab to the current tab.
+         *
+         * @since 6.1.0
+         *
+         * @param Tribe__Settings_Tab $tab The child tab to add.
+         */
+        public function add_child(\Tribe__Settings_Tab $tab) : void
+        {
+        }
+        /**
+         * Checks if the current tab has children.
+         *
+         * @since 6.1.0
+         *
+         * @return bool
+         */
+        public function has_children() : bool
+        {
+        }
+        /**
+         * Checks if the current tab has a child with the given slug.
+         *
+         * @since 6.1.0
+         *
+         * @param string $slug The slug of the child tab to check for.
+         *
+         * @return bool
+         */
+        public function has_child($slug) : bool
+        {
+        }
+        /**
+         * Gets the children of the current tab.
+         *
+         * @since 6.1.0
+         *
+         * @return array<string, Tribe__Settings_Tab>
+         */
+        public function get_children() : array
+        {
+        }
+        /**
+         * Gets a child tab by its slug.
+         *
+         * @since 6.1.0
+         *
+         * @param string $slug The slug of the child tab to get.
+         *
+         * @return ?Tribe__Settings_Tab The child tab if it exists, otherwise null.
+         */
+        public function get_child($slug) : ?\Tribe__Settings_Tab
+        {
+        }
+        /**
+         * Gets the priority of the current tab.
+         *
+         * @since 6.1.0
+         *
+         * @return string The priority of the tab. This will be a float stored as a string i.e. '5' or '5.5'.
+         */
+        public function get_priority() : string
+        {
+        }
+        /**
+         * Whether the tab has a sidebar assigned.
+         *
+         * If this is a child tab, it will also check whether the parent has a sidebar.
+         *
+         * @since 6.1.0
+         *
+         * @return bool
+         */
+        public function has_sidebar() : bool
+        {
+        }
+        /**
+         * Gets the sidebar for the current tab.
+         *
+         * @since 6.1.0
+         *
+         * @return ?Settings_Sidebar The sidebar for the tab.
+         */
+        public function get_sidebar() : ?\TEC\Common\Admin\Settings_Sidebar
+        {
+        }
+        /**
+         * Sets the sidebar for the current tab.
+         *
+         * @param Settings_Sidebar $sidebar The sidebar to set.
+         *
+         * @return void
+         */
+        public function add_sidebar(\TEC\Common\Admin\Settings_Sidebar $sidebar)
+        {
+        }
+        /**
+         * Sets the default sidebar for all tabs.
+         *
+         * @param Settings_Sidebar $sidebar The default sidebar to set.
+         *
+         * @return void
+         */
+        public static function set_default_sidebar(\TEC\Common\Admin\Settings_Sidebar $sidebar)
+        {
+        }
+        /**
+         * Unsets the default sidebar for all tabs.
+         *
+         * @return void
+         */
+        public static function unset_default_sidebar()
+        {
+        }
+        /**
+         * Handle calls to methods that don't exist.
+         *
+         * This is how we handle deprecated methods.
+         *
+         * @since 6.1.0
+         *
+         * @param string $name      The method name.
+         * @param array  $arguments Arguments passed to the method.
+         *
+         * @return mixed The result of the method call.
+         * @throws BadMethodCallException If the method does not exist.
+         */
+        #[\ReturnTypeWillChange]
+        public function __call(string $name, array $arguments)
         {
         }
     }
@@ -27248,7 +36853,9 @@ namespace {
         /**
          * A list of all the tabs registered for the tabbed view.
          *
-         * @var array An associative array in the [<slug> => <instance>] format.
+         * An associative array in the [<slug> => <instance>] format.
+         *
+         * @var Tribe__Tabbed_View__Tab[]
          */
         protected $items = [];
         /**
@@ -29962,7 +39569,7 @@ namespace Tribe\Utils {
          *
          * @return void
          */
-        protected function parse($arguments)
+        protected function parse($arguments) : void
         {
         }
         /**
@@ -31158,19 +40765,20 @@ namespace Tribe\Utils {
         {
         }
         /**
-         * When dealing with templates that make use of `get_post_class` the taxonomy + terms queries are very inefficient
-         * so this method primes the caching by doing a single query that will build the cache for all Posts involved on
-         * the template we are about to render, reducing about 2 queries for each Post that we prime the cache for.
+         * Primes the term cache for the specified posts to optimize taxonomy + terms queries.
          *
-         * Important to note that
+         * This method is particularly useful when dealing with templates that use `get_post_class`,
+         * as it reduces the inefficiency of taxonomy and terms queries. By performing a single query
+         * to build the cache for all posts involved in the template rendering, it significantly reduces
+         * the number of queries (approximately 2 queries per post).
          *
          * @since 5.0.0
          *
-         * @param array $posts
-         * @param array $taxonomies
-         * @param bool  $prime_term_meta
+         * @param array $posts           An array of post objects or post IDs. If empty, the method returns an empty array.
+         * @param array $taxonomies      An array of taxonomy names to prime the cache for. Defaults to 'post_tag' and 'Tribe__Events__Main::TAXONOMY'.
+         * @param bool  $prime_term_meta Whether to prime term meta caches. Defaults to false.
          *
-         * @return array<int, array>
+         * @return array<int, array> An associative array in the format [ post_id => [taxonomy => term_ids[]] ]. Returns an empty array if no posts are passed.
          */
         public static function prime_term_cache(array $posts = [], array $taxonomies = ['post_tag', \Tribe__Events__Main::TAXONOMY], bool $prime_term_meta = false) : array
         {
@@ -34505,6 +44113,30 @@ namespace TEC\Common\lucatume\DI52\Builders {
          * @throws NotFoundException If a builder cannot find its implementation target.
          */
         public function getBuilder($id, $implementation = null, array $afterBuildMethods = null, ...$buildArgs)
+        {
+        }
+        /**
+         * Sets the container the builder should use.
+         *
+         * @since TBD
+         *
+         * @param Container $container The container to bind.
+         *
+         * @return void
+         */
+        public function setContainer(\TEC\Common\lucatume\DI52\Container $container)
+        {
+        }
+        /**
+         * Sets the resolver the container should use.
+         *
+         * @since TBD
+         *
+         * @param Resolver $resolver The resolver the container should use.
+         *
+         * @return void
+         */
+        public function setResolver(\TEC\Common\lucatume\DI52\Builders\Resolver $resolver)
         {
         }
     }
@@ -39624,6 +49256,1487 @@ namespace TEC\Common\Psr\Log\Test {
         }
     }
 }
+namespace TEC\Common\StellarWP\Assets {
+    class Asset
+    {
+        /**
+         * @var array The asset action.
+         */
+        protected array $action = [];
+        /**
+         * The asset style data.
+         *
+         * @see: wp_style_add_data()
+         *
+         * @var array
+         */
+        protected array $add_style_data = [];
+        /**
+         * The callable to execute after enqueuing.
+         *
+         * @var mixed
+         */
+        protected $after_enqueue;
+        /**
+         * The asset conditional callable.
+         *
+         * @var mixed
+         */
+        protected $condition;
+        /**
+         * The asset dependencies.
+         *
+         * @var array<string>|callable
+         */
+        protected $dependencies = [];
+        /**
+         * The asset file path.
+         *
+         * @var ?string
+         */
+        protected ?string $file = null;
+        /**
+         * The asset groups.
+         *
+         * This is used for organizing assets into groups.
+         *
+         * @var array
+         */
+        protected array $groups = [];
+        /**
+         * Should the asset be loaded in the footer?
+         *
+         * @var bool
+         */
+        protected bool $in_footer = true;
+        /**
+         * Should the asset be marked as async?
+         *
+         * @var bool
+         */
+        protected bool $is_async = false;
+        /**
+         * Should the asset be marked as deferred?
+         *
+         * @var bool
+         */
+        protected bool $is_deferred = false;
+        /**
+         * Is the asset enqueued?
+         *
+         * @var bool
+         */
+        protected bool $is_enqueued = false;
+        /**
+         * Is the asset a module?
+         *
+         * @var bool
+         */
+        protected bool $is_module = false;
+        /**
+         * Is the asset printed?
+         *
+         * @var bool
+         */
+        protected bool $is_printed = false;
+        /**
+         * Is the asset registered?
+         *
+         * @var bool
+         */
+        protected bool $is_registered = false;
+        /**
+         * Is the asset a vendor asset?
+         *
+         * @var bool
+         */
+        protected bool $is_vendor = false;
+        /**
+         * The asset wp_localize_script objects for this asset.
+         *
+         * @var array<string,mixed>
+         */
+        protected array $wp_localize_script_objects = [];
+        /**
+         * The asset file media setting.
+         *
+         * @var string
+         */
+        protected string $media = 'all';
+        /**
+         * The relative path to the minified version of this file.
+         *
+         * @var ?string
+         */
+        protected ?string $min_path = null;
+        /**
+         * The asset file min url.
+         *
+         * @var ?string
+         */
+        protected ?string $min_url = null;
+        /**
+         * The relative path to the asset.
+         *
+         * @var ?string
+         */
+        protected ?string $path = null;
+        /**
+         * The root plugin path for this asset.
+         *
+         * @var string
+         */
+        protected string $root_path = '';
+        /**
+         * Content or callable that should be printed after the asset.
+         *
+         * @var mixed
+         */
+        protected $print_after;
+        /**
+         * Content or callable that should be printed before the asset.
+         *
+         * @var mixed
+         */
+        protected $print_before;
+        /**
+         * The asset priority.
+         *
+         * @var int
+         */
+        protected int $priority = 10;
+        /**
+         * Whether the asset should print rather than enqueue.
+         *
+         * @var bool
+         */
+        protected bool $should_print = false;
+        /**
+         * Whether to use the asset directory prefix based on asset type.
+         *
+         * @var bool
+         */
+        protected bool $should_use_asset_directory_prefix = true;
+        /**
+         * The asset slug.
+         *
+         * @var ?string
+         */
+        protected ?string $slug = null;
+        /**
+         * The asset type.
+         *
+         * @var ?string
+         */
+        protected ?string $type = null;
+        /**
+         * The asset file url.
+         *
+         * @var ?string
+         */
+        protected ?string $url = null;
+        /**
+         * The asset version.
+         *
+         * @var ?string
+         */
+        protected ?string $version = null;
+        /**
+         * An array of objects to localized using dot-notation and namespaces.
+         *
+         * @var array<array{0: string, 1:mixed}>
+         */
+        protected array $custom_localize_script_objects = [];
+        /**
+         * Constructor.
+         *
+         * @param string      $slug      The asset slug.
+         * @param string      $file      The asset file path.
+         * @param string|null $version   The asset version.
+         * @param string|null $root_path The path to the root of the plugin.
+         */
+        public function __construct(string $slug, string $file, string $version = null, string $root_path = null)
+        {
+        }
+        /**
+         * Registers an asset.
+         *
+         * @param string      $slug      The asset slug.
+         * @param string      $file      The asset file path.
+         * @param string|null $version   The asset version.
+         * @param string|null $root_path The path to the root of the plugin.
+         */
+        public static function add(string $slug, string $file, string $version = null, $root_path = null)
+        {
+        }
+        /**
+         * @since 1.0.0
+         *
+         * @param string $dependency
+         *
+         * @return static
+         */
+        public function add_dependency(string $dependency)
+        {
+        }
+        /**
+         * Adds data to be attached to the stylesheet.
+         *
+         * @see   : wp_style_add_data()
+         *
+         * @since 1.0.0
+         *
+         * @param string $key
+         * @param mixed  $value
+         *
+         * @return static
+         */
+        public function add_style_data(string $key, $value)
+        {
+        }
+        /**
+         * @since 1.0.0
+         *
+         * @param string $group
+         *
+         * @return static
+         */
+        public function add_to_group(string $group)
+        {
+        }
+        /**
+         * Builds the base asset URL.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        protected function build_asset_url() : string
+        {
+        }
+        /**
+         * Builds the minified asset URL.
+         *
+         * @since 1.2.4
+         *
+         * @param string $original_url The original URL.
+         *
+         * @return string
+         */
+        protected function build_min_asset_url($original_url) : string
+        {
+        }
+        /**
+         * Set a callable that should fire after enqueuing.
+         *
+         * @since 1.0.0
+         *
+         * @param mixed $callable A callable that executes after the asset is enqueued.
+         *
+         * @return static
+         */
+        public function call_after_enqueue($callable)
+        {
+        }
+        /**
+         * Adds a wp_localize_script object to the asset.
+         *
+         * @since 1.0.0
+         *
+         * @param string $object_name JS object name.
+         * @param array|callable  $data Data assigned to the JS object. If a callable is passed, it will be called
+         *                              when the asset is enqueued and the return value will be used. The callable
+         *                              will be passed the asset as the first argument and should return an array.
+         *
+         * @return static
+         */
+        public function add_localize_script(string $object_name, $data)
+        {
+        }
+        /**
+         * Performs the actual enqueueing of the asset.
+         *
+         * @since 1.0.0
+         *
+         * @param bool $should_force Whether to force the enqueueing and ignore any conditionals.
+         *
+         * @return void
+         */
+        public function enqueue(bool $should_force = false)
+        {
+        }
+        /**
+         * Enqueue the asset on an action.
+         *
+         * @since 1.0.0
+         *
+         * @param string $action WordPress action that this asset will be registered to.
+         *
+         * @return static
+         */
+        public function enqueue_on(string $action, $priority = null)
+        {
+        }
+        /**
+         * Get the asset action.
+         *
+         * @return array
+         */
+        public function get_action() : array
+        {
+        }
+        /**
+         * Get the asset after enqueue callable.
+         *
+         * @return mixed
+         */
+        public function get_after_enqueue()
+        {
+        }
+        /**
+         * Get the asset condition callable.
+         *
+         * @return mixed
+         */
+        public function get_condition()
+        {
+        }
+        /**
+         * Get the asset dependencies.
+         *
+         * @return array<string>|callable
+         */
+        public function get_dependencies()
+        {
+        }
+        /**
+         * Get the asset's enqueue action.
+         *
+         * @return array
+         */
+        public function get_enqueue_on() : array
+        {
+        }
+        /**
+         * Get the asset file.
+         *
+         * @return string
+         */
+        public function get_file() : string
+        {
+        }
+        /**
+         * Get the asset groups.
+         *
+         * @return array
+         */
+        public function get_groups() : array
+        {
+        }
+        /**
+         * Get the asset wp_localize_script_objects.
+         *
+         * @return array
+         */
+        public function get_localize_scripts() : array
+        {
+        }
+        /**
+         * Get the asset wp_localize_script_objects.
+         *
+         * @return array<array{0: string, 1: mixed}> A set of data to localized using dot-notation.
+         */
+        public function get_custom_localize_scripts() : array
+        {
+        }
+        /**
+         * Get the asset media setting.
+         *
+         * @return string
+         */
+        public function get_media() : string
+        {
+        }
+        /**
+         * Get the asset min path.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public function get_min_path() : string
+        {
+        }
+        /**
+         * Get the asset min url.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public function get_min_url() : string
+        {
+        }
+        /**
+         * Get the asset min path.
+         *
+         * @since 1.0.0
+         *
+         * @return string
+         */
+        public function get_path() : string
+        {
+        }
+        /**
+         * Gets the root path for the resource.
+         *
+         * @return ?string
+         */
+        public function get_root_path() : ?string
+        {
+        }
+        /**
+         * Get the print_after value.
+         *
+         * @return mixed
+         */
+        public function get_print_after()
+        {
+        }
+        /**
+         * Get the print_before value.
+         *
+         * @return mixed
+         */
+        public function get_print_before()
+        {
+        }
+        /**
+         * Get the asset action priority.
+         *
+         * @return int
+         */
+        public function get_priority() : int
+        {
+        }
+        /**
+         * Get the asset slug.
+         *
+         * @return string
+         */
+        public function get_slug() : string
+        {
+        }
+        /**
+         * Get the asset style data.
+         *
+         * @return array
+         */
+        public function get_style_data() : array
+        {
+        }
+        /**
+         * Get the asset type.
+         *
+         * @return string
+         */
+        public function get_type() : string
+        {
+        }
+        /**
+         * Get the asset url.
+         *
+         * @since 1.0.0
+         *
+         * @param bool $use_min_if_available Use the minified version of the asset if available.
+         *
+         * @return string
+         */
+        public function get_url(bool $use_min_if_available = true) : string
+        {
+        }
+        /**
+         * Get the asset version.
+         *
+         * @return string
+         */
+        public function get_version() : string
+        {
+        }
+        /**
+         * Sets the asset to be loaded in the footer.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function in_footer()
+        {
+        }
+        /**
+         * Sets the asset to be loaded in the header.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function in_header()
+        {
+        }
+        /**
+         * Set the asset type.
+         *
+         * @since 1.0.0
+         */
+        protected function infer_type()
+        {
+        }
+        /**
+         * Returns whether or not the asset is async.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_async() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset is deferred.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_deferred() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset is enqueued.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_enqueued() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset goes in the footer.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_in_footer() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset goes in the header.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_in_header() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset is a module.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_module() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset is printed.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_printed() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset is registered.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_registered() : bool
+        {
+        }
+        /**
+         * Returns whether or not the asset is a vendor asset.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function is_vendor() : bool
+        {
+        }
+        /**
+         * Returns the path to a minified version of a js or css file, if it exists.
+         * If the file does not exist, returns false.
+         *
+         * @since 1.0.0
+         *
+         * @deprecated 1.2.4 Use build_min_asset_url() instead.
+         *
+         * @param string $url The absolute URL to the un-minified file.
+         *
+         * @return string|false The url to the minified version or false, if file not found.
+         */
+        public function maybe_get_min_file($url)
+        {
+        }
+        /**
+         * Print the asset.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function print()
+        {
+        }
+        /**
+         * Set the print_after value.
+         *
+         * @since 1.0.0
+         *
+         * @param mixed $thing A string or callable to print after the asset.
+         *
+         * @return static
+         */
+        public function print_after($thing)
+        {
+        }
+        /**
+         * Set the print_before value.
+         *
+         * @since 1.0.0
+         *
+         * @param mixed $thing A string or callable to print before the asset.
+         *
+         * @return static
+         */
+        public function print_before($thing)
+        {
+        }
+        /**
+         * Enqueue the asset.
+         *
+         * @since 1.0.0
+         */
+        public function register()
+        {
+        }
+        /**
+         * @since 1.0.0
+         *
+         * @param string $group
+         *
+         * @return static
+         */
+        public function remove_from_group(string $group)
+        {
+        }
+        /**
+         * Set the asset action.
+         *
+         * @since 1.0.0
+         *
+         * @param string $action WordPress action that this asset will be registered to.
+         *
+         * @return static
+         */
+        public function set_action(string $action)
+        {
+        }
+        /**
+         * Set the asset as async.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_async()
+        {
+        }
+        /**
+         * Set the asset as deferred.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_deferred()
+        {
+        }
+        /**
+         * Set the asset enqueue status to true.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_enqueued()
+        {
+        }
+        /**
+         * Set the directory where asset should be retrieved.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $path                                                 The path to the minified file.
+         * @param bool        $should_automatically_use_asset_type_directory_prefix Whether to prefix files automatically by type (e.g. js/ for JS). Defaults to true.
+         *
+         * @return $this
+         */
+        public function set_path(?string $path = null, bool $should_automatically_use_asset_type_directory_prefix = true)
+        {
+        }
+        /**
+         * Set the directory where min files should be retrieved.
+         *
+         * @since 1.0.0
+         *
+         * @param string|null $path The path to the minified file.
+         *
+         * @return $this
+         */
+        public function set_min_path(?string $path = null)
+        {
+        }
+        /**
+         * Set the asset as a module.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_module()
+        {
+        }
+        /**
+         * Set the asset as not async.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_not_async()
+        {
+        }
+        /**
+         * Set the asset as not deferred.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_not_deferred()
+        {
+        }
+        /**
+         * Set the asset print status to false.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_not_printed()
+        {
+        }
+        /**
+         * Set the asset print status to true.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_printed()
+        {
+        }
+        /**
+         * Set the asset registration status to true.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_registered()
+        {
+        }
+        /**
+         * Set the asset enqueue status to false.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_unenqueued()
+        {
+        }
+        /**
+         * Set the asset registration status to false.
+         *
+         * @since 1.0.0
+         *
+         * @return static
+         */
+        public function set_as_unregistered()
+        {
+        }
+        /**
+         * Set the asset condition for inclusion.
+         *
+         * @since 1.0.0
+         *
+         * @param mixed $condition A callable that returns a boolean indicating if the asset should be enqueued.
+         *
+         * @return static
+         */
+        public function set_condition($condition)
+        {
+        }
+        /**
+         * @since 1.0.0
+         *
+         * @param string|callable ...$dependencies
+         *
+         * @return static
+         */
+        public function set_dependencies(...$dependencies)
+        {
+        }
+        /**
+         * Set the asset media.
+         *
+         * @since 1.0.0
+         *
+         * @param string $media Asset media setting.
+         *
+         * @return static
+         */
+        public function set_media(string $media)
+        {
+        }
+        /**
+         * Set the asset priority.
+         *
+         * @since 1.0.0
+         *
+         * @param int $priority Asset priority.
+         *
+         * @return static
+         */
+        public function set_priority(int $priority)
+        {
+        }
+        /**
+         * Set the asset type.
+         *
+         * @since 1.0.0
+         *
+         * @param string $type Asset type.
+         *
+         * @return static
+         */
+        public function set_type(string $type)
+        {
+        }
+        /**
+         * Get whether or not the script should print.
+         *
+         * @since 1.0.0
+         *
+         * @return bool
+         */
+        public function should_print() : bool
+        {
+        }
+    }
+    class Assets
+    {
+        /**
+         * @var ?Assets
+         */
+        protected static $instance;
+        /**
+         * @var ?Controller
+         */
+        protected ?\TEC\Common\StellarWP\Assets\Controller $controller;
+        /**
+         * @var array Array of memoized key value pairs.
+         */
+        protected array $memoized = [];
+        /**
+         * @var string
+         */
+        protected string $base_path;
+        /**
+         * @var string
+         */
+        protected string $assets_url;
+        /**
+         * @var string
+         */
+        protected string $version;
+        /**
+         * Stores all the Assets and it's configurations.
+         *
+         * @var array
+         */
+        protected $assets = [];
+        /**
+         * Stores the localized scripts for reference.
+         *
+         * @var array
+         */
+        protected $localized = [];
+        /**
+         * Constructor.
+         *
+         * @param string|null $base_path Base path to the directory.
+         * @param string|null $assets_url Directory to the assets.
+         *
+         * @since 1.0.0
+         *
+         */
+        public function __construct(?string $base_path = null, ?string $assets_url = null)
+        {
+        }
+        /**
+         * Helper method to get the instance object. Alias of ::init().
+         *
+         * @return Assets
+         * @since 1.0.0
+         *
+         */
+        public static function instance() : \TEC\Common\StellarWP\Assets\Assets
+        {
+        }
+        /**
+         * Singleton instance.
+         *
+         * @return Assets
+         * @since 1.0.0
+         *
+         */
+        public static function init() : \TEC\Common\StellarWP\Assets\Assets
+        {
+        }
+        /**
+         * Create an asset.
+         *
+         * @param string $slug The asset slug.
+         * @param string $file The asset file path.
+         * @param string|null $version The asset version.
+         * @param string|null $plugin_path The path to the root of the plugin.
+         */
+        public static function asset(string $slug, string $file, string $version = null, string $plugin_path = null)
+        {
+        }
+        /**
+         * Register an Asset and attach a callback to the required action to display it correctly.
+         *
+         * @param Asset $asset Register an asset.
+         *
+         * @return Asset|false The registered object or false on error.
+         * @since 1.0.0
+         *
+         */
+        public function add(\TEC\Common\StellarWP\Assets\Asset $asset)
+        {
+        }
+        /**
+         * Checks if an Asset exists.
+         *
+         * @param string|array $slug Slug of the Asset.
+         *
+         * @return bool
+         * @since 1.0.0
+         *
+         */
+        public function exists($slug)
+        {
+        }
+        /**
+         * Depending on how certain scripts are loaded and how much cross-compatibility is required we need to be able to
+         * create noConflict backups and restore other scripts, which normally need to be printed directly on the scripts.
+         *
+         * @param string $tag Tag we are filtering.
+         * @param string $handle Which is the ID/Handle of the tag we are about to print.
+         *
+         * @return string Script tag with the before and after strings attached to it.
+         * @since 1.0.0
+         *
+         */
+        public function filter_print_before_after_script($tag, $handle) : string
+        {
+        }
+        /**
+         * Get the Asset Object configuration.
+         *
+         * @param string|array $slug Slug of the Asset.
+         * @param boolean $sort If we should do any sorting before returning.
+         *
+         * @return array|Asset Array of asset objects, single asset object, or null if looking for a single asset but
+         *                           it was not in the array of objects.
+         * @since 1.0.0
+         *
+         */
+        public function get($slug = null, $sort = true)
+        {
+        }
+        /**
+         * Gets a memoized value.
+         *
+         * @param string $var Var name.
+         * @param mixed|null $default Default value.
+         *
+         * @return mixed|null
+         */
+        public function get_var(string $var, $default = null)
+        {
+        }
+        /**
+         * Sorting function based on Priority
+         *
+         * @param object|array $b Second subject to compare.
+         * @param object|array $a First Subject to compare.
+         * @param string $method Method to use for sorting.
+         *
+         * @return int
+         * @since 1.0.0
+         *
+         */
+        public function sort_by_priority($a, $b, $method = null)
+        {
+        }
+        /**
+         * Sets a memoized value.
+         *
+         * @param string $var Var name.
+         * @param mixed|null $value The value.
+         */
+        public function set_var(string $var, $value = null)
+        {
+        }
+        /**
+         * Handles adding localization data, when attached to `script_loader_tag` which allows dependencies to load in their
+         * localization data as well.
+         *
+         * @param string $tag Tag we are filtering.
+         * @param string $handle Which is the ID/Handle of the tag we are about to print.
+         *
+         * @return string Script tag with the localization variable HTML attached to it.
+         * @since 1.0.0
+         *
+         */
+        public function filter_add_localization_data($tag, $handle)
+        {
+        }
+        /**
+         * Filters the Script tags to attach Async and/or Defer based on the rules we set in our Asset class.
+         *
+         * @param string $tag Tag we are filtering.
+         * @param string $handle Which is the ID/Handle of the tag we are about to print.
+         *
+         * @return string Script tag with the defer and/or async attached.
+         * @since 1.0.0
+         *
+         */
+        public function filter_tag_async_defer($tag, $handle)
+        {
+        }
+        /**
+         * Filters the Script tags to attach type=module based on the rules we set in our Asset class.
+         *
+         * @since 1.0.0
+         * @since 1.2.6
+         *
+         * @param string $tag    Tag we are filtering.
+         * @param string $handle Which is the ID/Handle of the tag we are about to print.
+         *
+         * @return string Script tag with the type=module
+         */
+        public function filter_modify_to_module($tag, $handle)
+        {
+        }
+        /**
+         * Enqueues registered assets based on their groups.
+         *
+         * @param string|array $groups Which groups will be enqueued.
+         * @param bool $should_enqueue_no_matter_what Whether to ignore conditional requirements when enqueuing.
+         *
+         * @since 1.0.0
+         *
+         * @uses  Assets::enqueue()
+         *
+         */
+        public function enqueue_group($groups, bool $should_enqueue_no_matter_what = false)
+        {
+        }
+        /**
+         * Enqueues registered assets.
+         *
+         * This method is called on whichever action (if any) was declared during registration.
+         *
+         * It can also be called directly with a list of asset slugs to forcibly enqueue, which may be
+         * useful where an asset is required in a situation not anticipated when it was originally
+         * registered.
+         *
+         * @param string|array $assets_to_enqueue Which assets will be enqueued.
+         * @param bool $should_enqueue_no_matter_what Whether to ignore conditional requirements when enqueuing.
+         *
+         * @since 1.0.0
+         *
+         */
+        public function enqueue($assets_to_enqueue = null, bool $should_enqueue_no_matter_what = false)
+        {
+        }
+        /**
+         * Enqueues registered assets.
+         *
+         * This method is called on whichever action (if any) was declared during registration.
+         *
+         * It can also be called directly with a list of asset slugs to forcibly enqueue, which may be
+         * useful where an asset is required in a situation not anticipated when it was originally
+         * registered.
+         *
+         * @param Asset $asset Asset to enqueue.
+         * @param bool $force_enqueue Whether to ignore conditional requirements when enqueuing.
+         *
+         * @since 1.0.0
+         *
+         */
+        protected function do_enqueue(\TEC\Common\StellarWP\Assets\Asset $asset, bool $force_enqueue = false) : void
+        {
+        }
+        /**
+         * Register the Assets on the correct hooks.
+         *
+         * @since 1.0.0
+         *
+         * @param array|Asset|null $assets Array of asset objects, single asset object, or null.
+         *
+         * @return void
+         */
+        public function register_in_wp($assets = null)
+        {
+        }
+        /**
+         * Removes an Asset from been registered and enqueue.
+         *
+         * @since 1.0.0
+         *
+         * @param string $slug Slug of the Asset.
+         *
+         * @return bool
+         */
+        public function remove($slug)
+        {
+        }
+        /**
+         * Prints the `script` (JS) and `link` (CSS) HTML tags associated with one or more assets groups.
+         *
+         * The method will force the scripts and styles to print overriding their registration and conditional.
+         *
+         * @since 1.0.0
+         *
+         * @param string|array $group Which group(s) should be enqueued.
+         * @param bool $echo Whether to print the group(s) tag(s) to the page or not; default to `true` to
+         *                            print the HTML `script` (JS) and `link` (CSS) tags to the page.
+         *
+         * @return string The `script` and `link` HTML tags produced for the group(s).
+         */
+        public function print_group($group, $echo = true)
+        {
+        }
+    }
+    class Config
+    {
+        /**
+         * @var string
+         */
+        protected static string $hook_prefix = '';
+        /**
+         * @var string
+         */
+        protected static string $relative_asset_path = 'src/assets/';
+        /**
+         * @var string
+         */
+        protected static string $root_path = '';
+        /**
+         * @var string
+         */
+        protected static string $version = '';
+        /**
+         * @var array<string, string>
+         */
+        protected static array $path_urls = [];
+        /**
+         * Gets the hook prefix.
+         *
+         * @return string
+         */
+        public static function get_hook_prefix() : string
+        {
+        }
+        /**
+         * Gets the root path of the project.
+         *
+         * @return string
+         */
+        public static function get_path() : string
+        {
+        }
+        /**
+         * Gets the relative asset path of the project.
+         *
+         * @return string
+         */
+        public static function get_relative_asset_path() : string
+        {
+        }
+        /**
+         * Gets the root path of the project.
+         *
+         * @return string
+         */
+        public static function get_url($path) : string
+        {
+        }
+        /**
+         * Gets the version of the project.
+         *
+         * @return string
+         */
+        public static function get_version() : string
+        {
+        }
+        /**
+         * Resets this class back to the defaults.
+         */
+        public static function reset()
+        {
+        }
+        /**
+         * Sets the hook prefix.
+         *
+         * @param string $prefix The prefix to add to hooks.
+         *
+         * @return void
+         */
+        public static function set_hook_prefix(string $prefix)
+        {
+        }
+        /**
+         * Sets the relative asset path of the project.
+         *
+         * @param string $path The root path of the project.
+         *
+         * @return void
+         */
+        public static function set_relative_asset_path(string $path)
+        {
+        }
+        /**
+         * Sets the root path of the project.
+         *
+         * @param string $path The root path of the project.
+         *
+         * @return void
+         */
+        public static function set_path(string $path)
+        {
+        }
+        /**
+         * Sets the version of the project.
+         *
+         * @param string $version The version of the project.
+         *
+         * @return void
+         */
+        public static function set_version(string $version)
+        {
+        }
+    }
+    class Controller
+    {
+        /**
+         * @var Assets
+         */
+        protected \TEC\Common\StellarWP\Assets\Assets $assets;
+        /**
+         * Controller constructor.
+         *
+         * @param Assets $assets
+         */
+        public function __construct(\TEC\Common\StellarWP\Assets\Assets $assets)
+        {
+        }
+        /**
+         * Register the actions and filters.
+         *
+         * @return void
+         */
+        public function register()
+        {
+        }
+        /**
+         * Add actions for the Assets.
+         *
+         * @since 1.0.0
+         *
+         * @return void
+         */
+        public function add_actions()
+        {
+        }
+        /**
+         * Add filters for the Assets.
+         *
+         * @since 1.0.0
+         *
+         * @return void
+         */
+        public function add_filters()
+        {
+        }
+    }
+    /**
+     * Handles adding script data to the page in cases where localizing a
+     * specific script is not suitable.
+     */
+    class Data
+    {
+        /**
+         * Container for any JS data objects that should be added to the page.
+         *
+         * @var array
+         */
+        protected array $data = [];
+        /**
+         * Adds the provided data to the list of objects that should be available
+         * to other scripts.
+         *
+         * @param string $key  Object name.
+         * @param array  $data Object data.
+         */
+        public function add(string $key, $data)
+        {
+        }
+        /**
+         * Returns the data for the provided object name.
+         *
+         * @param string $key      Object name.
+         * @param mixed  $default  Default value to return if the object is not found.
+         *
+         * @return mixed
+         */
+        public function get(string $key, $default = null)
+        {
+        }
+        /**
+         * Removes the provided data from the list of objects that should be available
+         * to other scripts.
+         *
+         * @param string $key Object name.
+         */
+        public function remove($key)
+        {
+        }
+        /**
+         * Returns all data.
+         *
+         * @return array
+         */
+        public function get_data() : array
+        {
+        }
+        /**
+         * Checks if there is any stored data.
+         *
+         * @return bool
+         */
+        public function has_data() : bool
+        {
+        }
+        /**
+         * Prints an individual key value pair.
+         *
+         * @param string $name Object name.
+         * @param mixed  $data Object data.
+         */
+        public function print_data($name, $data)
+        {
+        }
+        /**
+         * Outputs the data.
+         *
+         * @internal
+         */
+        public function render_json()
+        {
+        }
+    }
+    class Utils
+    {
+        /**
+         * Stores all the Bases for the request.
+         *
+         * @since 1.2.3
+         *
+         * @var array
+         */
+        protected static array $bases = [];
+        /**
+         * Determines if the provided value should be regarded as 'true'.
+         *
+         * @since 1.0.0
+         *
+         * @param mixed $var
+         *
+         * @return bool
+         */
+        public static function is_truthy($var) : bool
+        {
+        }
+        /**
+         * Gets the asset bases for the request, both directory and URL.
+         *
+         * @since 1.2.3
+         *
+         * @return array
+         */
+        public static function get_bases() : array
+        {
+        }
+        /**
+         * Get the runtime cache key.
+         *
+         * @since 1.2.3
+         *
+         * @param array $extra Extra data to include in the cache key.
+         *
+         * @return string
+         */
+        public static function get_runtime_cache_key(array $extra = []) : string
+        {
+        }
+    }
+}
 namespace TEC\Common\StellarWP\DB {
     class Config
     {
@@ -39684,18 +50797,18 @@ namespace TEC\Common\StellarWP\DB {
      * A static decorator for the $wpdb class and decorator function which does SQL error checking when performing queries.
      * If a SQL error occurs a DatabaseQueryException is thrown.
      *
-     * @method static int|bool query(string $query)
-     * @method static int|false insert(string $table, array $data, array|string|null $format = null)
-     * @method static int|false delete(string $table, array $where, array|string|null $where_format = null)
-     * @method static int|false update(string $table, array $data, array $where, array|string|null $format = null, array|string|null $where_format = null)
-     * @method static int|false replace(string $table, array $data, array|string|null $format = null)
-     * @method static null|string get_var(string|null $query = null, int $x = 0, int $y = 0)
-     * @method static array|object|null|void get_row(string|null $query = null, string $output = OBJECT, int $y = 0)
-     * @method static array get_col(string|null $query = null, int $x = 0)
-     * @method static array|object|null get_results(string|null $query = null, string $output = OBJECT)
+     * @method static int|bool query( string $query )
+     * @method static int|false insert( string $table, array $data, array|string|null $format = null )
+     * @method static int|false delete( string $table, array $where, array|string|null $where_format = null )
+     * @method static int|false update( string $table, array $data, array $where, array|string|null $format = null, array|string|null $where_format = null )
+     * @method static int|false replace( string $table, array $data, array|string|null $format = null )
+     * @method static null|string get_var( string|null $query = null, int $x = 0, int $y = 0 )
+     * @method static array|object|null|void get_row( string|null $query = null, string $output = OBJECT, int $y = 0 )
+     * @method static array get_col( string|null $query = null, int $x = 0 )
+     * @method static array|object|null get_results( string|null $query = null, string $output = OBJECT )
      * @method static string get_charset_collate()
-     * @method static string esc_like(string $text)
-     * @method static string remove_placeholder_escape(string $text)
+     * @method static string esc_like( string $text )
+     * @method static string remove_placeholder_escape( string $text )
      * @method static Config config()
      */
     class DB
@@ -39711,14 +50824,14 @@ namespace TEC\Common\StellarWP\DB {
         /**
          * Runs the dbDelta function and returns a WP_Error with any errors that occurred during the process
          *
-         * @see dbDelta() for parameter and return details
-         *
          * @since 1.0.0
          *
          * @param $delta
          *
          * @return array
          * @throws DatabaseQueryException
+         * @see   dbDelta() for parameter and return details
+         *
          */
         public static function delta($delta)
         {
@@ -39726,14 +50839,14 @@ namespace TEC\Common\StellarWP\DB {
         /**
          * A convenience method for the $wpdb->prepare method
          *
-         * @see WPDB::prepare() for usage details
-         *
          * @since 1.0.0
          *
          * @param string $query
-         * @param mixed ...$args
+         * @param mixed  ...$args
          *
          * @return false|mixed
+         * @see   WPDB::prepare() for usage details
+         *
          */
         public static function prepare($query, ...$args)
         {
@@ -39776,7 +50889,7 @@ namespace TEC\Common\StellarWP\DB {
          * Create QueryBuilder instance
          *
          * @param string|RawSQL $table
-         * @param string|null  $alias
+         * @param string|null   $alias
          *
          * @return QueryBuilder
          */
@@ -39832,11 +50945,41 @@ namespace TEC\Common\StellarWP\DB {
          * If $args are provided, we will assume that dev wants to use DB::prepare method with raw SQL
          *
          * @param string $sql
-         * @param array ...$args
+         * @param array  ...$args
          *
          * @return RawSQL
          */
         public static function raw($sql, ...$args)
+        {
+        }
+        /**
+         * Get all the results from a query in batches.
+         *
+         * This method should be used to run an unbounded query in batches.
+         *
+         * @since TBD
+         *
+         * @param string|null $query      The SQL query.
+         * @param string      $output     The required return type. One of OBJECT, ARRAY_A, ARRAY_N.
+         * @param int         $batch_size The number of results to return in each batch.
+         *
+         * @return Generator<array|object|null> A generator to get all the results of the query.
+         */
+        public static function generate_results(string $query = null, string $output = OBJECT, int $batch_size = 20) : \Generator
+        {
+        }
+        /**
+         * Get all the values in a column from a query in batches.
+         *
+         * @since TBD
+         *
+         * @param string|null $query      The SQL query.
+         * @param int         $x          The column number to return.
+         * @param int         $batch_size The number of results to return in each batch.
+         *
+         * @return Generator<mixed> The values of the column.
+         */
+        public function generate_col(string $query = null, int $x = 0, int $batch_size = 50) : \Generator
         {
         }
     }
@@ -40162,12 +51305,8 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Clauses {
          */
         public $logicalOperator;
         /**
-         * @var string|null
-         */
-        public $type;
-        /**
          * @param  string  $column
-         * @param  string  $value
+         * @param  mixed  $value
          * @param  string  $comparisonOperator
          * @param  string|null  $logicalOperator
          */
@@ -40843,7 +51982,7 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Concerns {
         private $includeWhereKeyword = true;
         /**
          * @param  string|Closure|null  $column  The Closure will receive a StellarWP\DB\QueryBuilder\WhereQueryBuilder instance
-         * @param  string|Closure|array|null  $value  The Closure will receive a StellarWP\DB\QueryBuilder\QueryBuilder instance
+         * @param  string|Closure|array|null|mixed  $value  The Closure will receive a StellarWP\DB\QueryBuilder\QueryBuilder instance
          * @param  string  $comparisonOperator
          * @param  string  $logicalOperator
          *
@@ -40854,7 +51993,7 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Concerns {
         }
         /**
          * @param  string|Closure|null  $column  The closure will receive a StellarWP\DB\QueryBuilder\WhereQueryBuilder instance
-         * @param  string|Closure|array|null  $value  The closure will receive a StellarWP\DB\QueryBuilder\QueryBuilder instance
+         * @param  string|Closure|array|null|mixed  $value  The closure will receive a StellarWP\DB\QueryBuilder\QueryBuilder instance
          * @param  string  $comparisonOperator
          *
          * @return $this
@@ -40864,7 +52003,7 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Concerns {
         }
         /**
          * @param  string|Closure  $column
-         * @param  string|Closure|array|null  $value
+         * @param  string|Closure|array|null|mixed  $value
          * @param  string  $comparisonOperator
          *
          * @return $this
@@ -40968,7 +52107,7 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Concerns {
         }
         /**
          * @param  string  $column
-         * @param  string  $value
+         * @param  mixed  $value
          *
          * @return $this
          */
@@ -40977,7 +52116,7 @@ namespace TEC\Common\StellarWP\DB\QueryBuilder\Concerns {
         }
         /**
          * @param  string  $column
-         * @param  string  $value
+         * @param  mixed  $value
          *
          * @return $this
          */
@@ -42464,6 +53603,29 @@ namespace TEC\Common\StellarWP\Models {
          * @return mixed|array
          */
         public function getOriginal(string $key = null)
+        {
+        }
+        /**
+         * Whether the property is set or not. This is different from isset() because this considers a `null` value as
+         * being set. Defaults are considered set as well.
+         *
+         * @unreleased
+         *
+         * @return boolean
+         */
+        public function isSet(string $key) : bool
+        {
+        }
+        /**
+         * Check if there is a default value for a property.
+         *
+         * @unreleased
+         *
+         * @param string $key Property name.
+         *
+         * @return bool
+         */
+        protected function hasDefault(string $key) : bool
         {
         }
         /**
@@ -44229,7 +55391,7 @@ namespace TEC\Common\StellarWP\Schema\Tables\Filters {
          * @since 1.0.0
          *
          * @param array<string> $groups Paths to filter.
-         * @param \Iterator $iterator Iterator to filter.
+         * @param Iterator $iterator Iterator to filter.
          */
         public function __construct(array $groups, \Iterator $iterator)
         {
@@ -45715,6 +56877,384 @@ namespace TEC\Common\StellarWP\Telemetry {
         }
     }
 }
+namespace TEC\Events\Admin\Notice {
+    /**
+     * Class Provider
+     *
+     * @since
+     *
+     * @package TEC\Events\Admin\Notice
+     */
+    class Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * Register implementations.
+         *
+         * @since
+         */
+        public function register()
+        {
+        }
+        /**
+         * Add the action hooks.
+         *
+         * @since
+         */
+        public function add_actions()
+        {
+        }
+        /**
+         * Add the filter hooks.
+         *
+         * @since
+         */
+        public function add_filters()
+        {
+        }
+    }
+}
+namespace TEC\Events\Traits {
+    /**
+     * Trait Development_Mode
+     *
+     * @since 6.6.3
+     */
+    trait Development_Mode
+    {
+        /**
+         * Check if the site is in development mode.
+         *
+         * A site is considered to be in development mode if:
+         * - The value of wp_is_development_mode( 'plugin' ) is true.
+         * - The value of wp_get_environment_type() is 'local' or 'development'.
+         *
+         * This method also applies a filter so that 3rd party developers can set their
+         * own conditions for development mode.
+         *
+         * @since 6.6.3
+         *
+         * @return bool
+         */
+        protected function is_site_development_mode() : bool
+        {
+        }
+    }
+}
+namespace TEC\Events\Admin\Notice {
+    /**
+     * Class Rest_Api
+     *
+     * Shows an admin notice when our REST API endpoints are not available.
+     *
+     * @since 6.5.0
+     */
+    class Rest_Api
+    {
+        use \TEC\Events\Traits\Development_Mode;
+        /**
+         * Constructor.
+         *
+         * @since 6.5.0
+         *
+         * @return void
+         */
+        public function hook() : void
+        {
+        }
+        /**
+         * Checks if we are in a TEC page or in the main Dashboard.
+         *
+         * @since 6.5.0
+         *
+         * @return bool
+         */
+        public function should_display() : bool
+        {
+        }
+        /**
+         * Checks if our endpoints are accessible.
+         *
+         * @since 6.5.0
+         * @sicne 6.5.0.1 Introduce a force param.
+         *
+         * @param bool $force Force the check, skipping timed option cache.
+         *
+         * @return bool
+         */
+        public function is_rest_api_blocked(bool $force = false) : bool
+        {
+        }
+        /**
+         * HTML for the notice when we have blocked REST API endpoints.
+         *
+         * @since 6.5.0
+         *
+         * @return false|string
+         */
+        public function notice()
+        {
+        }
+    }
+}
+namespace TEC\Events\Admin\Settings {
+    /**
+     * Class Upsell
+     *
+     * @since 6.7.0
+     */
+    class Community_Upsell extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * The slug of the upsell tab.
+         *
+         * @since 6.7.0
+         *
+         * @var string
+         */
+        protected string $slug = 'community';
+        /**
+         * Stores the instance of the template engine that we will use for rendering the elements.
+         *
+         * @since 6.7.0
+         *
+         * @var Tribe__Template
+         */
+        protected $template;
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.7.0
+         */
+        public function register() : void
+        {
+        }
+        /**
+         * Add actions.
+         *
+         * @since 6.7.0
+         */
+        public function add_actions() : void
+        {
+        }
+        /**
+         * Add filters.
+         *
+         * @since 6.7.0
+         */
+        public function add_filters() : void
+        {
+        }
+        /**
+         * Adds a class to the settings form to allow for custom styling.
+         *
+         * @since 6.7.0
+         *
+         * @param array $classes The classes for the settings form.
+         *
+         * @return array The modified classes for the settings form.
+         */
+        public function filter_tribe_settings_form_classes($classes) : array
+        {
+        }
+        /**
+         * Adds the Community tab to the list of tabs that should not be saved.
+         *
+         * @since 6.7.0
+         *
+         * @param array $tabs The tabs that should not use the save footer.
+         *
+         * @return array The modified tabs that should not use the save footer.
+         */
+        public function filter_tribe_settings_no_save_tabs($tabs) : array
+        {
+        }
+        /**
+         * Create a Community upsell tab.
+         *
+         * @since 6.7.0
+         *
+         * @param string $admin_page The current admin page.
+         */
+        public function add_tab($admin_page) : void
+        {
+        }
+        /**
+         * Returns html of the Community upsell banner.
+         *
+         * @since 6.7.0
+         *
+         * @param array   $context Context of template.
+         * @param boolean $echo    Whether or not to output the HTML or just return it.
+         *
+         * @return string|false HTML of the Community upsell banner. False if the template is not found.
+         */
+        public function get_upsell_html($context = [], $echo = false)
+        {
+        }
+        /**
+         * Gets the template instance used to setup the rendering html.
+         *
+         * @since 6.7.0
+         *
+         * @return Tribe__Template
+         */
+        public function get_template() : \Tribe__Template
+        {
+        }
+    }
+    /**
+     * Class Upsell
+     *
+     * @since 6.7.0
+     */
+    class Filter_Bar_Upsell extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * The slug of the upsell tab.
+         *
+         * @since 6.7.0
+         *
+         * @var string
+         */
+        protected string $slug = 'filter-view';
+        /**
+         * Stores the instance of the template engine that we will use for rendering the elements.
+         *
+         * @since 6.7.0
+         *
+         * @var Tribe__Template
+         */
+        protected $template;
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.7.0
+         */
+        public function register() : void
+        {
+        }
+        /**
+         * Add actions.
+         *
+         * @since 6.7.0
+         */
+        public function add_actions() : void
+        {
+        }
+        /**
+         * Add filters.
+         *
+         * @since 6.7.0
+         */
+        public function add_filters() : void
+        {
+        }
+        /**
+         * Filters the classes for the settings form.
+         *
+         * @since 6.7.0
+         *
+         * @param array $classes The classes for the settings form.
+         *
+         * @return array The modified classes for the settings form.
+         */
+        public function filter_tribe_settings_form_classes($classes) : array
+        {
+        }
+        /**
+         * Adds the Filter Bar Upsell to the tabs that should not be saved.
+         *
+         * @since 6.7.0
+         *
+         * @param array $tabs The tabs that should not use the save footer.
+         *
+         * @return array The modified tabs that should not use the save footer.
+         */
+        public function filter_tribe_settings_no_save_tabs($tabs) : array
+        {
+        }
+        /**
+         * Create a Filter Bar upsell tab.
+         *
+         * @since 6.7.0
+         *
+         * @param string $admin_page The current admin page.
+         */
+        public function add_tab($admin_page) : void
+        {
+        }
+        /**
+         * Returns html of the Filter Bar upsell banner.
+         *
+         * @since 6.7.0
+         *
+         * @param array   $context Context of template.
+         * @param boolean $echo    Whether or not to output the HTML or just return it.
+         *
+         * @return string|false HTML of the Filter Bar upsell banner. False if the template is not found.
+         */
+        public function get_upsell_html($context = [], $echo = false)
+        {
+        }
+        /**
+         * Gets the template instance used to setup the rendering html.
+         *
+         * @since 6.7.0
+         *
+         * @return Tribe__Template
+         */
+        public function get_template() : \Tribe__Template
+        {
+        }
+    }
+    /**
+     * Class Provider
+     *
+     * @since
+     *
+     * @package TEC\Events\Admin\Settings
+     */
+    class Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * Register the service provider.
+         *
+         * @since 6.7.0
+         */
+        public function register()
+        {
+        }
+        /**
+         * Add actions.
+         *
+         * @since 6.7.0
+         */
+        public function add_actions() : void
+        {
+        }
+        /**
+         * Add filters.
+         *
+         * @since 6.7.0
+         */
+        public function add_filters() : void
+        {
+        }
+        /**
+         * Add classes to the settings wrap.
+         *
+         * @since 6.7.0
+         *
+         * @param array<string> $classes    The classes to add to the settings wrap.
+         * @param string        $admin_page The current admin page.
+         *
+         * @return array<string> The classes to add to the settings wrap.
+         */
+        public function filter_tribe_settings_wrap_classes($classes, $admin_page) : array
+        {
+        }
+    }
+}
 namespace TEC\Events\Block_Templates {
     /**
      * Interface Block_Template_Contract
@@ -46434,12 +57974,12 @@ namespace TEC\Events\Custom_Tables\V1\Events\Occurrences {
          *
          * @since 6.0.0
          *
-         * @param array  $fields
-         * @param string $settings_tab
+         * @param array  $fields     The fields to be displayed on the "defaults" settings page.
+         * @param string $deprecated Unused.
          *
          * @return array|mixed
          */
-        public function change_default_settings_field($fields, $settings_tab)
+        public function change_default_settings_field($fields, $deprecated = null)
         {
         }
         /**
@@ -46497,7 +58037,7 @@ namespace TEC\Events\Custom_Tables\V1\Events\Occurrences {
          *
          * @return array|mixed
          */
-        public function change_default_settings_field($fields, $settings_tab)
+        public function change_default_settings_field($fields)
         {
         }
     }
@@ -46668,7 +58208,7 @@ namespace TEC\Events\Custom_Tables\V1 {
          *
          * @since 6.0.2
          *
-         * @param int $blog_id The blog ID to udpate the tables for.
+         * @param int $blog_id The blog ID to update the tables for.
          *
          * @return void        Custom tables are updated, if required.
          */
@@ -48352,7 +59892,7 @@ namespace TEC\Events\Custom_Tables\V1\Migration {
          * @param string $errstr  The error message.
          * @param string $errfile The file the error occurred in.
          *
-         * @return bool A value indicating whether the error handler handled the erorr or not..
+         * @return bool A value indicating whether the error handler handled the error or not..
          *
          * @throws Migration_Exception A reference to an exception wrapping the error.
          */
@@ -49958,7 +61498,7 @@ namespace TEC\Events\Custom_Tables\V1\Models {
          * Bulk updates instances of the Model.
          *
          * Since MySQL does not come with a bulk update feature, this code will actually
-         * delete the exising model entries and re-insert them, by primary key, using the
+         * delete the existing model entries and re-insert them, by primary key, using the
          * updated data.
          *
          * @since 6.1.3 Integration with memoization.
@@ -53758,6 +65298,18 @@ namespace TEC\Events\Custom_Tables\V1\WP_Query {
         public function redirect_posts_orderby($posts_orderby, $query)
         {
         }
+        /**
+         * Sanitizes the order direction.
+         *
+         * @since 6.7.0
+         *
+         * @param string $order The order direction to sanitize.
+         *
+         * @return string The sanitized order direction.
+         */
+        protected function sanitize_order($order)
+        {
+        }
     }
 }
 namespace TEC\Events\Custom_Tables\V1\WP_Query\Modifiers {
@@ -54234,6 +65786,7 @@ namespace TEC\Events\Custom_Tables\V1\WP_Query\Repository {
          * to the custom tables.
          *
          * @since 6.0.0
+         * @since 6.0.3 Changed from 'else if' to `if` for handling deduplication of join clauses.
          *
          * {@inheritdoc}
          */
@@ -55391,6 +66944,167 @@ namespace TEC\Events\Telemetry {
         }
     }
 }
+namespace TEC\Events\Views\Modifiers {
+    /**
+     * Class Visibility_Modifier_Abstract.
+     *
+     * @since 6.4.1
+     *
+     * @package TEC\Events\Views\Modifiers
+     */
+    abstract class Visibility_Modifier_Abstract
+    {
+        /**
+         * @since 6.4.1
+         *
+         * @var array The options to be used for processing visibility operations.
+         */
+        protected array $options = [];
+        /**
+         * @since 6.4.1
+         *
+         * @param array $options The options to be used for processing visibility operations.
+         */
+        public function __construct(array $options)
+        {
+        }
+        /**
+         * Should validate and store the options to be used for processing visibility operations.
+         *
+         * @since 6.4.1
+         *
+         * @param array $options The options to be used for processing visibility operations.
+         */
+        public function set_options(array $options)
+        {
+        }
+        /**
+         * Get the list of valid options for visibility.
+         *
+         * @since 6.4.1
+         *
+         * @return array The visibility options.
+         */
+        public function get_options() : array
+        {
+        }
+        /**
+         * Get the default options.
+         *
+         * @since 6.4.1
+         *
+         * @return array The default options.
+         */
+        public abstract function get_defaults() : array;
+        /**
+         * Check if the visibility modifier's linked data (i.e. phone number) is visible on a certain page.
+         * This method should be implemented by the extending class.
+         *
+         * @since 6.4.1
+         *
+         * @param string                  $area The area for this visibility modifier.
+         * @param null|int|string|WP_Post $post The post to check for this visibility modifier.
+         *
+         * @return bool True if the linked data is visible on the given page, false otherwise.
+         */
+        public abstract function check_visibility(string $area, $post = null) : bool;
+        /**
+         * The key for this visibility implementation, mostly used for hook prefixing.
+         *
+         * @since 6.4.1
+         *
+         * @return string Get the slug for this visibility implementation.
+         */
+        public abstract function get_slug() : string;
+        /**
+         * Check if the visibility modifier's linked data (i.e. phone number) is visible on a certain page.
+         * Runs through filters to allow for more granular control.
+         *
+         * @since 6.4.1
+         *
+         * @param string                  $area The area for this visibility modifier.
+         * @param null|int|string|WP_Post $post The post to check for this visibility modifier.
+         *
+         * @return bool True if the linked data is visible on the given page, false otherwise.
+         */
+        public function is_visible(string $area, $post = null) : bool
+        {
+        }
+    }
+    /**
+     * Class Hide_End_Time_Modifier.
+     *
+     * This class is used to manage the visibility of end time for different views.
+     *
+     * @since 6.4.1
+     *
+     * @package TEC\Events\Views\Modifiers
+     */
+    class Hide_End_Time_Modifier extends \TEC\Events\Views\Modifiers\Visibility_Modifier_Abstract
+    {
+        /**
+         * @var Tribe__Context The context object.
+         */
+        protected $context;
+        /**
+         * Set the context object.
+         *
+         * @since 6.4.1
+         *
+         * @param Tribe__Context $context The context object.
+         */
+        public function set_context(\Tribe__Context $context)
+        {
+        }
+        /**
+         * Get the context object.
+         *
+         * @since 6.4.1
+         *
+         * @return Tribe__Context $context The context object.
+         */
+        public function get_context() : \Tribe__Context
+        {
+        }
+        /**
+         * Get the list of valid options for visibility.
+         *
+         * @since 6.4.1
+         *
+         * @return array The visibility options.
+         */
+        public function get_options() : array
+        {
+        }
+        /**
+         * Get the default options.
+         *
+         * @return array<string, bool> The default options.
+         */
+        public function get_defaults() : array
+        {
+        }
+        /**
+         * Check the visibility of the view for end time fields.
+         *
+         * @since 6.4.1
+         *
+         * @param string                  $area The view to check visibility for.
+         * @param null|int|string|WP_Post $post The post object to check visibility for.
+         *
+         * @return bool Whether the end time should be hidden or visible.
+         */
+        public final function check_visibility(string $area, $post = null) : bool
+        {
+        }
+        /**
+         * @inheritDoc
+         */
+        public function get_slug() : string
+        {
+        }
+    }
+}
 namespace {
     class Tribe__Events__API
     {
@@ -56016,14 +67730,6 @@ namespace Tribe\Events\Admin\Filter_Bar {
         {
         }
         /**
-         * Register Assets.
-         *
-         * @since 5.14.0
-         */
-        public function add_assets()
-        {
-        }
-        /**
          * Stores the instance of the template engine that we will use for rendering the elements.
          *
          * @since 5.14.0
@@ -56597,7 +68303,7 @@ namespace Tribe\Events\Admin {
         {
         }
         /**
-         * Filter The Events CAlendar Settings page title
+         * Filter The Events Calendar Settings page title
          *
          * @param string $title The title of the settings page.
          *
@@ -56607,7 +68313,19 @@ namespace Tribe\Events\Admin {
         {
         }
         /**
-         * Defines wether the current page is The Events Calendar Settings page.
+         * Replaces the source URL of the settings page logo.
+         *
+         * @since 6.7.0
+         *
+         * @param string $source_url The current source URL of the settings page logo.
+         *
+         * @return string The source URL of the settings page logo.
+         */
+        public function settings_page_logo_source($source_url) : string
+        {
+        }
+        /**
+         * Defines whether the current page is The Events Calendar Settings page.
          *
          * @since 5.15.0
          *
@@ -56712,6 +68430,16 @@ namespace Tribe\Events\Admin {
          * @param string $admin_page The slug of the admin page.
          */
         public function settings_ui($admin_page)
+        {
+        }
+        /**
+         * Register the default settings tab sidebar.
+         *
+         * @since 6.7.0
+         *
+         * @return void
+         */
+        public function register_default_sidebar()
         {
         }
         /**
@@ -56862,9 +68590,9 @@ namespace {
          * events then only the update tool will be exposed in this area, in all other cases this
          * is not exposed and the ordinary timezone settings will be visible.
          *
-         * @param array $display_settings
+         * @param array $display_settings The settings array for the Display->Date & Time sub-tab.
          *
-         * @return array
+         * @return array $display_settings The settings array with timezone settings added
          */
         public function settings_ui(array $display_settings)
         {
@@ -57962,6 +69690,7 @@ namespace {
         {
         }
     }
+    // phpcs:disable WordPress.DB.PreparedSQLPlaceholders.UnquotedComplexPlaceholder,WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.PreparedSQL.NotPrepared
     class Tribe__Events__Aggregator__Cron
     {
         /**
@@ -58164,7 +69893,7 @@ namespace {
     class Tribe__Events__Aggregator__Event
     {
         /**
-         * Slug used to mark Event Orgin on `_EventOrigin` meta
+         * Slug used to mark Event Origin on `_EventOrigin` meta
          *
          * @var string
          */
@@ -58607,7 +70336,7 @@ namespace {
          */
         protected $activities = [];
         /**
-         * @var int The maximum number of times and item should be requed due to unmet dependencies.
+         * @var int The maximum number of times and item should be requeued due to unmet dependencies.
          */
         protected $requeue_limit = 5;
         /**
@@ -58658,7 +70387,7 @@ namespace {
         {
         }
         /**
-         * Overrides the parent `save` method to save some additonal data.
+         * Overrides the parent `save` method to save some additional data.
          *
          * @since 4.6.16
          *
@@ -58668,7 +70397,7 @@ namespace {
         {
         }
         /**
-         * Overrides the parent `update` method to save some additonal data.
+         * Overrides the parent `update` method to save some additional data.
          *
          * @since 4.6.16
          *
@@ -60736,7 +72465,7 @@ namespace {
         {
         }
         /**
-         * Add Site URL for Eventbrite Requets
+         * Add Site URL for Eventbrite Requests
          *
          * @since 4.6.18
          *
@@ -62099,7 +73828,7 @@ namespace {
          */
         public static $auth_transient_meetup = 'tribe_aggregator_has_meetup_authorized_response';
         /**
-         * API varibles stored in a single Object
+         * API variables stored in a single Object
          *
          * @var array $api {
          *     @type string     $key         License key for the API (PUE)
@@ -62443,7 +74172,7 @@ namespace {
         }
         /**
          * A private method to prevent it to be created twice.
-         * It will add the methods and setup any dependecies
+         * It will add the methods and setup any dependencies
          *
          * Note: This should load on `plugins_loaded@P10`
          */
@@ -62646,7 +74375,7 @@ namespace {
         /**
          * Returns the default value for an origin regarding applicable event settings.
          *
-         * Event setttings are those settings related to an event presentation like Show Google Map, Hide from Listings and so on.
+         * Event settings are those settings related to an event presentation like Show Google Map, Hide from Listings and so on.
          *
          * @param string $origin The origin to look up the settings for.
          *
@@ -63122,7 +74851,7 @@ namespace {
         {
         }
         /**
-         * Parses the queue for errors and informations.
+         * Parses the queue for errors and information.
          *
          * @param Tribe__Events__Aggregator__Record__Queue_Interface|WP_Error|Tribe__Events__Aggregator__Record__Activity $queue
          *
@@ -63492,6 +75221,16 @@ namespace {
          * @return bool
          */
         public function is_settings_page()
+        {
+        }
+        /**
+         * Check if the override stylesheet exists.
+         *
+         * @since 6.6.0
+         *
+         * @return bool
+         */
+        public function override_style_exists() : bool
         {
         }
         /**
@@ -67014,25 +78753,73 @@ namespace {
         }
     }
     /**
+     * Class `Tribe__Events__Featured_Events__Permalinks_Helper`
+     *
+     * This class handles the modification of event permalinks to include a featured slug if necessary.
+     * It hooks into the permalink generation process for events to potentially add a featured slug.
+     *
      * @internal
      */
     class Tribe__Events__Featured_Events__Permalinks_Helper
     {
+        /**
+         * Hooks the `maybe_add_featured_slug` method into the `tribe_events_get_link` filter.
+         *
+         * @since 4.0.0
+         */
         public function hook()
         {
         }
+        /**
+         * Potentially adds a featured slug to the event permalink.
+         *
+         * This method checks if the event is marked as featured and, if so, appends the featured slug
+         * to the event URL. It does nothing if the event is explicitly set as non-featured or if the
+         * current query does not relate to featured events.
+         *
+         * @since 4.0.0
+         *
+         * @param string $url        The original event URL.
+         * @param string $type       The type of the link being generated.
+         * @param mixed  $secondary  Secondary data related to the link.
+         * @param mixed  $term       Term data related to the link.
+         * @param array  $url_args   Additional URL arguments.
+         * @param mixed  $featured   Indicates if the event is featured. Can be null, true, or false.
+         *
+         * @return string The modified or original URL.
+         */
         public function maybe_add_featured_slug($url, $type, $secondary, $term, $url_args, $featured)
         {
         }
     }
     /**
+     * Class `Tribe__Events__Featured_Events__Query_Helper`
+     *
+     * This class handles the modification of event queries to include only featured events if specified.
+     * It hooks into the `pre_get_posts` action to adjust the query parameters accordingly.
+     *
      * @internal
      */
     class Tribe__Events__Featured_Events__Query_Helper
     {
+        /**
+         * Hooks the pre_get_posts method into the tribe_events_pre_get_posts action.
+         *
+         * @since 4.0.0
+         */
         public function hook()
         {
         }
+        /**
+         * Modifies the query to include only featured events.
+         *
+         * This method checks if the query is for featured events and, if so, adds a meta query
+         * to filter events that are marked as featured.
+         *
+         * @since 4.0.0
+         *
+         * @param WP_Query $query The WP_Query instance (passed by reference).
+         */
         public function pre_get_posts($query)
         {
         }
@@ -67175,7 +78962,7 @@ namespace {
         }
         /**
          * Compare a value with the value used on the virtual page ID and converts the var $compare to an integer
-         * to make sure the strict comparision is done correctly between two integers.
+         * to make sure the strict comparison is done correctly between two integers.
          *
          * @since 4.6.15
          *
@@ -67201,7 +78988,7 @@ namespace {
          *
          * @since 6.0.6
          *
-         * @param mixed|null $input The first iput of the method, when used as a filter.
+         * @param mixed|null $input The first input of the method, when used as a filter.
          *
          * @return mixed|null The first input of the method, when used as a filter, unmodified.
          */
@@ -67874,12 +79661,39 @@ namespace {
         public function __construct($import_type)
         {
         }
+        /**
+         * Set the default values for the import.
+         *
+         * @since 3.2.0
+         *
+         * @param array $defaults Array of the default values.
+         *
+         * @return void
+         */
         public function set_defaults($defaults)
         {
         }
+        /**
+         * Render a select dropdown at the top of a column for column mapping.
+         *
+         * @since 3.10.0
+         *
+         * @param int $index The index of the column. Starts with 0.
+         *
+         * @return string The HTML markup of the select box.
+         */
         public function make_select_box($index)
         {
         }
+        /**
+         * Get the label of a column.
+         *
+         * @since 3.2.0
+         *
+         * @param string $key The array key of the column for which we need the label.
+         *
+         * @return mixed|string The label of the column, or an empty string if column is not found.
+         */
         public function get_column_label($key)
         {
         }
@@ -68453,7 +80267,7 @@ namespace Tribe\Events\Integrations\Fusion {
         {
         }
         /**
-         * Builds and hooks the class that will handle shortcode support in the context of Fusipn Core.
+         * Builds and hooks the class that will handle shortcode support in the context of Fusion Core.
          *
          * @since 5.5.0
          *
@@ -68727,7 +80541,7 @@ namespace {
          * into account in our rewrite rules and try to show a localized version of the `category` slug
          * in the permalinks.
          *
-         * @param string $slug The original, possibily translated, category slug.
+         * @param string $slug The original, possibly translated, category slug.
          *
          * @return string The category slug in its ENG form if the Events Category translation is not active
          *                or in a translation that The Events Calendar supports.
@@ -68843,7 +80657,7 @@ namespace {
          * While the default view of the calendar will will be served on `/events` non default calendar
          * views like `list` or `photo` will be served, respectively, at `/events/list`, `/events/photo`
          * and so on.
-         * For any view that's not the default one the `url` field in the language informtion array has to
+         * For any view that's not the default one the `url` field in the language information array has to
          * be set to the correct one.
          *
          * @param array $languages The original languages information array.
@@ -69800,19 +81614,19 @@ namespace {
     class Tribe__Events__Linked_Posts
     {
         /**
-         * @var string Meta key prefix for linked posts
+         * @var string Meta key prefix for linked posts.
          */
         const META_KEY_PREFIX = '_tribe_linked_post_';
         /**
-         * @var Tribe__Events__Linked_Posts Singleton instance of the class
+         * @var Tribe__Events__Linked_Posts Singleton instance of the class.
          */
         public static $instance;
         /**
-         * @var Tribe__Events__Main Singleton
+         * @var Tribe__Events__Main Singleton.
          */
         public $main;
         /**
-         * @var array Collection of post types that can be linked with events
+         * @var array Collection of post types that can be linked with events.
          */
         public $linked_post_types;
         /**
@@ -69820,7 +81634,7 @@ namespace {
          */
         protected $cache;
         /**
-         * Returns a singleton of this class
+         * Returns a singleton of this class.
          *
          * @return Tribe__Events__Linked_Posts
          */
@@ -69839,13 +81653,13 @@ namespace {
         {
         }
         /**
-         * Generates post_type => container key value pairs of linked post types for use on the front end
+         * Generates post_type => container key value pairs of linked post types for use on the front end.
          */
         public function get_post_type_container_data()
         {
         }
         /**
-         * Registers the default linked post types for events
+         * Registers the default linked post types for events.
          *
          * @since 4.2
          */
@@ -69853,7 +81667,7 @@ namespace {
         {
         }
         /**
-         * Registers a post type as a linked post type for events
+         * Registers a post type as a linked post type for events.
          *
          * Notable arguments that can be passed/filtered while registering linked post types:
          * - labels['name']
@@ -69863,8 +81677,8 @@ namespace {
          *
          * @since 4.2
          *
-         * @param string $post_type Post type slug
-         * @param array $args Arguments for the linked post type - note: gets merged with get_post_type_object data
+         * @param string $post_type Post type slug.
+         * @param array  $args      Arguments for the linked post type - note: gets merged with get_post_type_object data.
          *
          * @return boolean
          */
@@ -69876,7 +81690,7 @@ namespace {
          *
          * @since 4.2
          *
-         * @param string $post_type Post Type
+         * @param string $post_type Post type slug.
          *
          * @return string
          */
@@ -69903,7 +81717,7 @@ namespace {
          *
          * @since 4.2
          *
-         * @param string $linked_post_type Linked post type
+         * @param string $linked_post_type Linked post type slug.
          *
          * @return string
          */
@@ -69911,7 +81725,7 @@ namespace {
         {
         }
         /**
-         * Returns the post type's ID field name
+         * Returns the post type's ID field name.
          *
          * @since 4.2
          *
@@ -70151,11 +81965,11 @@ namespace {
          *
          * @since 6.2.0
          *
-         * @param int    $event_id Event ID.
+         * @param int    $event_id         Event ID.
          * @param string $linked_post_type The post type of the linked post.
-         * @param array  $original_order The original IDs/order stored in meta.
+         * @param array  $original_order   The original IDs/order stored in meta.
          *
-         * @return array
+         * @return array The new order of blocks if modified.
          */
         public function maybe_get_new_order_from_blocks(int $event_id, string $linked_post_type, array $original_order = [])
         {
@@ -70505,19 +82319,19 @@ namespace {
         const POSTTYPE = 'tribe_events';
         const VENUE_POST_TYPE = 'tribe_venue';
         const ORGANIZER_POST_TYPE = 'tribe_organizer';
-        const VERSION = '6.3.4';
+        const VERSION = '6.7.0';
         /**
-         * Min Pro Addon
+         * Min Pro Addon.
          *
          * @deprecated 4.8
          */
-        const MIN_ADDON_VERSION = '6.2.9-dev';
+        const MIN_ADDON_VERSION = '6.7.0';
         /**
-         * Min Common
+         * Min Common.
          *
          * @deprecated 4.8
          */
-        const MIN_COMMON_VERSION = '5.1.15.1-dev';
+        const MIN_COMMON_VERSION = '5.2.7-dev';
         const WP_PLUGIN_URL = 'https://wordpress.org/extend/plugins/the-events-calendar/';
         /**
          * Min Version of WordPress
@@ -70536,7 +82350,7 @@ namespace {
          *
          * @since 4.8
          */
-        protected $min_et_version = '5.8.0-dev';
+        protected $min_et_version = '5.10.0-dev';
         /**
          * Args for the event post type
          *
@@ -71942,7 +83756,6 @@ namespace {
         /**
          * Specify the "preview venue" to link to an event.
          *
-         *
          * @since 4.5.1
          *
          * @param int $event_id The ID of the event being previewed.
@@ -71952,7 +83765,6 @@ namespace {
         }
         /**
          * Specify the "preview organizer" to link to an event.
-         *
          *
          * @since 4.5.1
          *
@@ -72235,7 +84047,7 @@ namespace Tribe\Events\Models\Post_Types {
         {
         }
         /**
-         * Overrides the base method to conver the I18n Dates to PHP built-in Date types.
+         * Overrides the base method to convert the I18n Dates to PHP built-in Date types.
          *
          * @since 6.0.3.1
          *
@@ -72641,7 +84453,7 @@ namespace {
          *
          * @var string[][]
          */
-        protected $dependencies = ['addon-dependencies' => ['Tribe__Events__Pro__Main' => '6.3.0-dev', 'Tribe__Events__Filterbar__View' => '5.5.0-dev', 'Tribe__Events__Community__Main' => '4.10.10-dev', 'Tribe__Events__Community__Tickets__Main' => '4.9.3-dev', 'Tribe__Tickets__Main' => '5.8.1-dev', 'Tribe__Tickets_Plus__Main' => '5.9.0-dev', 'Tribe__Events__Tickets__Eventbrite__Main' => '4.6.14-dev', 'Tribe\\Events\\Virtual' => '1.15.5-dev', 'TEC\\Event_Automator' => '1.3.1-dev']];
+        protected $dependencies = ['addon-dependencies' => ['Tribe__Events__Pro__Main' => '7.1.0-dev', 'Tribe__Events__Filterbar__View' => '5.5.7-dev', 'Tribe__Events__Community__Main' => '5.0.4-dev', 'Tribe__Tickets__Main' => '5.10.0-dev', 'Tribe__Tickets_Plus__Main' => '5.9.0-dev', 'Tribe__Events__Tickets__Eventbrite__Main' => '4.6.14-dev', 'Tribe__Events__Community__Tickets__Main' => '4.9.3-dev', 'Tribe\\Events\\Virtual' => '1.15.5-dev', 'TEC\\Event_Automator' => '1.3.1-dev']];
         public function __construct()
         {
         }
@@ -72842,7 +84654,7 @@ namespace {
          * @param string $context               Context of data.
          *
          * @return array|WP_Error Either an the array representation of an orgnanizer, an
-         *                        arrya of array representations of an event organizer or
+         *                        array of array representations of an event organizer or
          *                        an error object.
          *
          * @since 4.6 Added $context param
@@ -72885,7 +84697,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -72903,7 +84715,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -72921,7 +84733,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -73083,7 +84895,7 @@ namespace {
         {
         }
         /**
-         * Converts REST format type argument to the correspondant Swagger.io definition.
+         * Converts REST format type argument to the correspondent Swagger.io definition.
          *
          * @since 4.6
          *
@@ -73263,7 +85075,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @since 4.6
@@ -73424,7 +85236,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -73491,7 +85303,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -73598,7 +85410,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @since 4.6
@@ -73672,7 +85484,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -74001,7 +85813,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @since 4.6
@@ -74096,7 +85908,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -74304,7 +86116,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link  http://swagger.io/
@@ -74498,7 +86310,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @since 4.6
@@ -74583,7 +86395,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link  http://swagger.io/
@@ -74798,7 +86610,7 @@ namespace {
          *
          * While the structure must conform to that used by v2.0 of Swagger the structure can be that of a full document
          * or that of a document part.
-         * The intelligence lies in the "gatherer" of informations rather than in the single "providers" implementing this
+         * The intelligence lies in the "gatherer" of information rather than in the single "providers" implementing this
          * interface.
          *
          * @link http://swagger.io/
@@ -74902,7 +86714,7 @@ namespace {
         }
         /**
          * Returns the header the REST API will print on the page head to report its origin
-         * url. Normaly the home_url()
+         * url. Normally the home_url()
          *
          * @return string
          */
@@ -75019,7 +86831,7 @@ namespace {
          *
          * @return string
          */
-        protected function get_events_route_namespace()
+        public function get_events_route_namespace()
         {
         }
         /**
@@ -75291,7 +87103,7 @@ namespace {
          * @param string $context               Context of data.
          *
          * @return array|WP_Error Either an the array representation of an orgnanizer, an
-         *                        arrya of array representations of an event organizer or
+         *                        array of array representations of an event organizer or
          *                        an error object.
          *
          * @since 4.6 Added $context param
@@ -75763,6 +87575,22 @@ namespace {
          * @return bool
          */
         public function is_linked_post_id_or_entry_or_empty($type, $linked_post)
+        {
+        }
+        /**
+         * Checks if the user can access password-protected content.
+         *
+         * This method determines whether we need to override the regular password
+         * check in core with a filter.
+         *
+         * @since 6.5.0.1
+         *
+         * @param WP_Post         $post    Post to check against.
+         * @param WP_REST_Request $request Request data to check.
+         *
+         * @return bool True if the user can access password-protected content, otherwise false.
+         */
+        public function can_access_password_content(\WP_Post $post, \WP_REST_Request $request) : bool
         {
         }
     }
@@ -76364,7 +88192,7 @@ namespace {
          *
          * @since 4.9
          *
-         * @param bool $use_utc Whether ot use the UTC dates and times to read events or not. If `true` then the
+         * @param bool $use_utc Whether to use the UTC dates and times to read events or not. If `true` then the
          *                      `_EventStartDateUTC` and `_EventEndDateUTC` meta keys will be used, if `false` then the
          *                      `_EventStartDate` and `_EventEndDate` meta keys will be used.
          *
@@ -77420,7 +89248,6 @@ namespace {
      * This file contains the hook logic required to create an effective embed view
      *
      * @package TribeEventsCalendar
-     *
      */
     /**
      * Single event template class
@@ -77633,177 +89460,6 @@ namespace {
         {
         }
     }
-    /**
-     * Run schema updates on plugin activation or updates
-     */
-    class Tribe__Events__Updater
-    {
-        protected $version_option = 'schema-version';
-        protected $reset_version = '5.16.0';
-        // when a reset() is called, go to this version
-        protected $current_version = 0;
-        public $capabilities;
-        public function __construct($current_version)
-        {
-        }
-        /**
-         * We've had problems with the notoptions and
-         * alloptions caches getting out of sync with the DB,
-         * forcing an eternal update cycle
-         *
-         */
-        protected function clear_option_caches()
-        {
-        }
-        public function do_updates()
-        {
-        }
-        public function update_version_option($new_version)
-        {
-        }
-        /**
-         * Returns an array of callbacks with version strings as keys.
-         * Any key higher than the version recorded in the DB
-         * and lower than $this->current_version will have its
-         * callback called.
-         *
-         * This method has been deprecated in favor of a more testable public function
-         *
-         * @return array
-         * @deprecated 4.0
-         */
-        protected function get_updates()
-        {
-        }
-        /**
-         * Getter for the private reset version.
-         * Mainly for tests.
-         *
-         * @since 6.0.1
-         *
-         * @return string The reset version number.
-         */
-        public function get_reset_version() : string
-        {
-        }
-        /**
-         * Returns an array of callbacks with version strings as keys.
-         * Any key higher than the version recorded in the DB
-         * and lower than $this->current_version will have its
-         * callback called.
-         *
-         * @return array
-         */
-        public function get_update_callbacks()
-        {
-        }
-        /**
-         * Returns an array of callbacks that should be called
-         * every time the version is updated
-         *
-         * @return array
-         */
-        public function get_constant_update_callbacks()
-        {
-        }
-        public function get_version_from_db()
-        {
-        }
-        /**
-         * Returns true if the version in the DB is less than the provided version
-         *
-         * @return boolean
-         */
-        public function is_version_in_db_less_than($version)
-        {
-        }
-        /**
-         * Returns true if this is a new install
-         *
-         * @return boolean
-         */
-        public function is_new_install()
-        {
-        }
-        /**
-         * Returns true if an update is required
-         *
-         * @return boolean
-         */
-        public function update_required()
-        {
-        }
-        public function migrate_from_sp_events()
-        {
-        }
-        public function migrate_from_sp_options()
-        {
-        }
-        public function flush_rewrites()
-        {
-        }
-        /**
-         * Set the Capabilities for Events and Related Post Types.
-         *
-         * @since 5.1.1 - change method of calling set_capabilities.
-         */
-        public function set_capabilities()
-        {
-        }
-        /**
-         * Reset the $current_user global after capabilities have been changed
-         *
-         */
-        public function reload_current_user()
-        {
-        }
-        /**
-         * Reset update flags. All updates past $this->reset_version will
-         * run again on the next page load
-         *
-         */
-        public function reset()
-        {
-        }
-        /**
-         * Make sure the tribeEnableViews option is always set
-         *
-         */
-        public function set_enabled_views()
-        {
-        }
-        /**
-         * Bump the :30 min EOD cutoff option to the next full hour
-         *
-         */
-        public function remove_30_min_eod_cutoffs()
-        {
-        }
-        /**
-         * Migrate the previous import mapping to the new naming and cleanup
-         * the old.
-         */
-        public function migrate_import_option()
-        {
-        }
-        /**
-         * Update WordPress Custom Field Setting moved from Pro
-         * only update setting if show|hide
-         *
-         * @since 4.6.23
-         */
-        public function migrate_wordpress_custom_field_option()
-        {
-        }
-        /**
-         * Update Event Status reason field from extension to a central field for both.
-         *
-         * @since 5.11.0
-         */
-        public function migrate_event_status_reason_field()
-        {
-        }
-    }
     class Tribe__Events__Utils__Id_Generator
     {
         protected static $count = [];
@@ -77833,11 +89489,28 @@ namespace {
         {
         }
     }
+    /**
+     * The Events Calendar Venue class
+     *
+     * @package Tribe\Events
+     * @since 4.2
+     *
+     */
+    /**
+     * Class Tribe__Events__Venue
+     */
     class Tribe__Events__Venue extends \Tribe__Events__Linked_Posts__Base
     {
+        // phpcs:ignore
+        /**
+         * The post type for venues
+         *
+         * @var string
+         */
         const POSTTYPE = 'tribe_venue';
         /**
          * Args for venue post type
+         *
          * @var array
          */
         public $post_type_args = ['public' => \false, 'rewrite' => ['slug' => 'venue', 'with_front' => \false], 'show_ui' => \true, 'show_in_menu' => \false, 'supports' => ['title', 'editor'], 'capability_type' => ['tribe_venue', 'tribe_venues'], 'map_meta_cap' => \true, 'exclude_from_search' => \true];
@@ -77854,9 +89527,14 @@ namespace {
          */
         public static $valid_venue_keys = ['Venue', 'Address', 'City', 'Province', 'State', 'StateProvince', 'Province', 'Zip', 'Phone'];
         /**
+         *
          * @var array A list of the valid meta keys for this linked post.
          */
         public static $meta_keys = ['Address', 'City', 'Province', 'State', 'StateProvince', 'Province', 'Zip', 'Phone'];
+        /**
+         *
+         * @var array A list of all the valid Venue tags.
+         */
         public $venueTags = ['_VenueCountry', '_VenueAddress', '_VenueCity', '_VenueStateProvince', '_VenueState', '_VenueProvince', '_VenueZip', '_VenuePhone', '_VenueURL', '_VenueShowMap', '_VenueShowMapLink'];
         /**
          * @var string
@@ -77913,6 +89591,7 @@ namespace {
         }
         /**
          * Allow users to specify their own singular label for Venues
+         *
          * @return string
          */
         public function get_venue_label_singular()
@@ -77928,6 +89607,7 @@ namespace {
         }
         /**
          * Allow users to specify their own lowercase singular label for Venues
+         *
          * @return string
          */
         public function get_venue_label_singular_lowercase()
@@ -78015,7 +89695,6 @@ namespace {
          *
          * @param int   $venue_id The venue ID.
          * @param array $data     The venue data.
-         *
          */
         public function save_meta($venue_id, $data)
         {
@@ -78060,7 +89739,6 @@ namespace {
          * @param int  $venue_id     The venue ID to delete.
          * @param bool $force_delete Whether or not to bypass the trash when deleting the venue (see wp_delete_post's
          *                           $force_delete param)
-         *
          */
         public function delete($venue_id, $force_delete = \false)
         {
@@ -78197,6 +89875,14 @@ namespace Tribe\Events\Views\V2 {
          * @var bool
          */
         protected $should_enqueue_frontend;
+        /**
+         * Caches the result of the `should_enqueue_full_styles` check.
+         *
+         * @todo: Elementor? IS this needed?
+         *
+         * @var bool
+         */
+        protected $should_enqueue;
         /**
          * Applies a filter to allow users that are experiencing issues w/ the Views v2 datepicker to load
          * it in no-conflict mode.
@@ -78906,14 +90592,101 @@ namespace Tribe\Events\Views\V2\Customizer {
 }
 namespace Tribe\Events\Views\V2 {
     /**
+     * Class Hide_End_Time_Provider
+     *
+     * @since 6.6.3
+     *
+     * @package Tribe\Events\Views\V2
+     */
+    class Hide_End_Time_Provider extends \TEC\Common\Contracts\Service_Provider
+    {
+        /**
+         * @var Hide_End_Time_Modifier The modifier to hide the end time.
+         */
+        protected \TEC\Events\Views\Modifiers\Hide_End_Time_Modifier $end_time_modifier;
+        /**
+         * Binds and sets up implementations.
+         *
+         * @since 6.6.3
+         */
+        public function register()
+        {
+        }
+        /**
+         * Remove our initialization hooks.
+         */
+        public function remove_init_actions()
+        {
+        }
+        /**
+         * Hook for the hide end time setting to flag the view accordingly.
+         */
+        public function hide_event_end_time() : void
+        {
+        }
+        /**
+         * Hook callback for the month calendar-event/date template, where we add the hide end time flag.
+         *
+         * @since 6.6.3
+         *
+         * @param string          $html Current template HTML.
+         * @param string          $file File path.
+         * @param string          $name Template name.
+         * @param Tribe__Template $template The month template.
+         */
+        public function handle_template_hide_end_time($html, $file, $name, $template)
+        {
+        }
+        /**
+         * Handles the visibility of the end time.
+         *
+         * @since 6.4.1
+         *
+         * @param array<string, boolean> $settings The settings.
+         *
+         * @return array
+         */
+        public function handle_end_time_visibility($settings = [])
+        {
+        }
+        /**
+         * Sets the context for the hide end time modifier.
+         *
+         * @since 6.4.1
+         *
+         * @param View $view The view.
+         */
+        public function set_context_for_views_v2_setup_loop($view)
+        {
+        }
+        /**
+         * Sets the context for the views v2 end time view modifier.
+         *
+         * @since 6.4.1
+         *
+         * @param string $html      The HTML to be filtered.
+         * @param string $view_slug The view slug.
+         * @param array  $query     The query.
+         * @param array  $context   The context.
+         */
+        public function set_context_for_views_v2_endtime($html, $view_slug, $query, $context)
+        {
+        }
+    }
+    /**
      * Class Hooks
      *
      * @since 4.9.2
+     * @since 6.6.3 Moved Hide End Time feature into Hide_End_Time_Provider provider.
      *
      * @package Tribe\Events\Views\V2
      */
     class Hooks extends \TEC\Common\Contracts\Service_Provider
     {
+        /**
+         * @var Hide_End_Time_Modifier The modifier to hide the end time.
+         */
+        protected \TEC\Events\Views\Modifiers\Hide_End_Time_Modifier $end_time_modifier;
         /**
          * Binds and sets up implementations.
          *
@@ -78947,6 +90720,17 @@ namespace Tribe\Events\Views\V2 {
         {
         }
         /**
+         * This retrieves the posts to be used on the rendered page, and stores them for use in title generation.
+         *
+         * @since 6.3.6
+         *
+         * @param WP_Post[] $events The list of tribe events for this page.
+         * @param View      $view   The current view being rendered.
+         */
+        public function action_set_title_events($events, $view)
+        {
+        }
+        /**
          * Includes includes edge cases for filtering when we need to manually overwrite theme's read
          * more link when excerpt is cut programmatically.
          *
@@ -78956,7 +90740,7 @@ namespace Tribe\Events\Views\V2 {
          *
          * @return void
          */
-        public function action_include_filters_excerpt()
+        public function action_include_filters_excerpt() : void
         {
         }
         /**
@@ -81756,7 +93540,7 @@ namespace Tribe\Events\Views\V2 {
          * Adds the URL encoded version of the slugs to the rewrite rules to ensure rewrites will keep working
          * in localized installations.
          *
-         * This method wil "fill-in" wrongly formatted or encoded bases too and order bases so that the `Tribe__Rewrite`
+         * This method will "fill-in" wrongly formatted or encoded bases too and order bases so that the `Tribe__Rewrite`
          * URL resolving methods will, preferably, resolve to the "pretty" (non URL-encoded) and human readable version.
          *
          * @since 5.0.0
@@ -82267,27 +94051,27 @@ namespace Tribe\Events\Views\V2\Template\Settings {
          */
         public static $key_after_events_html = 'tribeEventsAfterHTML';
         /**
-         * Fetches from the tribe options setting the string for the before events,
-         * applies all the required methods for proper usage and returns it.
+         * Fetches the "HTML before event content" from the calendar settings, which can be found under
+         * Events > Settings > Display tab. Applies all the required methods for proper usage and returns it.
          *
          * @since  4.9.11
          *
          * @param  View_Interface|null $view Instance of the view we are getting this for.
          *
-         * @return string HTML with all the methods have been applied to it.
+         * @return string HTML after all the methods have been applied to it.
          */
         public function get_before_events_html($view = null)
         {
         }
         /**
-         * Fetches from the tribe options setting the string for after the events,
-         * applies all the required methods for proper usage and returns it.
+         * Fetches the "HTML after event content" from the calendar settings, which can be found under
+         * Events > Settings > Display tab. Applies all the required methods for proper usage and returns it.
          *
          * @since  4.9.11
          *
          * @param  View_Interface|null $view Instance of the view we are getting this for.
          *
-         * @return string HTML with all the methods have been applied to it.
+         * @return string HTML after all the methods have been applied to it.
          */
         public function get_after_events_html($view = null)
         {
@@ -82410,7 +94194,7 @@ namespace Tribe\Events\Views\V2\Template {
          *
          * @since 4.9.10
          *
-         * @param Context|null $context The context to use, `null` values will unset it causing the object ot use the
+         * @param Context|null $context The context to use, `null` values will unset it causing the object to use the
          *                              global context.
          *
          * @return $this For chaining.
@@ -82437,10 +94221,11 @@ namespace Tribe\Events\Views\V2\Template {
          * Returns the post the title should use to build some title fragments.
          *
          * @since 4.9.10
+         * @since 6.3.6 Scope changed to public to make it more testable.
          *
          * @return array An array of injected posts, or the globally found posts.
          */
-        protected function get_posts()
+        public function get_posts()
         {
         }
         /**
@@ -82474,7 +94259,7 @@ namespace Tribe\Events\Views\V2\Template {
          * @since 5.12.3 Added params, refined logic around category archive titles.
          *
          * @param string      $title     The input title.
-         * @param  \WP_Term   $cat       The category term to use to build the title.
+         * @param  \WP_Term    $cat       The category term to use to build the title.
          * @param boolean     $depth     Whether to display the taxonomy hierarchy as part of the title.
          * @param null|string $separator The separator sequence to separate the title components.
          *
@@ -82561,6 +94346,16 @@ namespace Tribe\Events\Views\V2 {
          * @return bool Whether the current request is for the single event template or not.
          */
         public function is_single_event()
+        {
+        }
+        /**
+         * Sets the current view context to `single-event` for the legacy view system.
+         *
+         * @since 6.4.1
+         *
+         * @return string
+         */
+        public function context_view_as_single_event()
         {
         }
         /**
@@ -83235,7 +95030,7 @@ namespace Tribe\Events\Views\V2\Utils {
         {
         }
         /**
-         * Assigns a stack postion to each event w/o one not recycling space.
+         * Assigns a stack position to each event w/o one not recycling space.
          *
          * @since 4.9.9
          *
@@ -83561,11 +95356,11 @@ namespace Tribe\Events\Views\V2\Views\Traits {
     trait Breakpoint_Behavior
     {
         /**
-         * Default breakpoints used by TEC views.
+         * Associative array of default breakpoints used by TEC views keyed by breakpoints.
          *
          * @since 5.0.0
          *
-         * @var array
+         * @var array<string, int>
          */
         protected $default_breakpoints = ['xsmall' => 500, 'medium' => 768, 'full' => 960];
         /**
@@ -83573,9 +95368,9 @@ namespace Tribe\Events\Views\V2\Views\Traits {
          *
          * @since 5.0.0
          *
-         * @param string $name Which index we getting the breakpoint for.
+         * @param string $name Which index we are getting the breakpoint for.
          *
-         * @return int   Returns the breakpoint with that given name or 0 when not available.
+         * @return int The breakpoint with that given name or 0 when not available.
          */
         public function get_breakpoint($name)
         {
@@ -83585,17 +95380,17 @@ namespace Tribe\Events\Views\V2\Views\Traits {
          *
          * @since 5.0.0.2
          *
-         * @return int   Returns the breakpoint with that given name or 0 when not available.
+         * @return string Breakpoint pointer as a random UUID (version 4).
          */
         public function get_breakpoint_pointer()
         {
         }
         /**
-         * Returns all of the available breakpoints.
+         * Returns all the available breakpoints.
          *
          * @since 5.0.0
          *
-         * @return array Indexed array of all available breakpoints.
+         * @return array<string, int> Associative array of all breakpoints available keyed by breakpoint name.
          */
         public function get_breakpoints()
         {
@@ -84679,7 +96474,9 @@ namespace Tribe\Events\Views\V2 {
          *
          * @since 4.9.11
          *
-         * @return array
+         * @param bool $display Whether the view should display the events bar or not.
+         *
+         * @return bool
          */
         protected function filter_display_events_bar($display)
         {
@@ -85272,7 +97069,7 @@ namespace Tribe\Events\Views\V2\Views {
         }
         /**
          * Overrides the base View implementation to remove pagination from the URL.
-         * 
+         *
          * {@inheritdoc}
          */
         public function url_for_query_args($date = null, $query_args = [])
@@ -87104,10 +98901,18 @@ namespace Tribe\Events\Views\V2\iCalendar\Links {
     {
         /**
          * {@inheritDoc}
+         *
+         * @since 5.12.0
+         *
+         * @var string
          */
         public static $slug = 'gcal';
         /**
          * {@inheritDoc}
+         *
+         * @since 5.12.0
+         *
+         * @var string
          */
         public $block_slug = 'hasGoogleCalendar';
         /**
@@ -87118,6 +98923,10 @@ namespace Tribe\Events\Views\V2\iCalendar\Links {
         }
         /**
          * {@inheritDoc}
+         *
+         * @since 5.12.0
+         *
+         * @param View|null $view The view object.
          */
         public function get_uri(\Tribe\Events\Views\V2\View $view = null)
         {
@@ -87125,15 +98934,15 @@ namespace Tribe\Events\Views\V2\iCalendar\Links {
         /**
          * Generate a link that will import a single event into Google Calendar.
          *
-         *	Required link items:
-         *	action=TEMPLATE
-         *	text=[the title of the event]
-         *	dates= in YYYYMMDDHHMMSS format. start datetime / end datetime
+         * Required link items:
+         *     action=TEMPLATE
+         *     text=[the title of the event]
+         *     dates= in YYYYMMDDHHMMSS format. start datetime / end datetime
          *
-         *	Optional link items:
-         *	ctz=[time zone]
-         *	details=[event details]
-         *	location=[event location]
+         * Optional link items:
+         *     ctz=[time zone]
+         *     details=[event details]
+         *     location=[event location]
          *
          * URL format: https://www.google.com/calendar/render?action=TEMPLATE&text=Title&dates=20190227/20190228
          *
@@ -87152,8 +98961,8 @@ namespace Tribe\Events\Views\V2\iCalendar\Links {
          * @since 5.14.0
          *
          * @param string      $event_details The event description.
-         * @param WP_Post|int $post_id The event post or ID.
-         * @param int         $length The max length for the description before adding a "read more" link.
+         * @param WP_Post|int $post          The event post or ID.
+         * @param int         $length        The max length for the description before adding a "read more" link.
          *
          * @return string The possibly modified event description.
          */
@@ -87168,7 +98977,7 @@ namespace Tribe\Events\Views\V2\iCalendar\Links {
          * @todo This should really live in Tribe__Events__Venue, so move it there at some point
          * @see Tribe__Events__Main->fullAddressString()
          *
-         * @param int|WP_Post|null The post object or post id.
+         * @param int|WP_Post|null $event The post object or post id.
          *
          * @return string The event venue's address. Empty string if the event or venue isn't found.
          */
@@ -87207,10 +99016,11 @@ namespace Tribe\Events\Views\V2\iCalendar\Traits {
          * Generate the parameters for the Outlook export buttons.
          *
          * @since 5.16.0
+         * @since 6.3.6 Adding timezone to the start and end dates generated.
          *
          * @param string $calendar Whether it's Outlook live or Outlook 365.
          *
-         * @return string Part of the URL containing the event information.
+         * @return array<string,string> Params for the URL containing the event information.
          */
         protected function generate_outlook_add_url_parameters($calendar = 'live')
         {
@@ -88670,7 +100480,7 @@ namespace {
         }
     }
     // autoload_real.php @generated by Composer
-    class ComposerAutoloaderInit50298795addec7e328ecc086aec86c51
+    class ComposerAutoloaderInitaf65b88dc513654448dc0c9e151257f0
     {
         public static function loadClassLoader($class)
         {
@@ -88684,11 +100494,11 @@ namespace {
     }
 }
 namespace Composer\Autoload {
-    class ComposerStaticInit50298795addec7e328ecc086aec86c51
+    class ComposerStaticInitaf65b88dc513654448dc0c9e151257f0
     {
         public static $prefixLengthsPsr4 = array('T' => array('Tribe\\Events\\' => 13, 'TEC\\Events\\' => 11));
         public static $prefixDirsPsr4 = array('Tribe\\Events\\' => array(0 => __DIR__ . '/../..' . '/src/Tribe'), 'TEC\\Events\\' => array(0 => __DIR__ . '/../..' . '/src/Events'));
-        public static $classMap = array('Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php', 'TEC\\Events\\Block_Templates\\Archive_Events\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Archive_Events/Archive_Block_Template.php', 'TEC\\Events\\Block_Templates\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Block_Template_Contract.php', 'TEC\\Events\\Block_Templates\\Controller' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Controller.php', 'TEC\\Events\\Block_Templates\\Single_Event\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Single_Event/Single_Block_Template.php', 'TEC\\Events\\Blocks\\Archive_Events\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Archive_Events/Block.php', 'TEC\\Events\\Blocks\\Controller' => __DIR__ . '/../..' . '/src/Events/Blocks/Controller.php', 'TEC\\Events\\Blocks\\Single_Event\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Single_Event/Block.php', 'TEC\\Events\\Configuration\\Provider' => __DIR__ . '/../..' . '/src/Events/Configuration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Activation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Activation.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Event_Cleaner' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Event_Cleaner.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Occurrences_Generator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Occurrences_Generator.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Feedback_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Feedback_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Google_Form_Feedback' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Google_Form_Feedback.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Full_Activation_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Full_Activation_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Health_Check' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Health_Check.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Phase_View_Renderer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Phase_View_Renderer.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Progress_Modal' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Progress_Modal.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Template' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Template.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Upgrade_Tab' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Upgrade_Tab.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Ajax' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Ajax.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Asset_Loader' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Asset_Loader.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\Download_Report_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/Download_Report_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\File_Download' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/File_Download.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Expected_Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Expected_Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Maintenance_Mode' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Maintenance_Mode.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process_Worker' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process_Worker.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report_Categories' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report_Categories.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Site_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Site_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\State' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/State.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Null_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Null_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Single_Event_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Single_Event_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Strategy_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Strategy_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Boolean_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Boolean_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\End_Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/End_Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Integer_Key_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Integer_Key_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Numeric_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Numeric_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Text_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Text_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Timezone_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Timezone_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model_Date_Attributes' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model_Date_Attributes.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Occurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Occurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Post_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Post_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Ignore_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Ignore_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Integer_Key' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Integer_Key.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Occurrence_Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Occurrence_Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Positive_Integer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Positive_Integer.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Present' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Present.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Range_Dates' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Range_Dates.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\String_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/String_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Timezone' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Timezone.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\ValidatorInterface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/ValidatorInterface.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Whole_Number' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Whole_Number.php', 'TEC\\Events\\Custom_Tables\\V1\\Notices' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Notices.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider_Contract' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider_Contract.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Field' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Field.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Table' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Table.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Schema_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Schema_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Field_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Field_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Provider_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Provider_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Table_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Table_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Occurrences' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Occurrences.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Core_Tables' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Core_Tables.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Database_Transactions' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Database_Transactions.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Dates_Representation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Dates_Representation.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Observable_Filtering' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Observable_Filtering.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Reflection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Reflection.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Timezones' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Timezones.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Unbound_Queries' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Unbound_Queries.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_WP_Query_Introspection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_WP_Query_Introspection.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Meta_Watcher' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Meta_Watcher.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Requests' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Requests.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\By_Day_View_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/By_Day_View_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Customizer_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Customizer_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Meta_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Meta_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Base_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Base_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Admin_List_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Admin_List_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Only_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Only_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\WP_Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/WP_Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Custom_Tables_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Custom_Tables_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\WP_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/WP_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Redirection_Schema' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Redirection_Schema.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Custom_Tables_Query_Filters' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Custom_Tables_Query_Filters.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Query_Replace' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Query_Replace.php', 'TEC\\Events\\Editor\\Full_Site\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Archive_Block_Template.php', 'TEC\\Events\\Editor\\Full_Site\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Block_Template_Contract.php', 'TEC\\Events\\Editor\\Full_Site\\Controller' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Controller.php', 'TEC\\Events\\Editor\\Full_Site\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Single_Block_Template.php', 'TEC\\Events\\Installer\\Provider' => __DIR__ . '/../..' . '/src/Events/Installer/Provider.php', 'TEC\\Events\\Integrations\\Integration_Abstract' => __DIR__ . '/../..' . '/src/Events/Integrations/Integration_Abstract.php', 'TEC\\Events\\Integrations\\Plugins\\Colbri_Page_Builder\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Colbri_Page_Builder/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\RSVP' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/RSVP.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\Ticket' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/Ticket.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Emails' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Emails.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Hooks' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Hooks.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\JSON_LD\\Event_Data' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/JSON_LD/Event_Data.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Template' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Template.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Subsection' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Subsection.php', 'TEC\\Events\\Integrations\\Plugins\\Rank_Math\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Rank_Math/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Apple_Wallet\\Event_Modifier' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Apple_Wallet/Event_Modifier.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Pdf' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Pdf.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Events_Schema' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Events_Schema.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Provider.php', 'TEC\\Events\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Provider.php', 'TEC\\Events\\Legacy\\Views\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Legacy/Views/V1/Provider.php', 'TEC\\Events\\SEO\\Controller' => __DIR__ . '/../..' . '/src/Events/SEO/Controller.php', 'TEC\\Events\\Site_Health\\Info_Section' => __DIR__ . '/../..' . '/src/Events/Site_Health/Info_Section.php', 'TEC\\Events\\Site_Health\\Provider' => __DIR__ . '/../..' . '/src/Events/Site_Health/Provider.php', 'TEC\\Events\\Telemetry\\Provider' => __DIR__ . '/../..' . '/src/Events/Telemetry/Provider.php', 'TEC\\Events\\Telemetry\\Telemetry' => __DIR__ . '/../..' . '/src/Events/Telemetry/Telemetry.php', 'Tribe\\Events\\Admin\\Filter_Bar\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Filter_Bar/Provider.php', 'Tribe\\Events\\Admin\\Notice\\Full_Site_Editor' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Full_Site_Editor.php', 'Tribe\\Events\\Admin\\Notice\\Install_Event_Tickets' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Install_Event_Tickets.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Deprecation' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Deprecation.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Updated' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Updated.php', 'Tribe\\Events\\Admin\\Notice\\Marketing' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing.php', 'Tribe\\Events\\Admin\\Notice\\Timezones' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Timezones.php', 'Tribe\\Events\\Admin\\Notice\\Update' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Update.php', 'Tribe\\Events\\Admin\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Provider.php', 'Tribe\\Events\\Admin\\Settings' => __DIR__ . '/../..' . '/src/Tribe/Admin/Settings.php', 'Tribe\\Events\\Aggregator\\Processes\\Batch_Imports' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Processes/Batch_Imports.php', 'Tribe\\Events\\Aggregator\\Record\\Batch_Queue' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Record/Batch_Queue.php', 'Tribe\\Events\\Collections\\Lazy_Post_Collection' => __DIR__ . '/../..' . '/src/Tribe/Collections/Lazy_Post_Collection.php', 'Tribe\\Events\\Editor\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Editor/Hooks.php', 'Tribe\\Events\\Editor\\Objects\\Editor_Object_Interface' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Editor_Object_Interface.php', 'Tribe\\Events\\Editor\\Objects\\Event' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Event.php', 'Tribe\\Events\\Event_Status\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Admin_Template.php', 'Tribe\\Events\\Event_Status\\Classic_Editor' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Classic_Editor.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Detect' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Detect.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Events_Status_Filter' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Events_Status_Filter.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Event_Meta' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Meta.php', 'Tribe\\Events\\Event_Status\\Event_Status_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Status_Provider.php', 'Tribe\\Events\\Event_Status\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Models\\Event' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Models/Event.php', 'Tribe\\Events\\Event_Status\\Status_Labels' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Status_Labels.php', 'Tribe\\Events\\Event_Status\\Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template.php', 'Tribe\\Events\\Event_Status\\Template_Modifications' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template_Modifications.php', 'Tribe\\Events\\I18n' => __DIR__ . '/../..' . '/src/Tribe/I18n.php', 'Tribe\\Events\\Integrations\\Beaver_Builder' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Beaver_Builder.php', 'Tribe\\Events\\Integrations\\Divi\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Divi/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Widget_Shortcode' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Widget_Shortcode.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Service_Provider.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Templates' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Templates.php', 'Tribe\\Events\\Integrations\\Restrict_Content_Pro\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Restrict_Content_Pro/Service_Provider.php', 'Tribe\\Events\\Integrations\\WPML\\Views\\V2\\Filters' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WPML/Views/V2/Filters.php', 'Tribe\\Events\\Integrations\\WP_Rocket' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WP_Rocket.php', 'Tribe\\Events\\Models\\Post_Types\\Event' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Event.php', 'Tribe\\Events\\Models\\Post_Types\\Organizer' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Organizer.php', 'Tribe\\Events\\Models\\Post_Types\\Venue' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Venue.php', 'Tribe\\Events\\Service_Providers\\Context' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Context.php', 'Tribe\\Events\\Service_Providers\\First_Boot' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/First_Boot.php', 'Tribe\\Events\\Taxonomy\\Event_Tag' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Event_Tag.php', 'Tribe\\Events\\Taxonomy\\Taxonomy_Provider' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Taxonomy_Provider.php', 'Tribe\\Events\\Views\\V2\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Assets.php', 'Tribe\\Events\\Views\\V2\\Customizer' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Configuration' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Configuration.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Hooks.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Notice' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Notice.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Events_Bar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Events_Bar.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Global_Elements' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Global_Elements.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Month_View.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Single_Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Single_Event.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hooks.php', 'Tribe\\Events\\Views\\V2\\Implementation_Error' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Implementation_Error.php', 'Tribe\\Events\\Views\\V2\\Index' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Index.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\Repository_User_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/Repository_User_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Partial_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Partial_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Url_Provider_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Url_Provider_Interface.php', 'Tribe\\Events\\Views\\V2\\Kitchen_Sink' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Kitchen_Sink.php', 'Tribe\\Events\\Views\\V2\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Manager.php', 'Tribe\\Events\\Views\\V2\\Messages' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Messages.php', 'Tribe\\Events\\Views\\V2\\Query\\Event_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Event_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Query\\Hide_From_Upcoming_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Hide_From_Upcoming_Controller.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Period' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Period.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Result' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Result.php', 'Tribe\\Events\\Views\\V2\\Repository\\Events_Result_Set' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Events_Result_Set.php', 'Tribe\\Events\\Views\\V2\\Rest_Endpoint' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rest_Endpoint.php', 'Tribe\\Events\\Views\\V2\\Rewrite' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rewrite.php', 'Tribe\\Events\\Views\\V2\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template.php', 'Tribe\\Events\\Views\\V2\\Template\\Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Event.php', 'Tribe\\Events\\Views\\V2\\Template\\Excerpt' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Excerpt.php', 'Tribe\\Events\\Views\\V2\\Template\\Featured_Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Featured_Title.php', 'Tribe\\Events\\Views\\V2\\Template\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/JSON_LD.php', 'Tribe\\Events\\Views\\V2\\Template\\Page' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Page.php', 'Tribe\\Events\\Views\\V2\\Template\\Promo' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Promo.php', 'Tribe\\Events\\Views\\V2\\Template\\Settings\\Advanced_Display' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Settings/Advanced_Display.php', 'Tribe\\Events\\Views\\V2\\Template\\Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Title.php', 'Tribe\\Events\\Views\\V2\\Template_Bootstrap' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template_Bootstrap.php', 'Tribe\\Events\\Views\\V2\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Theme_Compatibility.php', 'Tribe\\Events\\Views\\V2\\Url' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Url.php', 'Tribe\\Events\\Views\\V2\\Utils\\Separators' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Separators.php', 'Tribe\\Events\\Views\\V2\\Utils\\Stack' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Stack.php', 'Tribe\\Events\\Views\\V2\\Utils\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/View.php', 'Tribe\\Events\\Views\\V2\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View.php', 'Tribe\\Events\\Views\\V2\\View_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Interface.php', 'Tribe\\Events\\Views\\V2\\View_Register' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Register.php', 'Tribe\\Events\\Views\\V2\\Views\\By_Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/By_Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Latest_Past_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Latest_Past_View.php', 'Tribe\\Events\\Views\\V2\\Views\\List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Month_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Reflector_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Reflector_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Breakpoint_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Breakpoint_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\HTML_Cache' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/HTML_Cache.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Json_Ld_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Json_Ld_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\List_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/List_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Fast_Forward_Link' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Fast_Forward_Link.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Noindex' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Noindex.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\iCal_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/iCal_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_View.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Admin_Template.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Assets.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Compatibility.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_Abstract.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_List' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_List.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Google_Calendar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Google_Calendar.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Abstract.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Interface.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_365' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_365.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Live' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Live.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCal' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCal.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCalendar_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCalendar_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Request' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Request.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Single_Events' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Single_Events.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Template.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Traits\\Outlook_Methods' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Traits/Outlook_Methods.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\iCalendar_Handler' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/iCalendar_Handler.php', 'Tribe__Events__Main_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Main_Deprecated.php', 'Tribe__Events__Query_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Query_Deprecated.php');
+        public static $classMap = array('Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php', 'TEC\\Events\\Admin\\Notice\\Provider' => __DIR__ . '/../..' . '/src/Events/Admin/Notice/Provider.php', 'TEC\\Events\\Admin\\Notice\\Rest_Api' => __DIR__ . '/../..' . '/src/Events/Admin/Notice/Rest_Api.php', 'TEC\\Events\\Admin\\Settings\\Community_Upsell' => __DIR__ . '/../..' . '/src/Events/Admin/Settings/Community_Upsell.php', 'TEC\\Events\\Admin\\Settings\\Filter_Bar_Upsell' => __DIR__ . '/../..' . '/src/Events/Admin/Settings/Filter_Bar_Upsell.php', 'TEC\\Events\\Admin\\Settings\\Provider' => __DIR__ . '/../..' . '/src/Events/Admin/Settings/Provider.php', 'TEC\\Events\\Block_Templates\\Archive_Events\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Archive_Events/Archive_Block_Template.php', 'TEC\\Events\\Block_Templates\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Block_Template_Contract.php', 'TEC\\Events\\Block_Templates\\Controller' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Controller.php', 'TEC\\Events\\Block_Templates\\Single_Event\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Block_Templates/Single_Event/Single_Block_Template.php', 'TEC\\Events\\Blocks\\Archive_Events\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Archive_Events/Block.php', 'TEC\\Events\\Blocks\\Controller' => __DIR__ . '/../..' . '/src/Events/Blocks/Controller.php', 'TEC\\Events\\Blocks\\Single_Event\\Block' => __DIR__ . '/../..' . '/src/Events/Blocks/Single_Event/Block.php', 'TEC\\Events\\Configuration\\Provider' => __DIR__ . '/../..' . '/src/Events/Configuration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Activation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Activation.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Event_Cleaner' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Event_Cleaner.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Event_Cleaner\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Event_Cleaner/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Max_Recurrence_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Max_Recurrence_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Events\\Occurrences\\Occurrences_Generator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Events/Occurrences/Occurrences_Generator.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Feedback_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Feedback_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Google_Form_Feedback' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Google_Form_Feedback.php', 'TEC\\Events\\Custom_Tables\\V1\\Feedback\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Feedback/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Full_Activation_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Full_Activation_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Health_Check' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Health_Check.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\ACF\\Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/ACF/Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Integrations/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Phase_View_Renderer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Phase_View_Renderer.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Progress_Modal' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Progress_Modal.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Template' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Template.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Admin\\Upgrade_Tab' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Admin/Upgrade_Tab.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Ajax' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Ajax.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Asset_Loader' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Asset_Loader.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\Download_Report_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/Download_Report_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\CSV_Report\\File_Download' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/CSV_Report/File_Download.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Expected_Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Expected_Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Maintenance_Mode' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Maintenance_Mode.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Migration_Exception' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Migration_Exception.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Process_Worker' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Process_Worker.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Event_Report_Categories' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Event_Report_Categories.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Reports\\Site_Report' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Reports/Site_Report.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\State' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/State.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Null_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Null_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Single_Event_Migration_Strategy' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Single_Event_Migration_Strategy.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\Strategies\\Strategy_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/Strategies/Strategy_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Migration\\String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Migration/String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Boolean_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Boolean_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\End_Date_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/End_Date_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Integer_Key_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Integer_Key_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Numeric_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Numeric_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Text_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Text_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Formatters\\Timezone_Formatter' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Formatters/Timezone_Formatter.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Model_Date_Attributes' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Model_Date_Attributes.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Occurrence' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Occurrence.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Post_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Post_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\End_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/End_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Ignore_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Ignore_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Integer_Key' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Integer_Key.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Occurrence_Duration' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Occurrence_Duration.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Positive_Integer' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Positive_Integer.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Present' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Present.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Range_Dates' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Range_Dates.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Start_Date_UTC' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Start_Date_UTC.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\String_Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/String_Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Date' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Date.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Event_Model' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Event_Model.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Valid_Timezone' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Valid_Timezone.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Validator' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Validator.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\ValidatorInterface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/ValidatorInterface.php', 'TEC\\Events\\Custom_Tables\\V1\\Models\\Validators\\Whole_Number' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Models/Validators/Whole_Number.php', 'TEC\\Events\\Custom_Tables\\V1\\Notices' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Notices.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Provider_Contract' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Provider_Contract.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Repository\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Repository/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Field' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Field.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Custom_Table' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Custom_Table.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Abstract_Schema_Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Abstract_Schema_Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Field_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Field_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Builder' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Builder.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Schema_Provider_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Schema_Provider_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Schema_Builder\\Table_Schema_Interface' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Schema_Builder/Table_Schema_Interface.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Occurrences' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Occurrences.php', 'TEC\\Events\\Custom_Tables\\V1\\Tables\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Tables/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Core_Tables' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Core_Tables.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Database_Transactions' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Database_Transactions.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Dates_Representation' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Dates_Representation.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Observable_Filtering' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Observable_Filtering.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Reflection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Reflection.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_String_Dictionary' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_String_Dictionary.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Timezones' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Timezones.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_Unbound_Queries' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_Unbound_Queries.php', 'TEC\\Events\\Custom_Tables\\V1\\Traits\\With_WP_Query_Introspection' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Traits/With_WP_Query_Introspection.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Controller' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Controller.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Events' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Events.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Meta_Watcher' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Meta_Watcher.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\Updates\\Requests' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Updates/Requests.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\By_Day_View_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/By_Day_View_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Customizer_Compatibility' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Customizer_Compatibility.php', 'TEC\\Events\\Custom_Tables\\V1\\Views\\V2\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/Views/V2/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Meta_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Meta_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Custom_Tables_Query' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Custom_Tables_Query.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Base_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Base_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Admin_List_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Admin_List_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\Events_Only_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/Events_Only_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Modifiers\\WP_Query_Modifier' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Modifiers/WP_Query_Modifier.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Custom_Tables_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Custom_Tables_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Monitors\\WP_Query_Monitor' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Monitors/WP_Query_Monitor.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Provider' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Provider.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Redirection_Schema' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Redirection_Schema.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Custom_Tables_Query_Filters' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Custom_Tables_Query_Filters.php', 'TEC\\Events\\Custom_Tables\\V1\\WP_Query\\Repository\\Query_Replace' => __DIR__ . '/../..' . '/src/Events/Custom_Tables/V1/WP_Query/Repository/Query_Replace.php', 'TEC\\Events\\Editor\\Full_Site\\Archive_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Archive_Block_Template.php', 'TEC\\Events\\Editor\\Full_Site\\Block_Template_Contract' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Block_Template_Contract.php', 'TEC\\Events\\Editor\\Full_Site\\Controller' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Controller.php', 'TEC\\Events\\Editor\\Full_Site\\Single_Block_Template' => __DIR__ . '/../..' . '/src/Events/Editor/Full_Site/Single_Block_Template.php', 'TEC\\Events\\Installer\\Provider' => __DIR__ . '/../..' . '/src/Events/Installer/Provider.php', 'TEC\\Events\\Integrations\\Integration_Abstract' => __DIR__ . '/../..' . '/src/Events/Integrations/Integration_Abstract.php', 'TEC\\Events\\Integrations\\Plugins\\Colbri_Page_Builder\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Colbri_Page_Builder/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Assets_Manager' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Assets_Manager.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Controls\\Groups\\Event_Query' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Controls/Groups/Event_Query.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Controls_Manager' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Controls_Manager.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Manager_Abstract' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Manager_Abstract.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Template\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Template/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Template\\Documents\\Event_Single_Dynamic' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Template/Documents/Event_Single_Dynamic.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Template\\Documents\\Event_Single_Static' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Template/Documents/Event_Single_Static.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Template\\Importer' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Template/Importer.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Traits\\Categories' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Traits/Categories.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Traits\\Tags' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Traits/Tags.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Contracts\\Abstract_Widget' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Contracts/Abstract_Widget.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Calendar_Link' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Calendar_Link.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Categories' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Categories.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Cost' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Cost.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Datetime' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Datetime.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Export' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Export.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Image' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Image.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Navigation' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Navigation.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Organizer' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Organizer.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Status' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Status.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Tags' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Tags.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Title' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Title.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Venue' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Venue.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Event_Website' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Event_Website.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Template_Engine' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Template_Engine.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Traits\\Event_Query' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Traits/Event_Query.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Traits\\Has_Preview_Data' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Traits/Has_Preview_Data.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets\\Traits\\With_Shared_Controls' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets/Traits/With_Shared_Controls.php', 'TEC\\Events\\Integrations\\Plugins\\Elementor\\Widgets_Manager' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Elementor/Widgets_Manager.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\RSVP' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/RSVP.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Email\\Ticket' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Email/Ticket.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Emails' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Emails.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Hooks' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Hooks.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\JSON_LD\\Event_Data' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/JSON_LD/Event_Data.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Emails\\Template' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Emails/Template.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Event_Tickets\\Site_Health\\Subsection' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Event_Tickets/Site_Health/Subsection.php', 'TEC\\Events\\Integrations\\Plugins\\Rank_Math\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Rank_Math/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\TEC_Tweaks_Extension\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/TEC_Tweaks_Extension/Provider.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Controller' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Controller.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Apple_Wallet\\Event_Modifier' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Apple_Wallet/Event_Modifier.php', 'TEC\\Events\\Integrations\\Plugins\\Tickets_Wallet_Plus\\Passes\\Pdf' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/Tickets_Wallet_Plus/Passes/Pdf.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Events_Schema' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Events_Schema.php', 'TEC\\Events\\Integrations\\Plugins\\WordPress_SEO\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Plugins/WordPress_SEO/Provider.php', 'TEC\\Events\\Integrations\\Provider' => __DIR__ . '/../..' . '/src/Events/Integrations/Provider.php', 'TEC\\Events\\Legacy\\Views\\V1\\Provider' => __DIR__ . '/../..' . '/src/Events/Legacy/Views/V1/Provider.php', 'TEC\\Events\\SEO\\Controller' => __DIR__ . '/../..' . '/src/Events/SEO/Controller.php', 'TEC\\Events\\Site_Health\\Info_Section' => __DIR__ . '/../..' . '/src/Events/Site_Health/Info_Section.php', 'TEC\\Events\\Site_Health\\Provider' => __DIR__ . '/../..' . '/src/Events/Site_Health/Provider.php', 'TEC\\Events\\Telemetry\\Provider' => __DIR__ . '/../..' . '/src/Events/Telemetry/Provider.php', 'TEC\\Events\\Telemetry\\Telemetry' => __DIR__ . '/../..' . '/src/Events/Telemetry/Telemetry.php', 'TEC\\Events\\Traits\\Development_Mode' => __DIR__ . '/../..' . '/src/Events/Traits/Development_Mode.php', 'TEC\\Events\\Views\\Modifiers\\Hide_End_Time_Modifier' => __DIR__ . '/../..' . '/src/Events/Views/Modifiers/Hide_End_Time_Modifier.php', 'TEC\\Events\\Views\\Modifiers\\Visibility_Modifier_Abstract' => __DIR__ . '/../..' . '/src/Events/Views/Modifiers/Visibility_Modifier_Abstract.php', 'Tribe\\Events\\Admin\\Filter_Bar\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Filter_Bar/Provider.php', 'Tribe\\Events\\Admin\\Notice\\Full_Site_Editor' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Full_Site_Editor.php', 'Tribe\\Events\\Admin\\Notice\\Install_Event_Tickets' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Install_Event_Tickets.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Deprecation' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Deprecation.php', 'Tribe\\Events\\Admin\\Notice\\Legacy_Views_Updated' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Legacy_Views_Updated.php', 'Tribe\\Events\\Admin\\Notice\\Marketing' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Marketing.php', 'Tribe\\Events\\Admin\\Notice\\Timezones' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Timezones.php', 'Tribe\\Events\\Admin\\Notice\\Update' => __DIR__ . '/../..' . '/src/Tribe/Admin/Notice/Update.php', 'Tribe\\Events\\Admin\\Provider' => __DIR__ . '/../..' . '/src/Tribe/Admin/Provider.php', 'Tribe\\Events\\Admin\\Settings' => __DIR__ . '/../..' . '/src/Tribe/Admin/Settings.php', 'Tribe\\Events\\Aggregator\\Processes\\Batch_Imports' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Processes/Batch_Imports.php', 'Tribe\\Events\\Aggregator\\Record\\Batch_Queue' => __DIR__ . '/../..' . '/src/Tribe/Aggregator/Record/Batch_Queue.php', 'Tribe\\Events\\Collections\\Lazy_Post_Collection' => __DIR__ . '/../..' . '/src/Tribe/Collections/Lazy_Post_Collection.php', 'Tribe\\Events\\Editor\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Editor/Hooks.php', 'Tribe\\Events\\Editor\\Objects\\Editor_Object_Interface' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Editor_Object_Interface.php', 'Tribe\\Events\\Editor\\Objects\\Event' => __DIR__ . '/../..' . '/src/Tribe/Editor/Objects/Event.php', 'Tribe\\Events\\Event_Status\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Admin_Template.php', 'Tribe\\Events\\Event_Status\\Classic_Editor' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Classic_Editor.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Events_Control_Extension\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Events_Control_Extension/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Detect' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Detect.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Events_Status_Filter' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Events_Status_Filter.php', 'Tribe\\Events\\Event_Status\\Compatibility\\Filter_Bar\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Compatibility/Filter_Bar/Service_Provider.php', 'Tribe\\Events\\Event_Status\\Event_Meta' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Meta.php', 'Tribe\\Events\\Event_Status\\Event_Status_Provider' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Event_Status_Provider.php', 'Tribe\\Events\\Event_Status\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/JSON_LD.php', 'Tribe\\Events\\Event_Status\\Models\\Event' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Models/Event.php', 'Tribe\\Events\\Event_Status\\Status_Labels' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Status_Labels.php', 'Tribe\\Events\\Event_Status\\Template' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template.php', 'Tribe\\Events\\Event_Status\\Template_Modifications' => __DIR__ . '/../..' . '/src/Tribe/Event_Status/Template_Modifications.php', 'Tribe\\Events\\I18n' => __DIR__ . '/../..' . '/src/Tribe/I18n.php', 'Tribe\\Events\\Integrations\\Beaver_Builder' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Beaver_Builder.php', 'Tribe\\Events\\Integrations\\Divi\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Divi/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Service_Provider.php', 'Tribe\\Events\\Integrations\\Fusion\\Widget_Shortcode' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Fusion/Widget_Shortcode.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Service_Provider.php', 'Tribe\\Events\\Integrations\\Hello_Elementor\\Templates' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Hello_Elementor/Templates.php', 'Tribe\\Events\\Integrations\\Restrict_Content_Pro\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Integrations/Restrict_Content_Pro/Service_Provider.php', 'Tribe\\Events\\Integrations\\WPML\\Views\\V2\\Filters' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WPML/Views/V2/Filters.php', 'Tribe\\Events\\Integrations\\WP_Rocket' => __DIR__ . '/../..' . '/src/Tribe/Integrations/WP_Rocket.php', 'Tribe\\Events\\Models\\Post_Types\\Event' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Event.php', 'Tribe\\Events\\Models\\Post_Types\\Organizer' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Organizer.php', 'Tribe\\Events\\Models\\Post_Types\\Venue' => __DIR__ . '/../..' . '/src/Tribe/Models/Post_Types/Venue.php', 'Tribe\\Events\\Service_Providers\\Context' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/Context.php', 'Tribe\\Events\\Service_Providers\\First_Boot' => __DIR__ . '/../..' . '/src/Tribe/Service_Providers/First_Boot.php', 'Tribe\\Events\\Taxonomy\\Event_Tag' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Event_Tag.php', 'Tribe\\Events\\Taxonomy\\Taxonomy_Provider' => __DIR__ . '/../..' . '/src/Tribe/Taxonomy/Taxonomy_Provider.php', 'Tribe\\Events\\Views\\V2\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Assets.php', 'Tribe\\Events\\Views\\V2\\Customizer' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Configuration' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Configuration.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Hooks.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Notice' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Notice.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Events_Bar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Events_Bar.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Global_Elements' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Global_Elements.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Month_View.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Section\\Single_Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Section/Single_Event.php', 'Tribe\\Events\\Views\\V2\\Customizer\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Customizer/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Hide_End_Time_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hide_End_Time_Provider.php', 'Tribe\\Events\\Views\\V2\\Hooks' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Hooks.php', 'Tribe\\Events\\Views\\V2\\Implementation_Error' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Implementation_Error.php', 'Tribe\\Events\\Views\\V2\\Index' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Index.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\Repository_User_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/Repository_User_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Partial_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Partial_Interface.php', 'Tribe\\Events\\Views\\V2\\Interfaces\\View_Url_Provider_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Interfaces/View_Url_Provider_Interface.php', 'Tribe\\Events\\Views\\V2\\Kitchen_Sink' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Kitchen_Sink.php', 'Tribe\\Events\\Views\\V2\\Manager' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Manager.php', 'Tribe\\Events\\Views\\V2\\Messages' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Messages.php', 'Tribe\\Events\\Views\\V2\\Query\\Event_Query_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Event_Query_Controller.php', 'Tribe\\Events\\Views\\V2\\Query\\Hide_From_Upcoming_Controller' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Query/Hide_From_Upcoming_Controller.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Period' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Period.php', 'Tribe\\Events\\Views\\V2\\Repository\\Event_Result' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Event_Result.php', 'Tribe\\Events\\Views\\V2\\Repository\\Events_Result_Set' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Repository/Events_Result_Set.php', 'Tribe\\Events\\Views\\V2\\Rest_Endpoint' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rest_Endpoint.php', 'Tribe\\Events\\Views\\V2\\Rewrite' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Rewrite.php', 'Tribe\\Events\\Views\\V2\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template.php', 'Tribe\\Events\\Views\\V2\\Template\\Event' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Event.php', 'Tribe\\Events\\Views\\V2\\Template\\Excerpt' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Excerpt.php', 'Tribe\\Events\\Views\\V2\\Template\\Featured_Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Featured_Title.php', 'Tribe\\Events\\Views\\V2\\Template\\JSON_LD' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/JSON_LD.php', 'Tribe\\Events\\Views\\V2\\Template\\Page' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Page.php', 'Tribe\\Events\\Views\\V2\\Template\\Promo' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Promo.php', 'Tribe\\Events\\Views\\V2\\Template\\Settings\\Advanced_Display' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Settings/Advanced_Display.php', 'Tribe\\Events\\Views\\V2\\Template\\Title' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template/Title.php', 'Tribe\\Events\\Views\\V2\\Template_Bootstrap' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Template_Bootstrap.php', 'Tribe\\Events\\Views\\V2\\Theme_Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Theme_Compatibility.php', 'Tribe\\Events\\Views\\V2\\Url' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Url.php', 'Tribe\\Events\\Views\\V2\\Utils\\Separators' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Separators.php', 'Tribe\\Events\\Views\\V2\\Utils\\Stack' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/Stack.php', 'Tribe\\Events\\Views\\V2\\Utils\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Utils/View.php', 'Tribe\\Events\\Views\\V2\\View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View.php', 'Tribe\\Events\\Views\\V2\\View_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Interface.php', 'Tribe\\Events\\Views\\V2\\View_Register' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/View_Register.php', 'Tribe\\Events\\Views\\V2\\Views\\By_Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/By_Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Day_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Day_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Latest_Past_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Latest_Past_View.php', 'Tribe\\Events\\Views\\V2\\Views\\List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Month_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Month_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Reflector_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Reflector_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Breakpoint_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Breakpoint_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\HTML_Cache' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/HTML_Cache.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\Json_Ld_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/Json_Ld_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\List_Behavior' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/List_Behavior.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Fast_Forward_Link' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Fast_Forward_Link.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\With_Noindex' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/With_Noindex.php', 'Tribe\\Events\\Views\\V2\\Views\\Traits\\iCal_Data' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Traits/iCal_Data.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_List_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_List_View.php', 'Tribe\\Events\\Views\\V2\\Views\\Widgets\\Widget_View' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Views/Widgets/Widget_View.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Admin_Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Admin_Template.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Assets' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Assets.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Compatibility' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Compatibility.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Service_Provider' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Service_Provider.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_Abstract.php', 'Tribe\\Events\\Views\\V2\\Widgets\\Widget_List' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/Widgets/Widget_List.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Google_Calendar' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Google_Calendar.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Abstract' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Abstract.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Link_Interface' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Link_Interface.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_365' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_365.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\Outlook_Live' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/Outlook_Live.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCal' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCal.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Links\\iCalendar_Export' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Links/iCalendar_Export.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Request' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Request.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Single_Events' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Single_Events.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Template' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Template.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\Traits\\Outlook_Methods' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/Traits/Outlook_Methods.php', 'Tribe\\Events\\Views\\V2\\iCalendar\\iCalendar_Handler' => __DIR__ . '/../..' . '/src/Tribe/Views/V2/iCalendar/iCalendar_Handler.php', 'Tribe__Events__Main_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Main_Deprecated.php', 'Tribe__Events__Query_Deprecated' => __DIR__ . '/../..' . '/src/deprecated/Traits/Tribe__Events__Query_Deprecated.php');
         public static function getInitializer(\Composer\Autoload\ClassLoader $loader)
         {
         }
@@ -88725,16 +100535,16 @@ namespace {
  */
 namespace Tribe\Events\Views\V2 {
     /**
-     * Used in the multiday month loop.
-     * Outputs classes for the multiday event (article).
+     * A list of CSS classes that will be added to multiday events in month view.
+     * Used in the Month view multiday loop.
      *
      * @since 5.1.1
      *
-     * @param WP_Post $event            An event post object with event-specific properties added from the the `tribe_get_event`
+     * @param WP_Post $event            An event post object with event-specific properties added from the `tribe_get_event`
      *                                  function.
-     * @param string  $day_date         The `Y-m-d` date of the day currently being displayed.
+     * @param string  $day_date         The date of the day currently being displayed in `Y-m-d` format.
      * @param bool    $is_start_of_week Whether the current grid day being rendered is the first day of the week or not.
-     * @param string  $today_date       Today's date in the `Y-m-d` format.
+     * @param string  $today_date       Today's date in `Y-m-d` format.
      *
      * @return array<string> $classes   The classes to add to the multiday event.
      */
@@ -88742,16 +100552,16 @@ namespace Tribe\Events\Views\V2 {
     {
     }
     /**
+     * A list of CSS classes that will be added to the day "cell" in month view.
      * Used in the Month View days loop.
-     * Outputs classes for each day "cell".
      *
      * @since 6.0.2
      * @since 6.2.9 Updated logic to always default to comparing days with today's date.
      *
      * @param array<mixed> $day          The current day data.
-     * @param string       $day_date     The current day date, in the `Y-m-d` format.
+     * @param string       $day_date     The current day date in `Y-m-d` format.
      * @param \DateTime    $request_date The request date for the view.
-     * @param string       $today_date   Today's date in the `Y-m-d` format.
+     * @param string       $today_date   Today's date in `Y-m-d` format.
      *
      * @return array<string,bool> $day_classes The classes to add to the day "cell".
      */
@@ -89543,12 +101353,12 @@ namespace {
      * Receives a float and formats it with a currency symbol
      *
      * @category Cost
-     * @param string $cost pricing to format
-     * @param null|int $post_id
-     * @param null|string $currency_symbol
-     * @param null|bool $reverse_position
+     * @param string      $cost pricing to format.
+     * @param null|int    $post_id Post ID.
+     * @param null|string $currency_symbol Currency symbol.
+     * @param null|bool   $reverse_position Reverse position.
      *
-     * @return string
+     * @return string Formatted currency.
      */
     function tribe_format_currency($cost, $post_id = \null, $currency_symbol = \null, $reverse_position = \null)
     {
@@ -89560,7 +101370,7 @@ namespace {
      *
      * @category Events
      * @param  string $optionName Name of the option to retrieve.
-     * @param string  $default    Value to return if no such option is found.
+     * @param string $default    Value to return if no such option is found.
      *
      * @return mixed Value of the option if found
      */
@@ -89573,8 +101383,8 @@ namespace {
      * @param  string          $slug      Slug to save the notice
      * @param  callable|string $callback  A callable Method/Function to actually display the notice
      * @param  array           $arguments Arguments to Setup a notice
-     * @param callable|null    $active_callback An optional callback that should return bool values
-     *                                          to indicate whether the notice should display or not.
+     * @param callable|null   $active_callback An optional callback that should return bool values
+     *                                         to indicate whether the notice should display or not.
      *
      * @return stdClass Which notice was registered
      */
@@ -89590,7 +101400,7 @@ namespace {
      * @param  string $slug      Slug to save the notice
      * @param  string $html      The notice output HTML code
      * @param  array  $arguments Arguments to Setup a notice
-     * @param int     $expire    After how much time (in seconds) the notice will stop showing.
+     * @param int    $expire    After how much time (in seconds) the notice will stop showing.
      *
      * @return stdClass Which notice was registered
      */
@@ -89622,50 +101432,87 @@ namespace {
     /**
      * Register a new error based on a Namespace
      *
-     * @param  string|array  $indexes  A list of the namespaces and last item should be the error name
-     * @param  string        $message  What is going to be the message associate with this indexes
+     * @param  string|array $indexes  A list of the namespaces and last item should be the error name.
+     * @param  string       $message  What is going to be the message associate with this indexes.
      *
-     * @return boolean
+     * @return boolean Whether the error was registered or not.
      */
     function tribe_register_error($indexes, $message)
     {
     }
     /**
-     * Shortcut for Tribe__Assets::register(), include a single asset
+     * Registers an asset.
      *
      * @since 4.3
+     * @since 5.3.0 Replaced the function internals with calls to the stellarwp/assets library.
      *
-     * @param object            $origin    The main object for the plugin you are enqueueing the asset for.
-     * @param string            $slug      Slug to save the asset - passes through `sanitize_title_with_dashes()`.
-     * @param string            $file      The asset file to load (CSS or JS), including non-minified file extension.
-     * @param array             $deps      The list of dependencies or callable function that will return a list of dependencies.
-     * @param string|array|null $action    The WordPress action(s) to enqueue on, such as `wp_enqueue_scripts`,
-     *                                     `admin_enqueue_scripts`, or `login_enqueue_scripts`.
-     * @param array             $arguments See `Tribe__Assets::register()` for more info.
+     * @param object|string          $origin The origin of the asset, either a class or a string.
+     * @param string                 $slug The handle of the asset.
+     * @param string                 $file The file of the asset.
+     * @param array<string>|callable $deps The dependencies of the asset; either an array of dependencies or a callable
+     *                                      that returns an array of dependencies.
+     * @param string|string[]|null   $action The action(s) to enqueue the asset on; either a string or an array of strings.
+     * @param array                  $arguments {
+     *                      The arguments to pass to the asset.
      *
-     * @return object|false     The asset that got registered or false on error.
+     *     @type string $type The type of the asset.
+     *     @type string $media The media type of the asset.
+     *     @type string|array $conditionals The conditionals to use for the asset.
+     *     @type string|array $groups The groups to add the asset to.
+     *     @type string|array $print_before The print_before to use for the asset.
+     *     @type string|array $print_after The print_after to use for the asset.
+     *     @type array $localize {
+     *         The localization data for the asset. One or more of the following:
+     *
+     *         @type string $name The name of the localization data.
+     *         @type array|callable $data The data to use for the localization.
+     *     }
+     *     @type array $translations {
+     *         The translations to use for the asset.
+     *
+     *         @type string $domain The domain to use for the translations.
+     *         @type string $path The path to use for the translations.
+     *     }
+     *     @type bool $after_enqueue Whether to call a callback after enqueuing the asset.
+     *     @type bool $in_footer Whether to enqueue the asset in the footer.
+     *     @type bool $module Whether to set the asset as a module.
+     *     @type bool $defer Whether to set the asset as deferred.
+     *     @type bool $async Whether to set the asset as asynchronous.
+     *     @type bool $print Whether to print the asset.
+     * }
+     *
+     * @return Asset|false The asset that was registered or `false` on error.
      */
     function tribe_asset($origin, $slug, $file, $deps = [], $action = \null, $arguments = [])
     {
     }
     /**
-     * Shortcut for Tribe__Assets::enqueue() to include assets.
+     * Immediately enqueues an asset.
+     *
+     * Note if force is set ot `true` (default) this will ignore any
+     * conditional logic set for the asset and enqueue regardless.
      *
      * @since 4.7
+     * @since 5.3.0 Refactored to use the `stellarwp/assets` library.
      *
      * @param string|array $slug Slug to enqueue
+     * @param bool         $force Whether to force the enqueue or not.
      */
-    function tribe_asset_enqueue($slug)
+    function tribe_asset_enqueue($slug, $force = \true)
     {
     }
     /**
-     * Shortcut for Tribe__Assets::enqueue_group() include assets by groups.
+     * Enqueues assets by groups.
+     *
+     * Note if force is set ot `true` (default) this will ignore any
+     * conditional logic set for the asset and enqueue regardless.
      *
      * @since 4.7
+     * @since 5.3.0 Refactored to use the `stellarwp/assets` library.
      *
-     * @param string|array  $group  Which group(s) should be enqueued.
+     * @param string|array $group  Which group(s) should be enqueued.
      */
-    function tribe_asset_enqueue_group($group)
+    function tribe_asset_enqueue_group($group, $force = \true)
     {
     }
     /**
@@ -89674,19 +101521,19 @@ namespace {
      * @since 4.3
      * @since 4.12.10 Added support for overriding arguments for individual assets.
      *
-     * @param  object   $origin     The main Object for the plugin you are enqueueing the script/style for
-     * @param  array    $assets     {
-     *    Indexed array, don't use any associative key.
-     *    E.g.: [ 'slug-my-script', 'my/own/path.js', [ 'jquery' ] ]
+     * @param  object $origin     The main Object for the plugin you are enqueueing the script/style for.
+     * @param  array  $assets     {
+     *      Indexed array, don't use any associative key.
+     *      E.g.: [ 'slug-my-script', 'my/own/path.js', [ 'jquery' ] ]
      *
-     *    @type  string   $slug       Slug to save the asset
-     *    @type  string   $file       Which file will be loaded, either CSS or JS
-     *    @type  array    $deps       (optional) Dependencies
-     * }
-     * @param  string   $action     A WordPress hook that will automatically enqueue this asset once fired
-     * @param  array    $arguments  Look at `Tribe__Assets::register()` for more info
+     *        @type  string   $slug       Slug to save the asset.
+     *        @type  string   $file       Which file will be loaded, either CSS or JS.
+     *        @type  array    $deps       (optional) Dependencies
+     *     }
+     * @param  string $action     A WordPress hook that will automatically enqueue this asset once fired.
+     * @param  array  $arguments  Look at `Tribe__Assets::register()` for more info.
      *
-     * @return array             Which Assets were registered
+     * @return array<Asset|bool>      Which Assets were registered.
      */
     function tribe_assets($origin, $assets, $action = \null, $arguments = [])
     {
@@ -90543,6 +102390,20 @@ namespace {
     {
     }
     /**
+     * Output a button to copy the content of an element to the clipboard.
+     *
+     * @since 6.0.3
+     *
+     * @param string $content_to_copy The content to copy to the clipboard.
+     * @param bool   $output_button   Whether to output the button or just the target element.
+     * @param string $aria_label      The aria-label attribute for the button.
+     *
+     * @return string
+     */
+    function tec_copy_to_clipboard_button(string $content_to_copy, bool $output_button = \true, string $aria_label = '') : string
+    {
+    }
+    /**
      * Whether a post is a valid Event Series or not.
      *
      * @since 6.0.0
@@ -90813,7 +102674,7 @@ namespace {
     {
     }
     /**
-     *  Simple diplay of meta group tag
+     *  Simple display of meta group tag
      *
      * @uses tribe_get_meta_group()
      * @deprecated 4.3
@@ -90826,7 +102687,7 @@ namespace {
     {
     }
     /**
-     *  Simple diplay of meta tag
+     *  Simple display of meta tag
      *
      * @uses tribe_get_meta()
      * @deprecated 4.3
@@ -90842,9 +102703,11 @@ namespace {
     {
     }
     /**
-     * Create's an Event.
+     * Creates an Event.
      *
-     * Note: If ONLY the 'VenueID'/'OrganizerID' value is set in the 'Venue'/'Organizer' array,
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_events()->create()` method](https://docs.theeventscalendar.com/apis/orm/create/events/).
+     *
+     * Legacy Note: If ONLY the 'VenueID'/'OrganizerID' value is set in the 'Venue'/'Organizer' array,
      * then the specified Venue/Organizer will be associated with this Event without attempting
      * to edit the Venue/Organizer. If NO 'VenueID'/'OrganizerID' is passed, but other Venue/Organizer
      * data is passed, then a new Venue/Organizer will be created.
@@ -90853,13 +102716,13 @@ namespace {
      * a post_type argument therefore is superfluous as it will be reset to the events post
      * type in any case.
      *
-     * @category Events
-     *
-     * @link     http://codex.wordpress.org/Function_Reference/wp_insert_post
+     * @since 3.0.0
      *
      * @see      wp_insert_post()
      * @see      tribe_create_venue()
      * @see      tribe_create_organizer()
+     *
+     * @link     http://codex.wordpress.org/Function_Reference/wp_insert_post
      *
      * @param array $args {
      *     An array of elements that make up a post to update or insert. Accepts anything from {@see wp_insert_post()}.
@@ -90927,14 +102790,17 @@ namespace {
     {
     }
     /**
-     * Update an Event.
+     * Update an Event using the legacy method.
+     *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_events()->save()` method](https://docs.theeventscalendar.com/apis/orm/basics/#save).
      *
      * @category Events
-     *
-     * @link     http://codex.wordpress.org/Function_Reference/wp_update_post
+     * @since 3.0.0
      *
      * @see      wp_update_post()
      * @see      tribe_create_event()
+     * @see      Tribe__Repository::save()
+     * @link     http://codex.wordpress.org/Function_Reference/wp_update_post
      *
      * @param int|bool   $postId  ID of the event to be modified.
      * @param array      $args    Args for updating the post. See {@link tribe_create_event()} for more info.
@@ -90945,7 +102811,9 @@ namespace {
     {
     }
     /**
-     * Delete an Event.
+     * Delete an Event using the legacy method.
+     *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_events()->delete()` method](https://docs.theeventscalendar.com/apis/orm/basics/#delete).
      *
      * @link     http://codex.wordpress.org/Function_Reference/wp_delete_post
      * @see      wp_delete_post()
@@ -90955,6 +102823,9 @@ namespace {
      * @param bool $force_delete Whether to bypass trash and force deletion. Defaults to false.
      *
      * @return bool false if delete failed.
+     *
+     * @version 3.0.0
+     * @since   3.0.0
      */
     function tribe_delete_event($post_id, $force_delete = \false)
     {
@@ -91129,8 +103000,11 @@ namespace {
     {
     }
     /**
-     * Create an Organizer
+     * Create an Organizer using the legacy method.
      *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_organizers()->create()` method](https://docs.theeventscalendar.com/apis/orm/create/organizers/).
+     *
+     * Legacy Note:
      * $args accepts all the args that can be passed to wp_insert_post().
      * In addition to that, the following args can be passed specifically
      * for the process of creating an Organizer:
@@ -91140,43 +103014,52 @@ namespace {
      * - Website string - URL of the Organizer.
      * - Phone string - Phone number for the Organizer.
      *
+     * @since 3.0.0
+     *
+     * @see      wp_insert_post()
+     * @link     http://codex.wordpress.org/Function_Reference/wp_insert_post
+     *
      * @param array $args Elements that make up post to insert.
      *
-     * @return int ID of the Organizer that was created. False if insert failed.
-     * @link     http://codex.wordpress.org/Function_Reference/wp_insert_post
-     * @see      wp_insert_post()
-     * @category Organizers
+     * @return int|false ID of the Organizer that was created. False if insert failed.
      */
     function tribe_create_organizer($args)
     {
     }
     /**
-     * Update an Organizer
+     * Update an Organizer using the legacy method.
+     *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_organizers()->save()` method](https://docs.theeventscalendar.com/apis/orm/update).
+     *
+     * @since 3.0.0
+     *
+     * @see      tribe_create_organizer()
+     * @see      wp_update_post()
+     * @link     http://codex.wordpress.org/Function_Reference/wp_update_post
      *
      * @param int   $postId ID of the Organizer to be modified.
-     * @param array $args   Args for updating the post. See {@link tribe_create_organizer()} for more info.
+     * @param array $args Args for updating the post.
      *
-     * @return int ID of the Organizer that was created. False if update failed.
-     * @link     http://codex.wordpress.org/Function_Reference/wp_update_post
-     * @see      wp_update_post()
-     * @see      tribe_create_organizer()
-     * @category Organizers
+     * @return int|false ID of the Organizer that was created. False if update failed.
      */
     function tribe_update_organizer($postId, $args)
     {
     }
     /**
-     * Delete an Organizer
+     * Delete an Organizer using the legacy method.
      *
-     * @param int  $postId       ID of the Organizer to be deleted.
-     * @param bool $force_delete Whether to bypass trash and force deletion. Defaults to false.
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_organizers()->delete()` method](https://docs.theeventscalendar.com/apis/orm/delete).
      *
-     * @return bool false if delete failed.
-     * @link     http://codex.wordpress.org/Function_Reference/wp_delete_post
+     * @since 3.0.0
+     *
      * @see      wp_delete_post()
-     * @category Organizers
+     * @link     http://codex.wordpress.org/Function_Reference/wp_delete_post
+     *
+     * @param  int  $post_id       ID of the Organizer to be deleted.
+     * @param  bool $force_delete Whether to bypass trash and force deletion. Defaults to false.
+     * @return WP_Post|false|null False if delete failed, null if delete succeeded.
      */
-    function tribe_delete_organizer($postId, $force_delete = \false)
+    function tribe_delete_organizer($post_id, $force_delete = \false)
     {
     }
     /**
@@ -91204,7 +103087,9 @@ namespace {
     {
     }
     /**
-     * Create a Venue
+     * Create a Venue using the legacy method.
+     *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_venue()->create()` method](https://docs.theeventscalendar.com/apis/orm/create/venues/)
      *
      * $args accepts all the args that can be passed to wp_insert_post().
      * In addition to that, the following args can be passed specifically
@@ -91219,41 +103104,50 @@ namespace {
      * - Zip string - Zip code of the Venue.
      * - Phone string - Phone number for the Venue.
      *
+     * @since 3.0.0
+     *
      * @param array $args Elements that make up post to insert.
      *
-     * @return int ID of the Venue that was created. False if insert failed.
-     * @link     http://codex.wordpress.org/Function_Reference/wp_insert_post
      * @see      wp_insert_post()
-     * @category Venues
+     * @link     http://codex.wordpress.org/Function_Reference/wp_insert_post
+     *
+     * @return int|false ID of the Venue that was created. False if insert failed.
      */
     function tribe_create_venue($args)
     {
     }
     /**
-     * Update a Venue
+     * Update a Venue using the legacy method.
+     *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_venue()->save()` method](https://docs.theeventscalendar.com/apis/orm/update)
+     *
+     * @since 3.0.0
+     *
+     * @see      wp_update_post()
+     * @see      tribe_create_venue()
+     * @link     http://codex.wordpress.org/Function_Reference/wp_update_post
      *
      * @param int   $postId ID of the Venue to be modified.
      * @param array $args   Args for updating the post. See {@link tribe_create_venue()} for more info.
-     *
      * @return int ID of the Venue that was created. False if update failed.
-     * @link     http://codex.wordpress.org/Function_Reference/wp_update_post
-     * @see      wp_update_post()
-     * @see      tribe_create_venue()
-     * @category Venues
      */
     function tribe_update_venue($postId, $args)
     {
     }
     /**
-     * Delete a Venue
+     * Delete a Venue using the legacy method.
+     *
+     * Note: This function is outdated and should be replaced with the [TEC ORM `tribe_venue()->delete()` method](https://docs.theeventscalendar.com/apis/orm/delete)
+     *
+     * @since 3.0.0
+     *
+     * @link     http://codex.wordpress.org/Function_Reference/wp_delete_post
+     * @see      wp_delete_post()
      *
      * @param int  $postId       ID of the Venue to be deleted.
      * @param bool $force_delete Whether to bypass trash and force deletion. Defaults to false.
      *
      * @return bool false if delete failed.
-     * @link     http://codex.wordpress.org/Function_Reference/wp_delete_post
-     * @see      wp_delete_post()
-     * @category Venues
      */
     function tribe_delete_venue($postId, $force_delete = \false)
     {
@@ -91387,6 +103281,26 @@ namespace {
     {
     }
     /**
+     * Gets the separator used between the start and end time of an event.
+     *
+     * @since 6.7.0
+     *
+     * @return string Time Range separator.
+     */
+    function tec_events_get_time_range_separator() : string
+    {
+    }
+    /**
+     * Gets the separator used between the start and end datetime of an event.
+     *
+     * @since 6.7.0
+     *
+     * @return string Time Range separator.
+     */
+    function tec_events_get_date_time_separator() : string
+    {
+    }
+    /**
      * Single Day Test
      *
      * Returns true if the query is set for single day, false otherwise
@@ -91443,7 +103357,7 @@ namespace {
      *                                 object to localize the event in a specific time-frame.
      * @param bool             $force  Whether to force a re-fetch ignoring cached results or not.
      *
-     * @return array|mixed|void|WP_Post|null {
+     * @return array|WP_Post|null {
      *                              The Event post object or array, `null` if not found.
      *
      *                              @type string $start_date The event start date, in `Y-m-d H:i:s` format.
@@ -91749,15 +103663,15 @@ namespace {
     /**
      * Event Categories (Display)
      *
-     * Display the event categories with display param
+     * Display the event categories with display param.
      *
+     * @param int   $post_id The post ID.
+     * @param array $args    The display options.
+     *
+     * @return string|void The html string or echo if provided in $args.
      * @uses     tribe_get_event_taxonomy()
      * @replaces tribe_meta_event_cats()
      *
-     * @param int   $post_id
-     * @param array $args
-     *
-     * @return string $html (echo if provided in $args)
      * @category Events
      */
     function tribe_get_event_categories($post_id = \null, $args = [])
@@ -91766,16 +103680,15 @@ namespace {
     /**
      * Event Tags (Display)
      *
-     * Display the event tags
+     * Display the event tags.
      *
+     * @param null|string $label     The label for the tags.
+     * @param string      $separator The delimiter for the tags.
+     * @param bool        $echo      Whether to echo the tags or return them.
+     *
+     * @return string|void The HTML list of tags.
      * @uses     the_terms()
      *
-     * @param string      $separator
-     * @param bool        $echo
-     *
-     * @param null|string $label
-     *
-     * @return array
      * @category Events
      */
     function tribe_meta_event_tags($label = \null, $separator = ', ', $echo = \true)
@@ -91814,7 +103727,7 @@ namespace {
      *
      * @param null|string $label     The label for the term list.
      * @param string      $separator The separator of each term.
-     * @param bool        $echo      , Whether to echo or return the list.
+     * @param boolean     $echo      Whether to echo or return the list.
      *
      * @return string|void The html list of tags or void if no terms.
      */
@@ -91991,19 +103904,19 @@ namespace {
     {
     }
     /**
-     * Return the featured image for an event (within the loop automatically will get event ID).
+     * Return the featured image for an event. (Within the loop it will automatically get event ID).
      *
-     * Where possible, the image will be returned as a well formed <img> tag contained in a link
-     * element and wrapped in a div used for targetting featured images from stylesheet. By setting
+     * Where possible, the image will be returned as a well-formed <img> tag contained in a link
+     * element and wrapped in a div used for targeting featured images from a stylesheet. By setting
      * the two final and optional parameters to false, however, it is possible to retrieve only
      * the image URL itself.
      *
-     * @param int    $post_id
-     * @param string $size
-     * @param bool   $link
-     * @param bool   $wrapper
+     * @param int    $post_id The post ID of the event.
+     * @param string $size    The size of the featured image.
+     * @param bool   $link    Whether the featured image should be wrapped in a link.
+     * @param bool   $wrapper Whether to wrap the featured image in our standard div.
      *
-     * @return string
+     * @return string The featured image HTML.
      * @category Events
      *
      */
@@ -92084,11 +103997,10 @@ namespace {
     /**
      * Display the Events Calendar promo banner
      *
-     * @param bool $echo Whether or not to echo the banner, if false, it's returned
+     * @param boolean $echo Whether or not to echo the banner, if false, it's returned.
      *
-     * @return string
-     **@category Events
-     *
+     * @return string|void If not echoing, the banner HTML string.
+     * @category Events
      */
     function tribe_events_promo_banner($echo = \true)
     {
@@ -92278,72 +104190,74 @@ namespace {
     /**
      * Google Map Link
      *
-     * Returns a url to google maps for the given event
+     * Returns a URL to Google Maps for the given event.
+     * 
+     * @since 4.6.24
      *
      * @category Events
      *
-     * @param string $postId
+     * @param int $post_id The event post ID.
      *
-     * @return string A fully qualified link to https://maps.google.com/ for this event
+     * @return string A fully qualified link to https://maps.google.com/ for this event.
      */
     function tribe_get_map_link($post_id = \null)
     {
     }
     /**
      * Returns a formed HTML link to Google Maps for the given event.
+     * 
+     * @since 4.6.24
      *
      * @category Events
      *
-     * @param string $postId
+     * @param int $postId The event post ID.
      *
-     * @return string A fully qualified link to https://maps.google.com/ for this event
+     * @return string A fully qualified link to https://maps.google.com/ for this event.
      */
     function tribe_get_map_link_html($postId = \null)
     {
     }
     /**
-     * Google Map Embed
-     *
-     * Returns an embedded google maps for an event
+     * Returns an embedded Google Maps map for an event.
+     * 
+     * @since 4.6.24
      *
      * @category Events
      *
-     * @param string $post_id
-     * @param int    $width
-     * @param int    $height
-     * @param bool   $force_load If true, then load the map even if an address is not provided.
+     * @param id   $post_id    The event post ID.
+     * @param int  $width      The width of the iframe containing the map in pixels.
+     * @param int  $height     The height of the iframe containing the map in pixels.
+     * @param bool $force_load If true, then load the map even if an address is not provided.
      *
-     * @return string An iframe pulling https://maps.google.com/ for this event
+     * @return string An iframe pulling https://maps.google.com/ for this event.
      */
     function tribe_get_embedded_map($post_id = \null, $width = \null, $height = \null, $force_load = \false)
     {
     }
     /**
-     * Google Map Embed Test
-     *
-     * Check if embed google map is enabled for this event (or venue ).
+     * Check if the "Show Map" option is enabled for the event or venue.
      *
      * @category Events
      *
-     * @param int $postId Id of the post, if none specified, current post is used
+     * @param int $post_id The Post ID. If none specified, current post is used.
      *
-     * @return bool True if google map option is set to embed the map
+     * @return bool True if the "Show Map" option is enabled.
      */
-    function tribe_embed_google_map($postId = \null)
+    function tribe_embed_google_map($post_id = \null)
     {
     }
     /**
-     * Google Map Link Test
+     * Check if the "Show Map Link" option is enabled for the event or venue.
      *
-     * Check if google map link is enabled for this event
+     * @since 4.6.24
      *
      * @category Events
      *
-     * @param int $postId Id of the post, if none specified, current post is used
+     * @param int $post_id The post ID. If none specified, current post is used.
      *
-     * @return bool True if google map link is set to display the event
+     * @return bool True if the "Show Map Link" option is enabled.
      */
-    function tribe_show_google_map_link($postId = \null)
+    function tribe_show_google_map_link($post_id = \null)
     {
     }
     /**
@@ -92353,6 +104267,8 @@ namespace {
      * @since 4.6.24
      *
      * @param string $address_string The full address for the marker to be shown on the map (e.g. an event venue).
+     * 
+     * @return string The full URL for a basic Google Maps embed.
      */
     function tribe_get_basic_gmap_embed_url($address_string)
     {
@@ -92414,11 +104330,13 @@ namespace {
     {
     }
     /**
-     * Return a link to the previous event by start date for the given event.
+     * Returns a link to the previous event by start date for the given event.
      *
-     * @param bool|string $anchor link text. Use %title% to place the post title in your string.
+     * @since 3.0
+     * 
+     * @param bool|string $anchor (optional) The link text. Use %title% to place the post title in your string. Default is false.
      *
-     * @return string
+     * @return string The link to the previous event.
      */
     function tribe_get_prev_event_link($anchor = \false)
     {
@@ -92476,11 +104394,17 @@ namespace {
     /**
      * Gets a view permalink.
      *
+     * Generates the permalink for a specific view based on the provided slug and optional term.
+     *
      * @since 5.7.0
      *
-     * @param bool|int|null $term
+     * @hook tribe_get_view_permalink        Filters the overall view permalink.
+     * @hook tribe_get_{slug}_view_permalink Filters the specific view permalink.
      *
-     * @return string $permalink
+     * @param string        $slug      The slug of the view for which the permalink is being generated.
+     * @param bool|int|null $term      Optional. The term associated with the view. Default is null.
+     *
+     * @return string       $permalink The generated permalink for the view.
      */
     function tribe_get_view_permalink($slug, $term = \null)
     {
@@ -92499,54 +104423,62 @@ namespace {
     {
     }
     /**
-     * Link to List View
+     * Returns a link to the general or category upcoming view.
      *
-     * Returns a link to the general or category upcoming view
+     * @since  2.0.1
      *
-     * @param int $term Optional event category ID to link to.
-     *
-     * @return string URL
+     * @param  int|null $term Optional. Event category ID to link to. Default null.
+     * @return string The URL of the list view.
      */
     function tribe_get_listview_link($term = \null)
     {
     }
     /**
-     * Link to List View (Past)
+     * Returns a url to the general or category past view.
      *
-     * Returns a link to the general or category past view
+     * @since 2.0.1
      *
-     * @param int|null $term Term ID
+     * @param int|null $term Optional. Term ID. Default null.
      *
-     * @return string URL
+     * @return string URL of the past list view.
      */
     function tribe_get_listview_past_link($term = \null)
     {
     }
     /**
-     * Link to a nearby List View page
+     * Returns a link to the next or previous list view page.
      *
-     * Returns a link to the next/previous list view page
+     * @since 4.0
      *
-     * @param string   $direction 'next' or 'prev'.
-     * @param int|null $term Term ID.
-     * @param string   $currently_displaying Type of listview page that is currently being displayed ('past' or 'list').
-     * @param int      $page Current page number being displayed.
+     * @param string      $direction            'next' or 'prev'.
+     * @param int|null    $term                 Optional. Term ID. Default null.
+     * @param string|null $currently_displaying Optional. Type of list view page currently displayed ('past' or 'list'). Default null.
+     * @param int|null    $page                 Optional. Current page number being displayed. Default null.
      *
-     * @return string URL
+     * @return string URL of the next or previous list view page.
      */
     function tribe_get_listview_dir_link($direction = 'next', $term = \null, $currently_displaying = \null, $page = \null)
     {
     }
     /**
-     * Utility function to update the pagination and current display on the list view.
+     * Updates pagination and determines the current view display for the list view.
+     *
+     * This function adjusts the pagination and sets the view to be displayed based on
+     * the current page and navigation direction.
      *
      * @since 4.6.12
      *
-     * @param int $page
-     * @param string $direction
-     * @param null $currently_displaying
+     * @param int         $page                 The current page number. Default is 1.
+     * @param string      $direction            The navigation direction, either 'next' or 'prev'. Default is 'next'.
+     * @param string|null $currently_displaying The view currently being displayed, such as 'list' or 'past'.
+     *                                          Default is null, which triggers a fallback to the default list view.
      *
-     * @return array
+     * @return array {
+     *      An associative array containing the updated display and page number.
+     * 
+     *      @type string $display The view to be displayed, either 'list' or 'past'.
+     *      @type int    $page    The updated page number.
+     * }
      */
     function tribe_get_listview_args($page = 1, $direction = 'next', $currently_displaying = \null)
     {
@@ -92601,12 +104533,13 @@ namespace {
     /**
      * Event Website Link (more info)
      *
-     * @param null|object|int $event
-     * @param null|string     $label
+     * @param null|object|int $event The event object or ID.
+     * @param ?string         $label The link label.
+     * @param string          $target The link target.
      *
      * @return string $html
      */
-    function tribe_get_event_website_link($event = \null, $label = \null)
+    function tribe_get_event_website_link($event = \null, $label = \null, $target = '_self') : string
     {
     }
     /**
@@ -93085,12 +105018,15 @@ namespace {
      *
      * Returns the event Organizer Name with a link to their supplied website
      *
-     * @param null|int    $post_id The post ID for an event.
-     * @param null|string $label   The text for the link.
+     * @since 3.0
+     *
+     * @param ?int    $post_id The post ID for an event.
+     * @param ?string $label   The text for the link.
+     * @param ?string $target  The target attribute for the link.
      *
      * @return string
      **/
-    function tribe_get_organizer_website_link($post_id = \null, $label = \null)
+    function tribe_get_organizer_website_link($post_id = \null, $label = \null, $target = '_self') : string
     {
     }
     /**
@@ -93547,13 +105483,15 @@ namespace {
     /**
      * Get the link for the venue website.
      *
-     * @since ??
+     * @since 3.0
      *
-     * @param null|int    $post_id The event or venue ID.
-     * @param null|string $label   The label for the link.
-     * @return string              Formatted link to the venue website
+     * @param ?int    $post_id The event or venue ID.
+     * @param ?string $label   The label for the link.
+     * @param string  $target  The target attribute for the link.
+     *
+     * @return string Formatted link to the venue website
      */
-    function tribe_get_venue_website_link($post_id = \null, $label = \null)
+    function tribe_get_venue_website_link($post_id = \null, $label = \null, $target = '_self') : string
     {
     }
     /**
@@ -93711,7 +105649,7 @@ namespace {
      *
      * @deprecated 6.0.0
      *
-     * @return bool Wether we just activated the v2 on the database.
+     * @return bool Whether we just activated the v2 on the database.
      */
     function tribe_events_views_v2_smart_activation()
     {
