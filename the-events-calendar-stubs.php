@@ -1,23 +1,5 @@
 <?php
 
-namespace {
-/**
- * Registers the library aliases redirecting calls to the `tad_DI52_`, non-namespaced, class format to the namespaced
- * classes.
- */
-
-$aliases = [
-	[ 'TEC\Common\lucatume\DI52\Container', 'tad_DI52_Container' ],
-	[ 'TEC\Common\lucatume\DI52\ServiceProvider', 'tad_DI52_ServiceProvider' ]
-];
-
-foreach ( $aliases as [$class, $alias] ) {
-	if ( ! class_exists( $alias ) ) {
-		class_alias( $class, $alias, false );
-	}
-}
-}
-
 namespace TEC\Common\Admin\Entities {
     /**
      * Interface Element
@@ -4410,7 +4392,7 @@ namespace TEC\Event_Automator {
      *
      * @package TEC\Event_Automator
      */
-    class Plugin extends \tad_DI52_ServiceProvider
+    class Plugin extends \TEC\Common\lucatume\DI52\ServiceProvider
     {
         /**
          * Stores the version for the plugin.
@@ -4470,9 +4452,9 @@ namespace TEC\Event_Automator {
          *
          * @since 6.0.0
          *
-         * @param \tad_DI52_Container $container The container to use.
+         * @param \TEC\Common\lucatume\DI52\Container $container The container to use.
          */
-        public function __construct(\tad_DI52_Container $container)
+        public function __construct(\TEC\Common\lucatume\DI52\Container $container)
         {
         }
         /**
@@ -93147,6 +93129,7 @@ namespace Tribe\Events\Views\V2\Repository {
      *
      * @package Tribe\Events\Views\V2\Repository
      */
+    #[\ReturnTypeWillChange]
     class Events_Result_Set implements \Tribe\Utils\Collection_Interface
     {
         use \Tribe\Utils\Collection_Trait;

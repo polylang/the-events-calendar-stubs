@@ -15,70 +15,67 @@ function remove_duplicates_and_fix() {
 
 	$io->title( 'Replacements in stubs' );
 
-	$contents = get_file_contents( $rel_path, $io );
-
-	if ( ! is_string( $contents ) ) {
-		return;
-	}
-
-	$aliases_contents = get_file_contents( 'vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php', $io );
-
-	if ( ! is_string( $aliases_contents ) ) {
-		return;
-	}
-
-	$aliases_contents = str_replace( 'class_alias( $class, $alias );', 'class_alias( $class, $alias, false );', $aliases_contents );
-	$aliases_contents = preg_replace(
-		'/^<\?php\n/s',
-		"<?php\n\nnamespace {",
-		$aliases_contents,
-		1
-	) . "\n}";
-	$contents = preg_replace( '/^<\?php/', $aliases_contents, $contents, 1 );
-
-	$to_remove = [
-		'@^\s*/\*\*\s+\*\s+Determine whether a post or content string has blocks\..+/\s*function has_blocks\(.+\)\s*{\s*}\s*$@msU' => '', // `has_blocks()` is a WP function that should be hidden behind `function_exists()`.
-		'#@return Context The View current Context instance#' => '@return \Tribe__Context The View current Context instance', // `use Tribe__Context as Context;`.
-	];
-
-	foreach ( $to_remove as $pattern => $replacement ) {
-		$new_contents = preg_replace( $pattern, $replacement, $contents, 1 );
-
-		if ( $new_contents !== $contents && is_string( $new_contents ) ) {
-			$contents = $new_contents;
-		}
-	}
-
-	$result = file_put_contents( __DIR__ . '/' . $rel_path, $contents );
-
-	if ( false === $result ) {
-		$io->error( "Failed to perform replacements in file $rel_path." );
-	} else {
-		$io->success( "Replacements done in file $rel_path." );
-	}
-}
-
-function get_file_contents( string $rel_path, SymfonyStyle $io ): ?string {
 	$full_path = __DIR__ . '/' . $rel_path;
 
 	if ( ! file_exists( $full_path ) ) {
 		$io->error( "Failed to locate file $rel_path." );
-		return null;
+		return;
 	}
+
+	$to_remove = [
+		'@^\s*/\*\*\s+\*\s+Determine whether a post or content string has blocks\..+/\s*function has_blocks\(.+\)\s*{\s*}\s*$@msU' => [ // `has_blocks()` is a WP function that should be hidden behind `function_exists()`.
+			'replacement' => '',
+			'count'       => 1,
+		],
+		'#@return Context The View current Context instance#' => [ // `use Tribe__Context as Context;`.
+			'replacement' => '@return \Tribe__Context The View current Context instance',
+			'count'       => 1,
+		],
+		'@tad_DI52_Container@' => [ // class alias, see `vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php`.
+			'replacement' => 'TEC\Common\lucatume\DI52\Container',
+		],
+		'@tad_DI52_ServiceProvider@' => [ // class alias, see `vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php`.
+			'replacement' => 'TEC\Common\lucatume\DI52\ServiceProvider',
+		],
+		'@^(\s+)(class Events_Result_Set )@m' => [
+			'replacement' => '$1#[\ReturnTypeWillChange]' . \PHP_EOL . '$1$2',
+			'count'       => 1,
+		],
+	];
+	$replaced  = false;
 
 	try {
 		$contents = file_get_contents( $full_path );
 
 		if ( ! is_string( $contents ) ) {
 			$io->error( "Failed to open file $rel_path." );
-			return null;
+			return;
 		}
 	} catch( Exception $e ) {
 		$io->error( "Failed to open file $rel_path." );
-		return null;
 	}
 
-	return $contents;
+	foreach ( $to_remove as $pattern => $replacement_atts ) {
+		$new_contents = preg_replace( $pattern, $replacement_atts['replacement'], $contents, $replacement_atts['count'] ?? -1 );
+
+		if ( $new_contents !== $contents && is_string( $new_contents ) ) {
+			$replaced = true;
+			$contents = $new_contents;
+		}
+	}
+
+	if ( ! $replaced ) {
+		$io->error( "No replacements done in file $rel_path." );
+		return;
+	}
+
+	$result = file_put_contents( $full_path, $contents );
+
+	if ( false === $result ) {
+		$io->error( "Failed to perform replacements in file $rel_path." );
+	} else {
+		$io->success( "Replacements done in file $rel_path." );
+	}
 }
 
 remove_duplicates_and_fix();
