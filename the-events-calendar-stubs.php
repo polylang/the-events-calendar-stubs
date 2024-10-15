@@ -13,7 +13,7 @@ $aliases = [
 
 foreach ( $aliases as [$class, $alias] ) {
 	if ( ! class_exists( $alias ) ) {
-		class_alias( $class, $alias );
+		class_alias( $class, $alias, false );
 	}
 }
 }

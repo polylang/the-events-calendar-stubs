@@ -27,6 +27,7 @@ function remove_duplicates_and_fix() {
 		return;
 	}
 
+	$aliases_contents = str_replace( 'class_alias( $class, $alias );', 'class_alias( $class, $alias, false );', $aliases_contents );
 	$aliases_contents = preg_replace(
 		'/^<\?php\n/s',
 		"<?php\n\nnamespace {",
