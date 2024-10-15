@@ -15,51 +15,63 @@ function remove_duplicates_and_fix() {
 
 	$io->title( 'Replacements in stubs' );
 
-	$full_path = __DIR__ . '/' . $rel_path;
+	$contents = get_file_contents( $rel_path, $io );
 
-	if ( ! file_exists( $full_path ) ) {
-		$io->error( "Failed to locate file $rel_path." );
+	if ( ! is_string( $contents ) ) {
 		return;
 	}
 
+	$aliases_contents = get_file_contents( 'vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php', $io );
+
+	if ( ! is_string( $aliases_contents ) ) {
+		return;
+	}
+
+	$contents = preg_replace( '/^<\?php/', $aliases_contents, $contents, 1 );
+
 	$to_remove = [
 		'@^\s*/\*\*\s+\*\s+Determine whether a post or content string has blocks\..+/\s*function has_blocks\(.+\)\s*{\s*}\s*$@msU' => '', // `has_blocks()` is a WP function that should be hidden behind `function_exists()`.
-		'#@return Context The View current Context instance#' => '@return \Tribe__Context The View current Context instance', // `use Tribe__Context as Context;`
+		'#@return Context The View current Context instance#' => '@return \Tribe__Context The View current Context instance', // `use Tribe__Context as Context;`.
 	];
-	$replaced  = false;
-
-	try {
-		$contents = file_get_contents( $full_path );
-
-		if ( ! is_string( $contents ) ) {
-			$io->error( "Failed to open file $rel_path." );
-			return;
-		}
-	} catch( Exception $e ) {
-		$io->error( "Failed to open file $rel_path." );
-	}
 
 	foreach ( $to_remove as $pattern => $replacement ) {
 		$new_contents = preg_replace( $pattern, $replacement, $contents, 1 );
 
 		if ( $new_contents !== $contents && is_string( $new_contents ) ) {
-			$replaced = true;
 			$contents = $new_contents;
 		}
 	}
 
-	if ( ! $replaced ) {
-		$io->error( "No replacements done in file $rel_path." );
-		return;
-	}
-
-	$result = file_put_contents( $full_path, $contents );
+	$result = file_put_contents( __DIR__ . '/' . $rel_path, $contents );
 
 	if ( false === $result ) {
 		$io->error( "Failed to perform replacements in file $rel_path." );
 	} else {
 		$io->success( "Replacements done in file $rel_path." );
 	}
+}
+
+function get_file_contents( string $rel_path, SymfonyStyle $io ): ?string {
+	$full_path = __DIR__ . '/' . $rel_path;
+
+	if ( ! file_exists( $full_path ) ) {
+		$io->error( "Failed to locate file $rel_path." );
+		return null;
+	}
+
+	try {
+		$contents = file_get_contents( $full_path );
+
+		if ( ! is_string( $contents ) ) {
+			$io->error( "Failed to open file $rel_path." );
+			return null;
+		}
+	} catch( Exception $e ) {
+		$io->error( "Failed to open file $rel_path." );
+		return null;
+	}
+
+	return $contents;
 }
 
 remove_duplicates_and_fix();
