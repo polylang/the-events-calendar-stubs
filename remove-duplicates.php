@@ -23,8 +23,20 @@ function remove_duplicates_and_fix() {
 	}
 
 	$to_remove = [
-		'@^\s*/\*\*\s+\*\s+Determine whether a post or content string has blocks\..+/\s*function has_blocks\(.+\)\s*{\s*}\s*$@msU' => '', // `has_blocks()` is a WP function that should be hidden behind `function_exists()`.
-		'#@return Context The View current Context instance#' => '@return \Tribe__Context The View current Context instance', // `use Tribe__Context as Context;`
+		'@^\s*/\*\*\s+\*\s+Determine whether a post or content string has blocks\..+/\s*function has_blocks\(.+\)\s*{\s*}\s*$@msU' => [ // `has_blocks()` is a WP function that should be hidden behind `function_exists()`.
+			'replacement' => '',
+			'count'       => 1,
+		],
+		'#@return Context The View current Context instance#' => [ // `use Tribe__Context as Context;`.
+			'replacement' => '@return \Tribe__Context The View current Context instance',
+			'count'       => 1,
+		],
+		'@tad_DI52_Container@' => [ // class alias, see `vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php`.
+			'replacement' => 'TEC\Common\lucatume\DI52\Container',
+		],
+		'@tad_DI52_ServiceProvider@' => [ // class alias, see `vendor/the-events-calendar/the-events-calendar/common/src/functions/aliases.php`.
+			'replacement' => 'TEC\Common\lucatume\DI52\ServiceProvider',
+		],
 	];
 	$replaced  = false;
 
@@ -39,8 +51,8 @@ function remove_duplicates_and_fix() {
 		$io->error( "Failed to open file $rel_path." );
 	}
 
-	foreach ( $to_remove as $pattern => $replacement ) {
-		$new_contents = preg_replace( $pattern, $replacement, $contents, 1 );
+	foreach ( $to_remove as $pattern => $replacement_atts ) {
+		$new_contents = preg_replace( $pattern, $replacement_atts['replacement'], $contents, $replacement_atts['count'] ?? -1 );
 
 		if ( $new_contents !== $contents && is_string( $new_contents ) ) {
 			$replaced = true;
